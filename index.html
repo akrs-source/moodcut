@@ -196,6 +196,47 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .pin-bottom button{font-size:7px;white-space:nowrap}
 }
 
+
+/* Pinterest-style inspiration cards: every card launches a real edit preset */
+.home-pinterest{background:#f7f5f1!important;color:#292521!important;margin:-38px -5% 0!important;padding:24px 5% 48px!important}
+.home-pinterest *{box-sizing:border-box}
+.home-pinterest h1,.home-pinterest h2,.home-pinterest p{color:inherit}
+.pin-welcome{min-height:320px;position:relative;background:linear-gradient(90deg,rgba(21,19,18,.7),rgba(21,19,18,.05)),url('https://images.unsplash.com/photo-1525506283742-2e2b3c6b6b6a?auto=format&fit=crop&w=1800&q=85') center 42%/cover;display:flex;flex-direction:column;justify-content:space-between;padding:22px 28px;color:white;margin-bottom:42px}
+.pin-brand{font:22px 'Playfair Display',serif;letter-spacing:5px}
+.pin-welcome-copy{max-width:480px;padding-bottom:12px}
+.pin-welcome-copy>span,.pin-section-head>div>span{font-size:8px;letter-spacing:2.2px;color:#e7d9cf}
+.pin-welcome-copy h1{font:400 clamp(48px,7vw,76px)/.94 'Playfair Display',serif!important;letter-spacing:-2px;margin:13px 0!important;color:white!important}
+.pin-welcome-copy h1 em{color:#e2c7b8;font-weight:400}
+.pin-welcome-copy p{font-size:11px;letter-spacing:.4px;color:#f2e9e3;margin:16px 0 0}
+.pin-section-head{display:flex;justify-content:space-between;align-items:end;margin:0 0 18px}
+.pin-section-head>div>span{color:#9a8275}
+.pin-section-head h2{font:400 30px 'Playfair Display',serif!important;margin:8px 0 0!important}
+.pin-section-head button,.pin-footer button{border:0;background:none;color:#765c50;font-size:8px;letter-spacing:1.5px}
+.pin-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:start}
+.pin-photo-card{position:relative;display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:0 0 14px;border:0;background:#fff;color:#292521;overflow:hidden;border-radius:3px;box-shadow:0 3px 16px rgba(40,30,20,.06);cursor:pointer;min-width:0}
+.pin-photo-card img{display:block;width:100%;height:260px;object-fit:cover;transition:transform .55s ease}
+.pin-photo-card:hover img{transform:scale(1.035)}
+.pin-card-large img{height:390px}
+.pin-card-tag{position:absolute;top:12px;left:12px;background:rgba(250,247,242,.9);padding:7px 9px;color:#6f5b50;font-size:7px;letter-spacing:1.4px}
+.pin-photo-card strong{font:20px 'Playfair Display',serif;padding:13px 14px 0}
+.pin-photo-card small{font-size:9px;color:#8d8178;padding:5px 14px 0;letter-spacing:.5px}
+.pin-photo-card i{font-style:normal;font-size:7px;letter-spacing:1.5px;color:#9a746b;padding:13px 14px 0}
+.pin-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ded8d0;margin-top:35px;padding-top:18px;color:#9a8275;font-size:8px;letter-spacing:1.7px}
+@media(max-width:700px){
+.home-pinterest{margin:-26px -17px 0!important;padding:14px 12px 32px!important}
+.pin-welcome{min-height:300px;padding:18px 17px;margin-bottom:32px;background-position:58% center}
+.pin-welcome-copy h1{font-size:54px!important}
+.pin-section-head h2{font-size:25px!important}
+.pin-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pin-photo-card img{height:205px}
+.pin-card-large img{height:285px}
+.pin-photo-card strong{font-size:17px;padding:10px 10px 0}
+.pin-photo-card small{font-size:8px;padding:4px 10px 0}
+.pin-photo-card i{font-size:6px;padding:10px 10px 0}
+.pin-card-tag{top:8px;left:8px;font-size:6px;padding:6px}
+.pin-footer{margin-top:25px;font-size:7px}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -211,42 +252,17 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
 <main>
 <section id="home" class="page home-editorial home-pinterest">
-  <div class="pin-topline"><span>MOODCUT</span><span>VISUAL DIARY · 2026</span></div>
-  <div class="pin-heading">
-    <div><span class="pin-eyebrow">COLLECT WHAT FEELS LIKE YOU</span><h1>Your mood.<br><em>Your world.</em></h1></div>
-    <p>A living collection of little things, beautiful details and ideas worth keeping.</p>
+  <div class="pin-welcome"><div class="pin-brand">MOODCUT</div><div class="pin-welcome-copy"><span>YOUR PERSONAL AESTHETIC STUDIO</span><h1>Find your<br><em>visual mood.</em></h1><p>Choose an aesthetic. Upload your photo. Make it yours.</p></div></div>
+  <div class="pin-section-head"><div><span>CURATED FOR YOUR EYE</span><h2>Pick a mood to create</h2></div><button onclick="showPage('discover')">ALL STYLES ↗</button></div>
+  <div class="pin-cards">
+    <button class="pin-photo-card pin-card-large" onclick="chooseMood('Old Money','Warm Film')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=85" alt="Old money fashion aesthetic"><span class="pin-card-tag">01 / CLASSIC</span><strong>Old Money</strong><small>Timeless · Refined · Warm</small><i>EDIT THIS MOOD ↗</i></button>
+    <button class="pin-photo-card" onclick="chooseMood('Vintage Film','Vintage')"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=85" alt="Vintage film fashion aesthetic"><span class="pin-card-tag">02 / FILM</span><strong>Vintage Film</strong><small>Analog · Nostalgic · Soft</small><i>EDIT THIS MOOD ↗</i></button>
+    <button class="pin-photo-card" onclick="chooseMood('Soft Minimal','Soft')"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85" alt="Soft minimal style"><span class="pin-card-tag">03 / MINIMAL</span><strong>Soft Minimal</strong><small>Clean · Natural · Light</small><i>EDIT THIS MOOD ↗</i></button>
+    <button class="pin-photo-card" onclick="chooseMood('Dark Romance','Moody')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85" alt="Dark romantic fashion mood"><span class="pin-card-tag">04 / ROMANTIC</span><strong>Dark Romance</strong><small>Deep · Poetic · Mysterious</small><i>EDIT THIS MOOD ↗</i></button>
+    <button class="pin-photo-card" onclick="chooseMood('Warm Everyday','Warm Film')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=900&q=85" alt="Warm everyday lifestyle"><span class="pin-card-tag">05 / LIFESTYLE</span><strong>Warm Everyday</strong><small>Slow · Cozy · Effortless</small><i>EDIT THIS MOOD ↗</i></button>
+    <button class="pin-photo-card" onclick="chooseMood('90s Flash','Moody')"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85" alt="90s flash portrait aesthetic"><span class="pin-card-tag">06 / EDITORIAL</span><strong>90s Flash</strong><small>Bold · Raw · Unfiltered</small><i>EDIT THIS MOOD ↗</i></button>
   </div>
-  <div class="pin-toolbar"><span>THE DAILY MOODBOARD</span><button onclick="showPage('discover')">EXPLORE ALL <b>↗</b></button></div>
-  <div class="pin-wall">
-    <button class="pin-card pin-tall" onclick="selectStyle('Old Money')">
-      <img src="https://www.rowiethelabel.com/cdn/shop/files/journal-home-apr-24-mobile.jpg?v=1712752731&width=1000" alt="Vintage fashion and interiors moodboard">
-      <span class="pin-caption">old-world romance <small>FASHION · OBJECTS · DETAILS</small></span>
-    </button>
-    <button class="pin-card pin-short" onclick="selectStyle('Quiet Luxury')">
-      <img src="https://marketplace.canva.com/EAFciDiM04c/1/0/800w/canva-neutral-aesthetic-texture-detail-feminine-moodboard-photo-collage-p9Iz3f6EkKk.jpg" alt="Neutral aesthetic moodboard collage">
-      <span class="pin-caption">soft neutrals <small>TEXTURE · FORM · LIGHT</small></span>
-    </button>
-    <button class="pin-card pin-mid" onclick="selectStyle('Vintage Film')">
-      <img src="https://i0.wp.com/laurajadeprado.com/wp-content/uploads/2025/09/September-aesthetic-mood-board-in-digital-planner-Cozy-Rituals-Fall-Inspiration-feat.jpg?fit=800%2C1100&ssl=1" alt="Autumn fashion and lifestyle collage">
-      <span class="pin-caption">a september feeling <small>COLOUR · BEAUTY · EVERYDAY</small></span>
-    </button>
-    <button class="pin-card pin-mid" onclick="selectStyle('Romantic Vintage')">
-      <img src="https://images.squarespace-cdn.com/content/v1/65ac8d3ce8e98d0ae2c224b5/bc4326bf-50e7-4a61-8387-b3e674053cd0/February%2B25%2BMood%2BBoard-01.jpg?format=2500w" alt="Old world elegance moodboard">
-      <span class="pin-caption">the art of details <small>VINTAGE · TEXTURE · GOLD</small></span>
-    </button>
-    <button class="pin-card pin-short" onclick="selectStyle('Editorial')">
-      <img src="https://cdn.mos.cms.futurecdn.net/v2/t%3A0%2Cl%3A250%2Ccw%3A1500%2Cch%3A1125%2Cq%3A80%2Cw%3A1500/3H3J2z2nYu2iExzWCgvqjM.jpg" alt="Fashion editorial moodboard">
-      <span class="pin-caption">runway memories <small>STYLE · SILHOUETTE · MOOD</small></span>
-    </button>
-    <button class="pin-card pin-tall" onclick="selectStyle('Warm Minimalism')">
-      <img src="https://static.wixstatic.com/media/a80253_214d4bbf6f0444ac91d69fb434a66d81~mv2.png/v1/fill/w_1000%2Ch_1000%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01/a80253_214d4bbf6f0444ac91d69fb434a66d81~mv2.png" alt="Warm neutral lifestyle and interior moodboard">
-      <span class="pin-caption">slow days, warm spaces <small>HOME · RITUALS · LIFE</small></span>
-    </button>
-  </div>
-  <div class="pin-bottom">
-    <div><span class="pin-eyebrow">MAKE IT YOURS</span><h2>Save the feeling.<br><em>Create the look.</em></h2></div>
-    <button onclick="showPage('editor')">OPEN THE EDITOR <b>↗</b></button>
-  </div>
+  <div class="pin-footer"><span>YOUR PHOTO. YOUR AESTHETIC.</span><button onclick="showPage('editor')">OPEN PHOTO EDITOR ↗</button></div>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
@@ -293,7 +309,7 @@ function openFormat(format){document.getElementById('socialContent').classList.a
 function backSocial(){document.getElementById('socialContent').classList.remove('hidden');document.getElementById('socialWorkspace').classList.add('hidden')}
 function updateDesign(){document.getElementById('channelTitle').firstChild.textContent=document.getElementById('designTitle').value;document.getElementById('channelText').textContent=document.getElementById('designDescription').value}
 function saveDesign(){notify('Design concept saved in this session')}
-function loadPhoto(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{originalPhoto=x.target.result;let img=document.getElementById('photo');img.src=originalPhoto;img.style.display='block';document.getElementById('empty').style.display='none';resetEditor()};r.readAsDataURL(f)}
+let chosenMoodPreset='Original';function chooseMood(name,presetName){document.getElementById('selectedStyle').textContent=name;document.getElementById('savedStyle').textContent=name;chosenMoodPreset=presetName;showPage('editor');const btn=[...document.querySelectorAll('.preset')].find(x=>x.textContent.trim()===presetName);if(btn)preset(presetName,btn);else resetEditor();}function loadPhoto(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{originalPhoto=x.target.result;let img=document.getElementById('photo');img.src=originalPhoto;img.style.display='block';document.getElementById('empty').style.display='none';const btn=[...document.querySelectorAll('.preset')].find(x=>x.textContent.trim()===chosenMoodPreset);if(btn)preset(chosenMoodPreset,btn);else resetEditor()};r.readAsDataURL(f)}
 function adjust(){['brightness','contrast','saturation','warmth','fade'].forEach(id=>document.getElementById(id+'Val').textContent=document.getElementById(id).value);let b=+brightness.value,c=+contrast.value,s=+saturation.value,w=+warmth.value,f=+fade.value;document.getElementById('photo').style.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${Math.max(0,w)/100})`;document.getElementById('photo').style.opacity=1-f/100}
 function preset(name,btn){document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'));btn.classList.add('active');let v={'Original':[100,100,100,0,0],'Warm Film':[103,92,85,22,10],'Moody':[90,120,75,-5,8],'Soft':[108,88,85,8,12],'Vintage':[98,90,72,16,22]}[name];['brightness','contrast','saturation','warmth','fade'].forEach((id,i)=>document.getElementById(id).value=v[i]);adjust();notify(name+' preset applied')}
 function resetEditor(){['brightness','contrast','saturation','warmth','fade'].forEach((id,i)=>document.getElementById(id).value=[100,100,100,0,0][i]);adjust()}
