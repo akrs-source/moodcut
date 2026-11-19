@@ -231,13 +231,17 @@ Deno.serve(async (req) => {
     }
 
     if (action === "admin_list") {
-      const [{ data: users, error: usersError }, { data: invites, error: invitesError }] = await Promise.all([
+      const [{ data: users, error: usersError }, { data: invites, error: invitesError }, { data: payments, error: paymentsError }, { data: subscriptions, error: subscriptionsError }] = await Promise.all([
         db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access,created_at,last_seen_at").order("created_at", { ascending: false }),
         db.from("moodcut_invites").select("id,max_uses,uses_count,expires_at,revoked_at,created_at").order("created_at", { ascending: false }),
+        db.from("moodcut_payment_events").select("telegram_payment_charge_id,telegram_id,total_amount,currency,created_at").order("created_at", { ascending: false }).limit(100),
+        db.from("moodcut_subscriptions").select("telegram_id,plan_code,status,current_period_end,is_recurring,updated_at"),
       ]);
       if (usersError) throw usersError;
       if (invitesError) throw invitesError;
-      return json({ users, invites });
+      if (paymentsError) throw paymentsError;
+      if (subscriptionsError) throw subscriptionsError;
+      return json({ users, invites, payments, subscriptions });
     }
 
     if (action === "create_invite") {
