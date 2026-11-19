@@ -157,6 +157,45 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .editorial-signoff p{order:3;width:100%;margin:0}
 }
 
+
+/* MOODCUT Pinterest-inspired visual wall */
+.home-pinterest{background:#f5f2ed!important;color:#26221f!important;margin:-38px -5% 0!important;padding:28px 5% 58px!important;min-height:100vh}
+.home-pinterest *{box-sizing:border-box}
+.home-pinterest h1,.home-pinterest h2,.home-pinterest p{color:inherit}
+.pin-topline{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #d9d2c9;padding:0 0 17px;margin-bottom:48px;color:#5f554d;font-size:9px;letter-spacing:2px}
+.pin-topline span:first-child{font:22px 'Playfair Display',serif;letter-spacing:4px;color:#28231f}
+.pin-heading{display:flex;justify-content:space-between;align-items:end;gap:30px;margin:0 0 42px}
+.pin-eyebrow{font-size:8px;letter-spacing:2.5px;color:#987b70}
+.pin-heading h1,.pin-bottom h2{font:400 clamp(48px,7vw,82px)/.96 'Playfair Display',serif!important;letter-spacing:-2.5px;margin:15px 0 0!important}
+.pin-heading h1 em,.pin-bottom h2 em{color:#9d7470;font-weight:400}
+.pin-heading>p{max-width:250px;color:#766e66;font-size:12px;line-height:1.8;margin:0 0 5px}
+.pin-toolbar{display:flex;justify-content:space-between;align-items:center;margin:0 0 17px;color:#7e736b;font-size:8px;letter-spacing:2px}
+.pin-toolbar button,.pin-bottom button{border:0;background:none;color:#71554f;font-size:8px;letter-spacing:1.5px}
+.pin-toolbar b,.pin-bottom b{font-size:15px;margin-left:10px;font-weight:400}
+.pin-wall{columns:3;column-gap:14px;align-items:start}
+.pin-card{display:block;position:relative;width:100%;padding:0;margin:0 0 14px;border:0;border-radius:3px;overflow:hidden;background:#e8e1d8;text-align:left;break-inside:avoid;cursor:pointer}
+.pin-card img{display:block;width:100%;height:auto;object-fit:cover;transition:transform .6s ease;filter:saturate(.91)}
+.pin-card:hover img{transform:scale(1.025)}
+.pin-caption{display:block;background:#f5f2ed;padding:12px 3px 14px;color:#39312c;font:italic 16px 'Playfair Display',serif}
+.pin-caption small{display:block;margin-top:6px;color:#91847a;font:7px Arial,sans-serif;letter-spacing:1.5px}
+.pin-bottom{display:flex;align-items:end;justify-content:space-between;border-top:1px solid #d9d2c9;margin-top:38px;padding-top:27px}
+.pin-bottom h2{font-size:38px!important;letter-spacing:-1px;margin-top:10px!important}
+.pin-bottom button{padding:13px 0}
+@media(max-width:700px){
+.home-pinterest{margin:-26px -17px 0!important;padding:20px 15px 38px!important}
+.pin-topline{margin-bottom:38px}
+.pin-heading{display:block;margin-bottom:32px}
+.pin-heading h1{font-size:58px!important}
+.pin-heading>p{margin:17px 0 0;max-width:290px}
+.pin-wall{columns:2;column-gap:9px}
+.pin-card{margin-bottom:9px}
+.pin-caption{font-size:13px;padding:9px 2px 11px}
+.pin-caption small{font-size:6px;letter-spacing:1px}
+.pin-bottom{margin-top:25px;gap:12px}
+.pin-bottom h2{font-size:31px!important}
+.pin-bottom button{font-size:7px;white-space:nowrap}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -171,41 +210,43 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <button class="nav" onclick="showPage('social',this)"><span class="nav-icon">▤</span>Social Studio</button>
 <div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
 <main>
-<section id="home" class="page home-editorial home-v2">
-  <div class="editorial-cover">
-    <img class="cover-image" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800&auto=format&fit=crop" alt="Fashion editorial portrait">
-    <div class="cover-shade"></div>
-    <div class="cover-top"><span>MOODCUT</span><span>YOUR AESTHETIC. YOUR RULES.</span></div>
-    <div class="cover-copy">
-      <div class="cover-kicker">THE VISUAL CULTURE CLUB · 2026</div>
-      <h1>Make it<br><em>your mood.</em></h1>
-      <p>Curate the feeling. Create the image. Make the ordinary look extraordinary.</p>
-      <button class="cover-cta" onclick="showPage('editor')">ENTER THE STUDIO <span>↗</span></button>
-    </div>
-    <div class="cover-foot"><span>01 — PERSONAL STYLE</span><span>SCROLL TO EXPLORE ↓</span></div>
+<section id="home" class="page home-editorial home-pinterest">
+  <div class="pin-topline"><span>MOODCUT</span><span>VISUAL DIARY · 2026</span></div>
+  <div class="pin-heading">
+    <div><span class="pin-eyebrow">COLLECT WHAT FEELS LIKE YOU</span><h1>Your mood.<br><em>Your world.</em></h1></div>
+    <p>A living collection of little things, beautiful details and ideas worth keeping.</p>
   </div>
-
-  <div class="editorial-intro">
-    <div><span class="editorial-overline">A WORLD OF YOUR OWN</span><h2>See it. Feel it.<br><em>Make it yours.</em></h2></div>
-    <p>MOODCUT is your visual playground — a place to edit, collect and shape the aesthetic that feels unmistakably you.</p>
+  <div class="pin-toolbar"><span>THE DAILY MOODBOARD</span><button onclick="showPage('discover')">EXPLORE ALL <b>↗</b></button></div>
+  <div class="pin-wall">
+    <button class="pin-card pin-tall" onclick="selectStyle('Old Money')">
+      <img src="https://www.rowiethelabel.com/cdn/shop/files/journal-home-apr-24-mobile.jpg?v=1712752731&width=1000" alt="Vintage fashion and interiors moodboard">
+      <span class="pin-caption">old-world romance <small>FASHION · OBJECTS · DETAILS</small></span>
+    </button>
+    <button class="pin-card pin-short" onclick="selectStyle('Quiet Luxury')">
+      <img src="https://marketplace.canva.com/EAFciDiM04c/1/0/800w/canva-neutral-aesthetic-texture-detail-feminine-moodboard-photo-collage-p9Iz3f6EkKk.jpg" alt="Neutral aesthetic moodboard collage">
+      <span class="pin-caption">soft neutrals <small>TEXTURE · FORM · LIGHT</small></span>
+    </button>
+    <button class="pin-card pin-mid" onclick="selectStyle('Vintage Film')">
+      <img src="https://i0.wp.com/laurajadeprado.com/wp-content/uploads/2025/09/September-aesthetic-mood-board-in-digital-planner-Cozy-Rituals-Fall-Inspiration-feat.jpg?fit=800%2C1100&ssl=1" alt="Autumn fashion and lifestyle collage">
+      <span class="pin-caption">a september feeling <small>COLOUR · BEAUTY · EVERYDAY</small></span>
+    </button>
+    <button class="pin-card pin-mid" onclick="selectStyle('Romantic Vintage')">
+      <img src="https://images.squarespace-cdn.com/content/v1/65ac8d3ce8e98d0ae2c224b5/bc4326bf-50e7-4a61-8387-b3e674053cd0/February%2B25%2BMood%2BBoard-01.jpg?format=2500w" alt="Old world elegance moodboard">
+      <span class="pin-caption">the art of details <small>VINTAGE · TEXTURE · GOLD</small></span>
+    </button>
+    <button class="pin-card pin-short" onclick="selectStyle('Editorial')">
+      <img src="https://cdn.mos.cms.futurecdn.net/v2/t%3A0%2Cl%3A250%2Ccw%3A1500%2Cch%3A1125%2Cq%3A80%2Cw%3A1500/3H3J2z2nYu2iExzWCgvqjM.jpg" alt="Fashion editorial moodboard">
+      <span class="pin-caption">runway memories <small>STYLE · SILHOUETTE · MOOD</small></span>
+    </button>
+    <button class="pin-card pin-tall" onclick="selectStyle('Warm Minimalism')">
+      <img src="https://static.wixstatic.com/media/a80253_214d4bbf6f0444ac91d69fb434a66d81~mv2.png/v1/fill/w_1000%2Ch_1000%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01/a80253_214d4bbf6f0444ac91d69fb434a66d81~mv2.png" alt="Warm neutral lifestyle and interior moodboard">
+      <span class="pin-caption">slow days, warm spaces <small>HOME · RITUALS · LIFE</small></span>
+    </button>
   </div>
-
-  <div class="editorial-mosaic-head"><span>THE MOODBOARD / 001</span><button onclick="showPage('discover')">DISCOVER MORE ↗</button></div>
-  <div class="editorial-mosaic">
-    <button class="mosaic-tile mosaic-fashion" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&auto=format&fit=crop" alt="Fashion portrait"><span>01 / FASHION</span></button>
-    <button class="mosaic-tile mosaic-still" onclick="selectStyle('Slow Living')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900&auto=format&fit=crop" alt="Flowers"><span>02 / STILL LIFE</span></button>
-    <button class="mosaic-tile mosaic-space" onclick="selectStyle('Warm Minimalism')"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=900&auto=format&fit=crop" alt="Interior"><span>03 / SPACES</span></button>
-    <button class="mosaic-tile mosaic-art" onclick="selectStyle('Artful Details')"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&auto=format&fit=crop" alt="Art"><span>04 / ART</span></button>
-    <button class="mosaic-tile mosaic-film" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900&auto=format&fit=crop" alt="Golden landscape"><span>05 / ATMOSPHERE</span></button>
+  <div class="pin-bottom">
+    <div><span class="pin-eyebrow">MAKE IT YOURS</span><h2>Save the feeling.<br><em>Create the look.</em></h2></div>
+    <button onclick="showPage('editor')">OPEN THE EDITOR <b>↗</b></button>
   </div>
-
-  <div class="editorial-tools">
-    <div class="editorial-tools-title"><span>MAKE SOMETHING BEAUTIFUL</span><h2>Your next obsession<br><em>starts here.</em></h2></div>
-    <button class="tool-tile" onclick="showPage('editor')"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop" alt="Fashion styling"><span>01</span><strong>THE EDITOR</strong><small>Transform your photos ↗</small></button>
-    <button class="tool-tile" onclick="showPage('discover')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900&auto=format&fit=crop" alt="Curated inspiration"><span>02</span><strong>DISCOVER</strong><small>Find your visual language ↗</small></button>
-    <button class="tool-tile" onclick="showPage('social')"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&auto=format&fit=crop" alt="Creative workspace"><span>03</span><strong>SOCIAL STUDIO</strong><small>Design your next post ↗</small></button>
-  </div>
-  <div class="editorial-signoff"><span>MOODCUT</span><p>Not a trend. Your point of view.</p><button onclick="showPage('style')">DEFINE YOUR STYLE ↗</button></div>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
