@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
         .select("telegram_id").eq("telegram_id", payerId).maybeSingle();
       if ((!pending || String(pending.telegram_id) !== payerId) && !(isRecurring && existingSubscription)) return json({ ok: true, ignored: true });
       if (pending && new Date(pending.expires_at).getTime() <= Date.now() && !isRecurring) return json({ ok: true, ignored: true });
-      if (String(payment.currency || "") !== "XTR" || Number(payment.total_amount || 0) !== 10) {
+      if (String(payment.currency || "") !== "XTR" || Number(payment.total_amount || 0) !== 330) {
         return json({ error: "payment_amount_or_currency_invalid" }, 400);
       }
 
@@ -200,10 +200,10 @@ Deno.serve(async (req) => {
           title: "MOODCUT PRO",
           description: "Доступ к MOODCUT PRO на 30 дней. Автоматическое продление каждый месяц.",
           payload, provider_token: "", currency: "XTR",
-          prices: [{ label: "MOODCUT PRO · 30 дней", amount: 10 }],
+          prices: [{ label: "MOODCUT PRO · 30 дней", amount: 330 }],
           subscription_period: 2592000,
         });
-        return json({ invoiceUrl, priceStars: 10, periodDays: 30 });
+        return json({ invoiceUrl, priceStars: 330, periodDays: 30 });
       } catch (error) {
         await db.from("moodcut_pending_payments").delete().eq("invoice_payload", payload);
         throw error;
@@ -228,6 +228,21 @@ Deno.serve(async (req) => {
         pending_update_count: info.pending_update_count || 0,
         last_error_message: info.last_error_message || null,
       });
+    }
+
+    if (action === "cancel_test_auto_renew") {
+      const targetId = "548363238";
+      const { data: subscription, error: subError } = await db.from("moodcut_subscriptions")
+        .select("last_charge_id,current_period_end").eq("telegram_id", Number(targetId)).maybeSingle();
+      if (subError) throw subError;
+      if (!subscription?.last_charge_id) return json({ error: "subscription_charge_not_found" }, 404);
+      const result = await telegramApi("editUserStarSubscription", {
+        user_id: Number(targetId), telegram_payment_charge_id: subscription.last_charge_id, is_canceled: true,
+      });
+      if (result !== true) throw new Error("telegram_subscription_cancel_not_confirmed");
+      const { error: updateError } = await db.from("moodcut_subscriptions").update({ is_recurring: false, updated_at: new Date().toISOString() }).eq("telegram_id", Number(targetId));
+      if (updateError) throw updateError;
+      return json({ canceled: true, subscription_expires_at: subscription.current_period_end });
     }
 
     if (action === "admin_list") {
