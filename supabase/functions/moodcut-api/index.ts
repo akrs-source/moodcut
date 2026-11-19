@@ -106,8 +106,13 @@ Deno.serve(async (req) => {
       const { data: pending } = await db.from("moodcut_pending_payments")
         .select("telegram_id,expires_at").eq("invoice_payload", payload).maybeSingle();
       const isRecurring = payment.is_recurring === true;
-      if ((!pending || String(pending.telegram_id) !== payerId) && !isRecurring) return json({ ok: true, ignored: true });
+      const { data: existingSubscription } = await db.from("moodcut_subscriptions")
+        .select("telegram_id").eq("telegram_id", payerId).maybeSingle();
+      if ((!pending || String(pending.telegram_id) !== payerId) && !(isRecurring && existingSubscription)) return json({ ok: true, ignored: true });
       if (pending && new Date(pending.expires_at).getTime() <= Date.now() && !isRecurring) return json({ ok: true, ignored: true });
+      if (String(payment.currency || "") !== "XTR" || Number(payment.total_amount || 0) !== 330) {
+        return json({ error: "payment_amount_or_currency_invalid" }, 400);
+      }
 
       const chargeId = String(payment.telegram_payment_charge_id || "");
       if (!chargeId) return json({ error: "payment_charge_missing" }, 400);
