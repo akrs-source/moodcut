@@ -237,6 +237,77 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .pin-footer{margin-top:25px;font-size:7px}
 }
 
+
+/* MOODCUT — faithful mobile home reference */
+body:has(.moodcut-reference-home:not(.hidden)){background:#171412;color:#eee4dc}
+body:has(.moodcut-reference-home:not(.hidden)) .app{max-width:100%;background:#171412}
+body:has(.moodcut-reference-home:not(.hidden)) header{display:none}
+body:has(.moodcut-reference-home:not(.hidden)) .layout{display:block;min-height:100vh;padding:0}
+body:has(.moodcut-reference-home:not(.hidden)) aside.mc-bottom-nav{position:fixed;z-index:30;bottom:0;left:0;right:0;height:76px;padding:7px 12px calc(7px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;background:rgba(25,22,20,.97);border-top:1px solid rgba(239,224,213,.12);backdrop-filter:blur(18px)}
+.mc-bottom-nav .nav{width:25%;margin:0;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none!important;color:#938982;font-size:11px;font-weight:400}
+.mc-bottom-nav .nav.active{color:#f0dfd5}
+.mc-bottom-nav .nav-icon{width:auto;font-size:23px;line-height:1.1}
+body:has(.moodcut-reference-home:not(.hidden)) main{padding:0 0 88px;min-width:0}
+.moodcut-reference-home{background:#171412!important;color:#eee3db!important;margin:0!important;padding:0 0 24px!important;min-height:100vh;overflow:hidden}
+.moodcut-reference-home *{box-sizing:border-box}
+.mc-hero{height: min(690px,82vh);min-height:570px;position:relative;overflow:hidden;background:#201b18;color:#f1e4dc}
+.mc-hero-photo{position:absolute;inset:0 0 0 43%;background-image:linear-gradient(90deg,#201b18 0%,rgba(32,27,24,.34) 28%,rgba(32,27,24,.02) 65%),url('https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=1300&q=90');background-position:center;background-size:cover;filter:sepia(.22) saturate(.65) brightness(.78)}
+.mc-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#201b18 0%,rgba(32,27,24,.9) 34%,rgba(32,27,24,.08) 76%),linear-gradient(0deg,rgba(0,0,0,.16),transparent 25%);pointer-events:none}
+.mc-hero-top{position:absolute;z-index:2;top:0;left:0;right:0;padding:28px 26px;display:flex;align-items:center;justify-content:space-between}
+.mc-wordmark{font:400 30px/1 'Playfair Display',serif;letter-spacing:1px;color:#e9d9d0}
+.mc-language{border:1px solid rgba(236,220,209,.18);border-radius:28px;padding:13px 18px;color:#eee2da;font-size:12px;letter-spacing:.5px;background:rgba(255,255,255,.04)}
+.mc-hero-copy{position:absolute;z-index:2;left:6%;top:29%;width:57%;max-width:490px}
+.mc-hero-copy h1{font:400 clamp(48px,7.5vw,76px)/.99 'Playfair Display',serif!important;letter-spacing:-1.8px;color:#e9d9d0!important;margin:0 0 24px!important}
+.mc-tagline{font-size:18px;color:#e2d2c9;margin:0 0 24px}
+.mc-hero-copy p{font-size:14px;line-height:1.35;color:#bcb0a8;margin:0 0 34px}
+.mc-start{border:0;border-radius:40px;background:#e9d7cc;color:#211b18;padding:18px 25px 18px 28px;min-width:230px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600}
+.mc-start span{font-size:25px;font-weight:300;line-height:1}
+.mc-actions{padding:24px 26px 0}
+.mc-actions h2{font:400 32px/1.1 'Playfair Display',serif!important;color:#e9d9d0!important;margin:0 0 22px!important;letter-spacing:-.5px}
+.mc-action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mc-action{position:relative;display:block;height:250px;min-width:0;overflow:hidden;border:0;border-radius:18px;padding:0;background:#302823;text-align:left;color:#f3e7df}
+.mc-action img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.67) sepia(.18) saturate(.68);transition:transform .5s ease}
+.mc-action:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(0deg,rgba(18,15,14,.8),transparent)}
+.mc-action-copy{position:absolute;z-index:2;left:17px;right:50px;bottom:17px;display:flex;flex-direction:column;gap:4px}
+.mc-action-copy strong{font:400 20px/1.1 'Playfair Display',serif;color:#fff}
+.mc-action-copy small{font:12px/1.2 'DM Sans',sans-serif;color:#d0c3bb}
+.mc-action i{position:absolute;z-index:3;right:14px;bottom:15px;width:48px;height:48px;border:1px solid rgba(255,255,255,.34);border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:26px;color:#f3e7df;background:rgba(0,0,0,.18)}
+.mc-note{margin:18px 26px 0;padding:14px 17px;border:1px solid rgba(240,224,214,.1);border-radius:25px;background:linear-gradient(110deg,rgba(255,255,255,.09),rgba(255,255,255,.025));display:flex;align-items:center;gap:14px;color:#c9bbb2}
+.mc-spark{font-size:26px;color:#d9c6bb}
+.mc-note p{font-size:12px;line-height:1.4;margin:0;flex:1}
+.mc-note button{border:0;background:none;color:#bfb0a7;font-size:10px;white-space:nowrap}
+.mc-note b{font-size:17px;font-weight:400;margin-left:8px}
+@media(min-width:701px){
+ body:has(.moodcut-reference-home:not(.hidden)) main{padding:0 0 40px}
+ .mc-hero{height:690px;min-height:690px}
+ .mc-hero-copy{left:8%;top:27%}
+ .mc-actions{max-width:980px;margin:auto;padding-top:34px}
+ .mc-action{height:300px}
+ .mc-note{max-width:928px;margin:22px auto 0}
+}
+@media(max-width:430px){
+ .mc-hero{height:690px;min-height:620px}
+ .mc-hero-photo{left:39%;background-position:48% center}
+ .mc-hero-top{padding:26px 22px}
+ .mc-wordmark{font-size:27px}
+ .mc-hero-copy{left:6%;top:30%;width:67%}
+ .mc-hero-copy h1{font-size:54px!important}
+ .mc-tagline{font-size:16px;margin-bottom:23px}
+ .mc-hero-copy p{font-size:13px;margin-bottom:34px}
+ .mc-start{min-width:205px;padding:16px 21px 16px 24px}
+ .mc-actions{padding:24px 15px 0}
+ .mc-actions h2{font-size:29px!important;margin-bottom:20px!important}
+ .mc-action-grid{gap:10px}
+ .mc-action{height:245px;border-radius:17px}
+ .mc-action-copy{left:13px;bottom:14px;right:40px}
+ .mc-action-copy strong{font-size:17px}
+ .mc-action-copy small{font-size:10px}
+ .mc-action i{width:40px;height:40px;right:9px;bottom:12px}
+ .mc-note{margin:17px 15px 0;padding:12px 13px;gap:9px}
+ .mc-note p{font-size:10px}
+ .mc-note button{font-size:9px}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -244,25 +315,46 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <div class="app">
 <header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" id="languageToggle" onclick="toggleMoodcutLanguage()">EN / RU</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
-<aside><div class="nav-label">MENU</div>
+<aside class="mc-bottom-nav">
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
-<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon">◈</span>Discover</button>
-<button class="nav" onclick="showPage('editor',this)"><span class="nav-icon">✳</span>Editor</button>
-<button class="nav" onclick="showPage('social',this)"><span class="nav-icon">▤</span>Social Studio</button>
-<div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
+<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon">▦</span>Collections</button>
+<button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♧</span>Saved</button>
+<button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♙</span>Profile</button>
+</aside>
 <main>
-<section id="home" class="page home-editorial home-pinterest">
-  <div class="pin-welcome" style="background-image:linear-gradient(90deg,rgba(21,19,18,.58),rgba(21,19,18,.02)),url('https://images.unsplash.com/photo-1780382131490-3f23619ef845?auto=format&fit=crop&w=1800&q=85')"><div class="pin-brand">MOODCUT</div><div class="pin-welcome-copy"><span>YOUR PERSONAL AESTHETIC STUDIO</span><h1>Find your<br><em>visual mood.</em></h1><p>Choose an aesthetic. Upload your photo. Make it yours.</p></div></div>
-  <div class="pin-section-head"><div><span>THE GLAMOUR EDIT</span><h2>Choose your signature look</h2></div><button onclick="showPage('discover')">ALL STYLES ↗</button></div>
-  <div class="pin-cards">
-    <button class="pin-photo-card pin-card-large" onclick="chooseMood('Soft Luxury','Warm Film')"><img src="https://images.unsplash.com/photo-1635784134390-db7e5d90592f?auto=format&fit=crop&w=1000&q=85" alt="Blonde model in a white tailored suit"><span class="pin-card-tag">01 / SOFT LUXURY</span><strong>Soft Luxury</strong><small>Ivory · Gold · Timeless</small><i>EDIT THIS MOOD ↗</i></button>
-    <button class="pin-photo-card" onclick="chooseMood('Glamour Muse','Moody')"><img src="https://images.unsplash.com/photo-1792963762246-3456ccb19c42?auto=format&fit=crop&w=900&q=85" alt="Glamorous blonde fashion editorial"><span class="pin-card-tag">02 / GLAMOUR</span><strong>Glamour Muse</strong><small>Confident · Feminine · Chic</small><i>EDIT THIS MOOD ↗</i></button>
-    <button class="pin-photo-card" onclick="chooseMood('City Chic','Soft')"><img src="https://images.unsplash.com/photo-1770644935626-f61d233f4827?auto=format&fit=crop&w=900&q=85" alt="Blonde woman in elegant beige coat by the sea"><span class="pin-card-tag">03 / CITY CHIC</span><strong>City Chic</strong><small>Polished · Effortless · Modern</small><i>EDIT THIS MOOD ↗</i></button>
-    <button class="pin-photo-card" onclick="chooseMood('Evening Elegance','Moody')"><img src="https://images.unsplash.com/photo-1781454226691-5c858b262dd7?auto=format&fit=crop&w=900&q=85" alt="Elegant blonde woman in a luxury cafe"><span class="pin-card-tag">04 / EVENING</span><strong>Evening Elegance</strong><small>Silk · Glow · Allure</small><i>EDIT THIS MOOD ↗</i></button>
-    <button class="pin-photo-card" onclick="chooseMood('Beauty & Glow','Soft')"><img src="https://images.unsplash.com/photo-1779912217795-158d9efe51ff?auto=format&fit=crop&w=900&q=85" alt="Blonde fashion model in dark editorial look"><span class="pin-card-tag">05 / BEAUTY</span><strong>Beauty &amp; Glow</strong><small>Beauty · Details · Radiance</small><i>EDIT THIS MOOD ↗</i></button>
-    <button class="pin-photo-card" onclick="chooseMood('Fashion Editorial','Vintage')"><img src="https://images.unsplash.com/photo-1779399722752-34299f590b7b?auto=format&fit=crop&w=900&q=85" alt="Blonde model in tailored fashion editorial"><span class="pin-card-tag">06 / EDITORIAL</span><strong>Fashion Editorial</strong><small>Model · Pose · Statement</small><i>EDIT THIS MOOD ↗</i></button>
+<section id="home" class="page moodcut-reference-home">
+  <div class="mc-hero">
+    <div class="mc-hero-photo" aria-hidden="true"></div>
+    <div class="mc-hero-top"><div class="mc-wordmark">MOODCUT</div><div class="mc-language">EN / RU</div></div>
+    <div class="mc-hero-copy">
+      <h1>Your visual<br>identity<br>starts here.</h1>
+      <div class="mc-tagline">Create. Curate. Inspire.</div>
+      <p>Edit photos, build moodboards<br>and design your aesthetic space<br>in one place.</p>
+      <button class="mc-start" onclick="showPage('editor')">Start creating <span>→</span></button>
+    </div>
   </div>
-  <div class="pin-footer"><span>YOUR PHOTO. YOUR AESTHETIC.</span><button onclick="showPage('editor')">OPEN PHOTO EDITOR ↗</button></div>
+  <section class="mc-actions">
+    <h2>What do you want to do?</h2>
+    <div class="mc-action-grid">
+      <button class="mc-action" onclick="showPage('editor')">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85" alt="Fashion portrait with sunglasses">
+        <span class="mc-action-copy"><strong>Edit Photos</strong><small>Filters, effects, perfection</small></span><i>→</i>
+      </button>
+      <button class="mc-action" onclick="showPage('discover')">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85" alt="Laptop and creative workspace">
+        <span class="mc-action-copy"><strong>Create Moodboards</strong><small>Collect your inspiration</small></span><i>→</i>
+      </button>
+      <button class="mc-action" onclick="showPage('social')">
+        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85" alt="Paris street and Eiffel Tower">
+        <span class="mc-action-copy"><strong>Design for Socials</strong><small>Posts, covers, ideas</small></span><i>→</i>
+      </button>
+      <button class="mc-action" onclick="showPage('discover')">
+        <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=900&q=85" alt="Burgundy silk fabric">
+        <span class="mc-action-copy"><strong>Find Your Aesthetic</strong><small>Explore styles &amp; palettes</small></span><i>→</i>
+      </button>
+    </div>
+  </section>
+  <div class="mc-note"><span class="mc-spark">✦</span><p>Your personal space for creativity,<br>inspiration and self-expression.</p><button onclick="showPage('style')">About MOODCUT <b>→</b></button></div>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
