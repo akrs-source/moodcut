@@ -1267,7 +1267,7 @@ const enToRu={
 "EN / RU":"EN / RU"
 };
 const ruToEn=Object.fromEntries(Object.entries(enToRu).map(([a,b])=>[b,a]));
-let lang=localStorage.getItem("moodcut-language")||"en";
+let lang="ru";localStorage.setItem("moodcut-language","ru");
 const originalText=new WeakMap();
 function translateNode(node){
  const dict=lang==="ru"?enToRu:ruToEn;
