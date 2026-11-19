@@ -70,11 +70,72 @@ Deno.serve(async (req) => {
     if (!botToken || !adminId || !supabaseUrl || !serviceKey) {
       return json({ error: "server_not_configured" }, 500);
     }
+    const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
+    const telegramApi = async (method: string, payload: Record<string, unknown>) => {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.description || `telegram_${method}_failed`);
+      return result.result;
+    };
+
+    // Telegram webhook: verify the secret token before accepting payment updates.
+    if (body.pre_checkout_query || body.message?.successful_payment) {
+      const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "";
+      const suppliedSecret = req.headers.get("x-telegram-bot-api-secret-token") || "";
+      if (!webhookSecret || !safeEqual(webhookSecret, suppliedSecret)) return json({ error: "webhook_unauthorized" }, 403);
+
+      if (body.pre_checkout_query) {
+        const query = body.pre_checkout_query;
+        const { data: pending } = await db.from("moodcut_pending_payments")
+          .select("telegram_id,expires_at").eq("invoice_payload", String(query.invoice_payload || "")).maybeSingle();
+        const valid = !!pending && String(pending.telegram_id) === String(query.from?.id)
+          && new Date(pending.expires_at).getTime() > Date.now();
+        await telegramApi("answerPreCheckoutQuery", {
+          pre_checkout_query_id: query.id, ok: valid,
+          ...(valid ? {} : { error_message: "Счёт устарел. Откройте MOODCUT и создайте новый." }),
+        });
+        return json({ ok: true });
+      }
+
+      const message = body.message;
+      const payment = message.successful_payment;
+      const payerId = String(message.from?.id || "");
+      const payload = String(payment.invoice_payload || "");
+      const { data: pending } = await db.from("moodcut_pending_payments")
+        .select("telegram_id,expires_at").eq("invoice_payload", payload).maybeSingle();
+      const isRecurring = payment.is_recurring === true;
+      if ((!pending || String(pending.telegram_id) !== payerId) && !isRecurring) return json({ ok: true, ignored: true });
+      if (pending && new Date(pending.expires_at).getTime() <= Date.now() && !isRecurring) return json({ ok: true, ignored: true });
+
+      const chargeId = String(payment.telegram_payment_charge_id || "");
+      if (!chargeId) return json({ error: "payment_charge_missing" }, 400);
+      const { error: eventError } = await db.from("moodcut_payment_events").insert({
+        telegram_payment_charge_id: chargeId, telegram_id: Number(payerId),
+        invoice_payload: payload, total_amount: Number(payment.total_amount || 330),
+        currency: String(payment.currency || "XTR"), raw_payment: payment,
+      });
+      if (eventError) {
+        if (eventError.code === "23505") return json({ ok: true, duplicate: true });
+        throw eventError;
+      }
+      const expiresAt = payment.subscription_expiration_date
+        ? new Date(Number(payment.subscription_expiration_date) * 1000).toISOString()
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { error: subError } = await db.from("moodcut_subscriptions").upsert({
+        telegram_id: Number(payerId), plan_code: "pro", status: "active",
+        current_period_end: expiresAt, last_charge_id: chargeId,
+        is_recurring: isRecurring, updated_at: new Date().toISOString(),
+      }, { onConflict: "telegram_id" });
+      if (subError) throw subError;
+      if (pending) await db.from("moodcut_pending_payments").delete().eq("invoice_payload", payload);
+      return json({ ok: true, subscription_expires_at: expiresAt });
+    }
 
     const tg = await verifyTelegram(initData, botToken);
     const telegramId = String(tg.id);
     const isAdmin = telegramId === adminId;
-    const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
 
     const profile = {
       telegram_id: Number(telegramId),
@@ -90,7 +151,11 @@ Deno.serve(async (req) => {
     if (action === "me") {
       const { data, error } = await db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access,created_at,last_seen_at").eq("telegram_id", telegramId).single();
       if (error) throw error;
-      return json({ profile: data, isAdmin });
+      const { data: subscription, error: subscriptionError } = await db.from("moodcut_subscriptions")
+        .select("plan_code,status,current_period_end").eq("telegram_id", telegramId).maybeSingle();
+      if (subscriptionError) throw subscriptionError;
+      const proActive = !!subscription && subscription.status === "active" && new Date(subscription.current_period_end).getTime() > Date.now();
+      return json({ profile: { ...data, pro_active: proActive, subscription_plan: proActive ? "MOODCUT PRO" : (data.free_access ? "Бесплатный доступ" : "Free"), subscription_expires_at: subscription?.current_period_end || null }, isAdmin });
     }
 
     if (action === "redeem_invite") {
@@ -101,6 +166,34 @@ Deno.serve(async (req) => {
       if (!result.data?.ok) return json({ error: result.data?.error || "invite_invalid" }, 400);
       const { data } = await db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access").eq("telegram_id", telegramId).single();
       return json({ redeemed: true, profile: data });
+    }
+
+    if (action === "create_pro_invoice") {
+      const { data: current } = await db.from("moodcut_subscriptions")
+        .select("status,current_period_end").eq("telegram_id", telegramId).maybeSingle();
+      if (current?.status === "active" && new Date(current.current_period_end).getTime() > Date.now()) {
+        return json({ error: "pro_already_active", subscription_expires_at: current.current_period_end }, 409);
+      }
+      const nonce = [...crypto.getRandomValues(new Uint8Array(18))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const payload = `moodcut_pro_${telegramId}_${nonce}`;
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const { error: pendingError } = await db.from("moodcut_pending_payments").insert({
+        invoice_payload: payload, telegram_id: Number(telegramId), expires_at: expiresAt,
+      });
+      if (pendingError) throw pendingError;
+      try {
+        const invoiceUrl = await telegramApi("createInvoiceLink", {
+          title: "MOODCUT PRO",
+          description: "Доступ к MOODCUT PRO на 30 дней. Автоматическое продление каждый месяц.",
+          payload, provider_token: "", currency: "XTR",
+          prices: [{ label: "MOODCUT PRO · 30 дней", amount: 330 }],
+          subscription_period: 2592000,
+        });
+        return json({ invoiceUrl, priceStars: 330, periodDays: 30 });
+      } catch (error) {
+        await db.from("moodcut_pending_payments").delete().eq("invoice_payload", payload);
+        throw error;
+      }
     }
 
     if (!isAdmin) return json({ error: "admin_only" }, 403);
