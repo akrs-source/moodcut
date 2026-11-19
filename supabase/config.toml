@@ -1,0 +1,2 @@
+[functions.moodcut-api]
+verify_jwt = false
