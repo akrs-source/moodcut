@@ -434,6 +434,8 @@ aside{left:12px;right:12px;bottom:12px;height:64px;border:1px solid rgba(255,255
 .platforms{margin-right:-17px}
 }
 
+
+.nav-icon svg{width:18px;height:18px;display:block;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin:0 auto 2px}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -443,10 +445,10 @@ aside{left:12px;right:12px;bottom:12px;height:64px;border:1px solid rgba(255,255
 <header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" id="languageToggle" onclick="toggleMoodcutLanguage()">EN / RU</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
 <aside class="mc-bottom-nav">
-<button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
-<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon">▦</span>Collections</button>
-<button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♧</span>Saved</button>
-<button class="nav" onclick="openMoodcutProfile(this)"><span class="nav-icon">♙</span>Profile</button>
+<button class="nav active" onclick="showPage('home',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>Home</button>
+<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></span>Collections</button>
+<button class="nav" onclick="showPage('style',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5A2.5 2.5 0 0 1 10.3 2.8L12 4.5l1.7-1.7A2.5 2.5 0 0 1 18 4.5c0 4-6 9-6 9S6 8.5 6 4.5Z"/><path d="M12 13.5V22"/></svg></span>Saved</button>
+<button class="nav" onclick="openMoodcutProfile(this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Profile</button>
 </aside>
 <main>
 <section id="home" class="page moodcut-reference-home">
