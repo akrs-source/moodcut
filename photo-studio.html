@@ -126,7 +126,8 @@ function render(){
  ctx.save();ctx.clearRect(0,0,w,h);
  ctx.filter=(values.softness>0||values.blur>0)?'blur('+(values.softness+values.blur/18)+'px)':'none';
  ctx.drawImage(img,0,0,w,h);ctx.filter='none';ctx.restore();
- const frame=ctx.getImageData(0,0,w,h),p=frame.data,source=new Uint8ClampedArray(p);\n const distortion=(values.distortion||0)/100*.16;if(distortion){const original=new Uint8ClampedArray(source);for(let y=0;y<h;y++){for(let x=0;x<w;x++){const nx=(x-w/2)/(w/2),ny=(y-h/2)/(h/2),r2=nx*nx+ny*ny,scale=1+distortion*r2,sx=Math.max(0,Math.min(w-1,Math.round(w/2+nx*scale*w/2))),sy=Math.max(0,Math.min(h-1,Math.round(h/2+ny*scale*h/2))),to=(y*w+x)*4,from=(sy*w+sx)*4;source[to]=original[from];source[to+1]=original[from+1];source[to+2]=original[from+2];p[to]=original[from];p[to+1]=original[from+1];p[to+2]=original[from+2];}}}
+ const frame=ctx.getImageData(0,0,w,h),p=frame.data,source=new Uint8ClampedArray(p);
+ const distortion=(values.distortion||0)/100*.16;if(distortion){const original=new Uint8ClampedArray(source);for(let y=0;y<h;y++){for(let x=0;x<w;x++){const nx=(x-w/2)/(w/2),ny=(y-h/2)/(h/2),r2=nx*nx+ny*ny,scale=1+distortion*r2,sx=Math.max(0,Math.min(w-1,Math.round(w/2+nx*scale*w/2))),sy=Math.max(0,Math.min(h-1,Math.round(h/2+ny*scale*h/2))),to=(y*w+x)*4,from=(sy*w+sx)*4;source[to]=original[from];source[to+1]=original[from+1];source[to+2]=original[from+2];p[to]=original[from];p[to+1]=original[from+1];p[to+2]=original[from+2];}}}
  const exposure=Math.pow(2,values.exposure/200),brightness=values.brightness*.8,contrast=Math.max(0,1+values.contrast/100),brilliance=values.brilliance/100,vibrance=values.vibrance/100;
  const saturation=Math.max(0,1+values.saturation/100);
  const temp=values.temperature/100,tint=values.tint/30,filterMix=values.filter/100,glow=values.glow/100;
