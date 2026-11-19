@@ -619,6 +619,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
  <div class="mc-profile-info">
   <div><span class="eyebrow">TELEGRAM ID</span><strong id="mcProfileId">—</strong></div>
   <div><span class="eyebrow">ACCOUNT STATUS</span><strong id="mcProfileStatus">Checking account…</strong></div>
+  <div><span class="eyebrow">CURRENT PLAN</span><strong id="mcProfilePlan">Free</strong></div>
  </div>
  <button class="btn" onclick="refreshMoodcutProfile()">Refresh account</button>
 </div>
@@ -722,7 +723,10 @@ function renderMoodcutProfile(){
  document.getElementById('mcProfileName').textContent=name;
  document.getElementById('mcProfileUsername').textContent=username?'@'+username:'Telegram account';
  document.getElementById('mcProfileId').textContent=p.telegram_id||user.id||'—';
- document.getElementById('mcProfileStatus').textContent=p.is_admin||p.role==='admin'?'Administrator':(p.free_access?'Free access':'Active account');
+ document.getElementById('mcProfileStatus').textContent=p.is_admin||p.role==='admin'?'Administrator':(p.free_access?'Complimentary access':'Active account');
+ const plan=p.plan_name||p.subscription_plan||p.plan|| (p.free_access?'Complimentary access':'Free');
+ const planLabel=typeof plan==='string'?plan:(plan.name||plan.status||'Free');
+ const planNode=document.getElementById('mcProfilePlan');if(planNode)planNode.textContent=planLabel;
  document.getElementById('mcProfileAvatar').textContent=(name.trim()[0]||'M').toUpperCase();
  const admin=document.getElementById('adminAccess');
  const adminLink=document.getElementById('adminProfileLink');
