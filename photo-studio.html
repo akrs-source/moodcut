@@ -56,71 +56,7 @@ input[type=range]{width:100%;height:3px;accent-color:var(--gold)}
 .analog-look b{display:block;font:500 14px 'Playfair Display',serif;position:relative;z-index:1}.analog-look small{display:block;margin-top:5px;color:var(--muted);font:7px 'DM Sans';letter-spacing:.13em;position:relative;z-index:1}
 .analog-look.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px #d9b8ad35}
 @media(prefers-reduced-motion:reduce){.stage.developing:after{animation:none;opacity:0}}
-</style>
-<style id="mc-mobile-ergonomic-ui">
-/* MOODCUT mobile studio: larger controls, stronger hierarchy and breathing room */
-:root{--mc-control-h:50px}
-header{height:70px!important;min-height:70px!important;padding:0 20px!important}
-.brand{font-size:25px!important;letter-spacing:.14em!important}
-.brand span{font-size:9px!important;letter-spacing:.3em!important;margin-top:5px!important}
-.head-actions{gap:10px!important}
-.icon{width:44px!important;height:44px!important;font-size:23px!important}
-.export{height:48px!important;min-width:104px!important;padding:0 20px!important;font-size:11px!important;letter-spacing:.14em!important}
-.workspace{padding:13px 16px 0!important}
-.stage{border-radius:20px!important}
-.empty{max-width:360px!important;padding:30px 22px!important}
-.empty .monogram{width:84px!important;height:84px!important;margin-bottom:24px!important;font-size:42px!important}
-.eyebrow{font-size:10px!important;letter-spacing:2.8px!important}
-.empty p{font-size:14px!important;line-height:1.75!important;margin:15px auto 25px!important;color:#d0c4bb!important}
-.open-photo{min-height:56px!important;padding:0 30px!important;font-size:12px!important;letter-spacing:.13em!important}
-.hud{left:16px!important;right:16px!important;top:16px!important}
-.pill{padding:10px 13px!important;font-size:9px!important}
-.change-photo,.compare{height:42px!important;padding:0 14px!important;font-size:9px!important}
-.compare{font-size:8px!important}
-.meta{height:36px!important;font-size:9px!important;letter-spacing:.13em!important}
-.meta strong{font-size:9px!important}
-.history{gap:14px!important;padding:0 18px 14px!important}
-.history button{font-size:10px!important;padding:8px 0!important}
-.dock{flex-basis:clamp(286px,42dvh,370px)!important;height:clamp(286px,42dvh,370px)!important;padding:12px 19px calc(12px + var(--safe))!important}
-.tabs{gap:7px!important;padding-bottom:12px!important}
-.tab{min-height:58px!important;padding:9px 3px 7px!important;font-size:10px!important;letter-spacing:.08em!important;gap:7px!important}
-.tab .glyph{font-size:22px!important}
-.panel{padding:16px 2px 18px!important}
-.panel-title{margin-bottom:17px!important}
-.panel-title b{font-size:17px!important}
-.panel-title span,.mylooks-head{font-size:9px!important}
-.presets{gap:13px!important;padding:0 2px 15px!important}
-.presets>.preset{flex-basis:104px!important;width:104px!important;min-width:104px!important;max-width:104px!important;gap:9px!important;font-size:11px!important}
-.preset{font-size:11px!important;gap:9px!important}
-.swatch{height:78px!important;border-radius:12px!important}
-.mylooks{margin-top:20px!important;padding-top:16px!important}
-.save-look-row input,.create-row input{min-height:48px!important;padding:12px 14px!important;font-size:13px!important}
-.save-look-row button,.create-row button,.small-action{min-height:48px!important;padding:0 16px!important;font-size:10px!important}
-.saved-look{padding:10px 14px!important;font-size:11px!important}
-.subhint{font-size:11px!important}
-.controls{gap:18px!important;padding:7px 0 13px!important}
-.control{grid-template-columns:100px 1fr 36px!important;gap:12px!important}
-.control label{font-size:12px!important}
-.control output{font-size:11px!important}
-input[type=range]{height:6px!important}
-.actions{gap:12px!important;padding:16px 0 5px!important;margin-top:12px!important}
-.action{height:52px!important;font-size:11px!important;letter-spacing:.12em!important}
-.toast{bottom:calc(290px + var(--safe))!important;padding:13px 18px!important;font-size:12px!important}
-@media(max-height:740px){
- .dock{flex-basis:clamp(260px,43dvh,315px)!important;height:clamp(260px,43dvh,315px)!important}
- .workspace{padding-top:8px!important}
- .empty .monogram{width:72px!important;height:72px!important}
- .tabs{padding-bottom:8px!important}
- .tab{min-height:52px!important}
-}
-@media(min-width:600px){
- .app{max-width:760px!important}
- .dock{padding-left:24px!important;padding-right:24px!important}
- .presets>.preset{flex-basis:124px!important;width:124px!important;min-width:124px!important;max-width:124px!important}
- .swatch{height:92px!important}
-}
-</style>
-</head><body><div class="app">
+</style></head><body><div class="app">
 <header><button class="icon" id="back" aria-label="Назад">‹</button><div class="brand">MOODCUT<span>PHOTO STUDIO</span></div><div class="head-actions"><button class="icon" id="undo" title="Отменить" disabled>↶</button><button class="icon" id="redo" title="Повторить" disabled>↷</button><button class="export" id="exportTop">EXPORT</button></div></header>
 <main class="workspace"><div class="stage" id="stage"><canvas id="canvas"></canvas><div class="empty" id="empty"><div class="monogram">m.</div><div class="eyebrow">YOUR PHOTO. YOUR SIGNATURE.</div><p>Загрузи фотографию и создай собственный визуальный стиль.</p><label class="open-photo" for="file">ВЫБРАТЬ ФОТО</label></div><div class="hud"><span class="pill" id="lookTag">ORIGINAL</span><div class="hud-right"><label class="change-photo" for="file">＋ PHOTO</label><button class="compare" id="compare">HOLD · BEFORE</button></div></div><span class="zoom-label hidden" id="zoomLabel">100%</span></div><div class="meta"><span id="photoName">NO PHOTO SELECTED</span><strong id="status">READY WHEN YOU ARE</strong></div><input id="file" class="file-picker" type="file" accept="image/*,.heic,.heif" aria-label="Выбрать фотографию"></main>
 <div class="history"><button id="undoText" disabled>↶ UNDO</button><button id="redoText" disabled>REDO ↷</button><button id="fit">FIT</button></div>
