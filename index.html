@@ -31,7 +31,7 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 </head>
 <body>
 <div class="app">
-<header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" onclick="notify('Language settings coming soon')">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
+<header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" id="languageToggle" onclick="toggleMoodcutLanguage()">EN / RU</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
 <aside><div class="nav-label">MENU</div>
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
@@ -166,6 +166,48 @@ async function createMoodcutInvite(){
 async function setMoodcutAccess(id,enabled){try{await moodcutApi("set_free_access",{telegramId:id,enabled:enabled});await loadAdminData();notify("Доступ обновлён.");}catch(e){notify(e.message);}}
 async function revokeMoodcutInvite(id){try{await moodcutApi("revoke_invite",{inviteId:id});await loadAdminData();notify("Приглашение отозвано.");}catch(e){notify(e.message);}}
 window.addEventListener("load",initMoodcutAccount);
+</script>
+<script>
+(function(){
+const enToRu={
+"MENU":"МЕНЮ","PERSONAL":"ЛИЧНОЕ","Home":"Главная","Discover":"Обзор","Editor":"Редактор","Social Studio":"Социальная студия","My Style":"Мой стиль",
+"YOUR PERSONAL AESTHETIC EDITOR":"ТВОЙ ПЕРСОНАЛЬНЫЙ РЕДАКТОР ЭСТЕТИКИ","Your aesthetic.":"Твоя эстетика.","Your rules.":"Твои правила.",
+"Create a visual world that feels like you. Edit photos, build beautiful feeds and find your signature style.":"Создавай визуальный мир, который отражает тебя. Редактируй фото, оформляй ленты и находи свой стиль.",
+"Create new edit ↗":"Создать новый образ ↗","The art of being you.":"Искусство быть собой.","Explore aesthetics":"Исследуй эстетику","VIEW ALL ↗":"СМОТРЕТЬ ВСЁ ↗",
+"Quiet elegance":"Тихая элегантность","Memories in frames":"Воспоминания в кадрах","Soft and mysterious":"Нежность и загадочность","Creative space":"Творческое пространство",
+"Photo Editor":"Фоторедактор","Make every image yours.":"Сделай каждое фото своим.","Create for every platform.":"Создавай контент для каждой платформы.","Collect your visual identity.":"Собирай свою визуальную идентичность.",
+"FIND YOUR VISUAL LANGUAGE":"НАЙДИ СВОЙ ВИЗУАЛЬНЫЙ ЯЗЫК","Discover aesthetics":"Открой эстетику","Explore moods, colours and visual directions. Choose a style to make it your own.":"Исследуй настроения, цвета и визуальные направления. Выбери стиль и адаптируй его под себя.",
+"All":"Все","Classic":"Классика","Film":"Плёнка","Romantic":"Романтика","Travel":"Путешествия","Minimal":"Минимализм",
+"Classic · Refined · Timeless":"Классика · Изысканность · Вне времени","Subtle elegance":"Ненавязчивая элегантность","Warm analog memories":"Тёплые аналоговые воспоминания","Raw nostalgic energy":"Чистая ностальгия","Moody and poetic":"Атмосферно и поэтично","Soft romantic details":"Нежные романтичные детали","Sun, sea and slow days":"Солнце, море и неторопливые дни","Clean and natural":"Чистота и естественность","Fresh everyday aesthetic":"Свежая эстетика на каждый день",
+"MAKE IT YOURS":"СДЕЛАЙ ЭТО СВОИМ","Photo editor":"Фоторедактор","Upload a photo, explore presets and create your signature look.":"Загрузи фото, попробуй фильтры и создай свой фирменный стиль.",
+"Upload a photo to begin":"Загрузи фото, чтобы начать","MOODCUT EDITOR":"РЕДАКТОР MOODCUT","＋ UPLOAD PHOTO":"＋ ЗАГРУЗИТЬ ФОТО","BEFORE / AFTER":"ДО / ПОСЛЕ","Presets":"Фильтры","Original":"Оригинал","Warm Film":"Тёплая плёнка","Moody":"Атмосферный","Soft":"Мягкий","Vintage":"Винтаж",
+"Adjustments":"Настройки","LIGHT":"СВЕТ","Brightness":"Яркость","Contrast":"Контраст","Saturation":"Насыщенность","COLOR":"ЦВЕТ","Warmth":"Теплота","EFFECTS":"ЭФФЕКТЫ","Fade":"Выцветание","Save edit":"Сохранить обработку","Reset":"Сбросить",
+"ONE CREATIVE SPACE · EVERY PLATFORM":"ОДНО ТВОРЧЕСКОЕ ПРОСТРАНСТВО · ВСЕ ПЛАТФОРМЫ","Choose where you want to create. One aesthetic, different ways to express it.":"Выбери платформу для творчества. Одна эстетика — разные способы её выразить.",
+"Channel & posts":"Канал и публикации","Feed & stories":"Лента и истории","Pins & moodboards":"Пины и мудборды","TELEGRAM CREATIVE SPACE":"ТВОРЧЕСТВО В TELEGRAM","Make your channel feel like you.":"Пусть канал отражает тебя.","Create a consistent visual identity for your Telegram channel.":"Создай целостный визуальный стиль своего Telegram-канала.",
+"Channel aesthetic":"Эстетика канала","Post design":"Дизайн публикаций","Post cover":"Обложка поста","Quote cards":"Карточки с цитатами","Cover, colours and identity":"Обложка, цвета и стиль","Beautiful visual publications":"Красивые визуальные публикации","Editorial covers and images":"Редакционные обложки и изображения","Typography and composition":"Типографика и композиция",
+"Your design":"Твой дизайн","← BACK":"← НАЗАД","A JOURNAL OF AESTHETICS":"ЖУРНАЛ ЭСТЕТИКИ","Little moments, beautiful details. A collection of things that inspire me.":"Маленькие моменты, красивые детали. Коллекция того, что меня вдохновляет.",
+"Title":"Название","Description":"Описание","＋ CHANGE IMAGE":"＋ ИЗМЕНИТЬ ИЗОБРАЖЕНИЕ","Save concept":"Сохранить концепцию",
+"YOUR SIGNATURE LOOK":"ТВОЙ ФИРМЕННЫЙ СТИЛЬ","Your personal visual identity, collected in one place.":"Твоя визуальная идентичность — в одном месте.","CURRENT MOOD":"ТЕКУЩЕЕ НАСТРОЕНИЕ","Warm tones, soft contrast, muted colours and a touch of film grain.":"Тёплые оттенки, мягкий контраст, приглушённые цвета и лёгкое зерно плёнки.",
+"Create with this style":"Создать в этом стиле","Saved styles":"Сохранённые стили","Your collection will grow as you explore.":"Твоя коллекция будет расти вместе с тобой.",
+"MOODCUT CONTROL":"УПРАВЛЕНИЕ MOODCUT","Admin panel":"Панель администратора","Manage users and free access.":"Управляй пользователями и бесплатным доступом.","Create invitation":"Создать приглашение","Number of uses":"Количество использований","Expires in days (0 = no expiration)":"Срок действия в днях (0 = без срока)","Create invite link":"Создать ссылку","Users":"Пользователи","REFRESH ↻":"ОБНОВИТЬ ↻","Invitations":"Приглашения","Loading users…":"Загрузка пользователей…","Loading invitations…":"Загрузка приглашений…",
+"Build a feed worth looking at.":"Создай ленту, на которую хочется смотреть.","Create a cohesive Instagram visual world.":"Создай целостный визуальный мир Instagram.","Collect your visual inspiration.":"Собирай визуальное вдохновение.","Create moodboards, pins and visual collections.":"Создавай мудборды, пины и визуальные коллекции.",
+"Feed preview":"Предпросмотр ленты","Story templates":"Шаблоны историй","Highlights covers":"Обложки актуального","Plan your 3×3 grid":"Планируй сетку 3×3","Edit and design posts":"Редактируй и оформляй публикации","Create story layouts":"Создавай макеты историй","Design highlight covers":"Оформляй обложки актуального",
+"Moodboard":"Мудборд","Pin design":"Дизайн пина","Collage":"Коллаж","Colour palette":"Цветовая палитра","Collect references":"Собирай референсы","Create beautiful pins":"Создавай красивые пины","Mix images and textures":"Сочетай изображения и текстуры","Find your signature colours":"Найди свои фирменные цвета",
+"Design concept saved in this session":"Концепция дизайна сохранена в этой сессии","Upload a photo first":"Сначала загрузи фото","Original photo":"Оригинальное фото","Edited photo":"Обработанное фото","Your edit is ready":"Твоя обработка готова"
+};
+const ruToEn=Object.fromEntries(Object.entries(enToRu).map(([a,b])=>[b,a]));
+let lang=localStorage.getItem("moodcut-language")||"en";
+function translateNode(node){
+ const dict=lang==="ru"?enToRu:ruToEn;
+ if(node.nodeType===Node.TEXT_NODE){const raw=node.nodeValue,trim=raw.trim();if(trim&&Object.prototype.hasOwnProperty.call(dict,trim))node.nodeValue=raw.replace(trim,dict[trim]);}
+ else if(node.nodeType===Node.ELEMENT_NODE){["placeholder","title","aria-label"].forEach(a=>{const v=node.getAttribute(a);if(v&&dict[v])node.setAttribute(a,dict[v]);});node.childNodes.forEach(translateNode);}
+}
+window.applyMoodcutLanguage=function(){document.documentElement.lang=lang;document.getElementById("languageToggle").textContent=lang==="ru"?"RU / EN":"EN / RU";document.querySelectorAll("body > .app, body > .toast").forEach(translateNode);};
+window.toggleMoodcutLanguage=function(){lang=lang==="en"?"ru":"en";localStorage.setItem("moodcut-language",lang);window.applyMoodcutLanguage();};
+const observer=new MutationObserver(rs=>rs.forEach(r=>{if(r.type==="childList")r.addedNodes.forEach(translateNode);else translateNode(r.target);}));
+window.addEventListener("DOMContentLoaded",()=>{window.applyMoodcutLanguage();observer.observe(document.body,{childList:true,subtree:true,characterData:true});});
+const oldNotify=window.notify;window.notify=function(msg){const d=lang==="ru"?enToRu:ruToEn;oldNotify(d[msg]||msg);};
+})();
 </script>
 </body>
 </html>
