@@ -102,6 +102,37 @@ header{height:56px;min-height:56px;padding:0 15px}
  .history{padding-bottom:3px}
 }
 @media(min-width:600px){.dock{border-radius:0 0 20px 20px}}
+
+/* Strong photo-first composition: large canvas above a compact bottom editor */
+html,body,.app{height:100dvh!important;min-height:0!important;overflow:hidden!important}
+.app{display:flex!important;flex-direction:column!important}
+header{height:48px!important;min-height:48px!important;flex:0 0 48px!important;padding:0 13px!important}
+.workspace{flex:1 1 auto!important;min-height:0!important;padding:5px 8px 0!important;display:flex!important;flex-direction:column!important}
+.stage{flex:1 1 auto!important;min-height:0!important;width:100%!important;border-radius:12px!important}
+.meta,.history{display:none!important}
+.dock{flex:0 0 174px!important;height:174px!important;min-height:174px!important;max-height:174px!important;margin:0!important;padding:0 10px calc(4px + var(--safe))!important;overflow:hidden!important;border-top:1px solid var(--line)!important;background:#171412!important}
+.dock .tabs{order:2!important;flex:0 0 57px!important;height:57px!important;min-height:57px!important;display:flex!important;justify-content:flex-start!important;gap:2px!important;padding:5px 0 0!important;margin:0!important;border-top:1px solid var(--line)!important;border-bottom:0!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important}
+.dock .tabs::-webkit-scrollbar{display:none!important}
+.dock .tab{flex:0 0 65px!important;min-width:65px!important;min-height:49px!important;height:49px!important;padding:4px 1px!important;gap:3px!important;border:0!important;border-radius:8px!important;background:transparent!important;font-size:7px!important}
+.dock .tab .glyph{font-size:18px!important}
+.dock .tab.active{background:#302722!important;border:1px solid rgba(217,184,173,.3)!important;color:var(--gold)!important}
+.dock .panel{order:1!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;padding:8px 1px 5px!important;overflow-x:hidden!important;overflow-y:auto!important}
+.dock .panel-title{margin:0 0 7px!important}
+.dock .presets{padding-bottom:4px!important;gap:8px!important}
+.dock .presets>.preset{flex-basis:66px!important;width:66px!important;min-width:66px!important;max-width:66px!important}
+.dock .swatch{height:48px!important}
+.dock .preset{font-size:8px!important;gap:4px!important}
+.dock .controls{gap:8px!important;padding:0 0 5px!important}
+.dock .control{grid-template-columns:72px 1fr 26px!important;gap:7px!important}
+.dock .control label{font-size:9px!important}
+.dock input[type=range]{height:3px!important}
+.change-photo{height:26px!important}
+@media(max-height:700px){
+ header{height:44px!important;min-height:44px!important;flex-basis:44px!important}
+ .dock{flex-basis:158px!important;height:158px!important;min-height:158px!important;max-height:158px!important}
+ .dock .tabs{flex-basis:51px!important;height:51px!important;min-height:51px!important}
+ .dock .tab{height:44px!important;min-height:44px!important}
+}
 </style></head><body><div class="app">
 <header><button class="icon" id="back" aria-label="Назад">‹</button><div class="brand">MOODCUT<span>PHOTO STUDIO</span></div><div class="head-actions"><button class="icon" id="undo" title="Отменить" disabled>↶</button><button class="icon" id="redo" title="Повторить" disabled>↷</button><button class="export" id="exportTop">EXPORT</button></div></header>
 <main class="workspace"><div class="stage" id="stage"><canvas id="canvas"></canvas><div class="empty" id="empty"><div class="monogram">m.</div><div class="eyebrow">YOUR PHOTO. YOUR SIGNATURE.</div><p>Загрузи фотографию и создай собственный визуальный стиль.</p><label class="open-photo" for="file">ВЫБРАТЬ ФОТО</label></div><div class="hud"><span class="pill" id="lookTag">ORIGINAL</span><div class="hud-right"><label class="change-photo" for="file">＋ PHOTO</label><button class="compare" id="compare">HOLD · BEFORE</button></div></div><span class="zoom-label hidden" id="zoomLabel">100%</span></div><div class="meta"><span id="photoName">NO PHOTO SELECTED</span><strong id="status">READY WHEN YOU ARE</strong></div><input id="file" class="file-picker" type="file" accept="image/*,.heic,.heif" aria-label="Выбрать фотографию"></main>
