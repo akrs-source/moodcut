@@ -63,14 +63,14 @@ input[type=range]{width:100%;height:3px;accent-color:var(--gold)}
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),file=$('#file'),stage=$('#stage'),tg=window.Telegram?.WebApp;
 const defaults={exposure:0,contrast:0,highlights:0,shadows:0,temperature:0,saturation:0,tint:0,fade:0,grain:0,vignette:0,softness:0};
-const looks={original:{},soft:{exposure:7,contrast:-9,saturation:-8,temperature:5,fade:7,softness:.5},portra:{exposure:4,contrast:-12,saturation:-10,temperature:8,fade:9,grain:8},golden:{exposure:5,contrast:3,saturation:8,temperature:18,highlights:-10,grain:3},editorial:{contrast:17,saturation:-18,temperature:-5,fade:4,shadows:8},noir:{contrast:27,saturation:-50,exposure:-3,fade:3,vignette:24}};
+const looks={original:{},soft:{exposure:8,contrast:-16,saturation:-18,temperature:7,highlights:-18,shadows:15,fade:12,softness:1.2},portra:{exposure:5,contrast:-20,saturation:-24,temperature:15,tint:5,highlights:-25,shadows:18,fade:18,grain:13},golden:{exposure:10,contrast:8,saturation:18,temperature:32,tint:5,highlights:-18,shadows:8,fade:5,grain:5},editorial:{exposure:-2,contrast:32,saturation:-38,temperature:-12,tint:-7,highlights:-20,shadows:-10,fade:5,vignette:18},noir:{exposure:-5,contrast:48,saturation:-100,highlights:-35,shadows:12,fade:8,grain:16,vignette:32}};
 let img=null,values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false;
 function haptic(){try{tg?.HapticFeedback?.impactOccurred('light')}catch(e){}}
 function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1700)}
 function theme(){const p=tg?.themeParams;if(!p)return;const root=document.documentElement;const bg=p.bg_color||'#171714',surface=p.secondary_bg_color||'#20201c',ink=p.text_color||'#f5f1e9',light=luma(bg)>145;root.dataset.theme=light?'light':'dark';root.style.setProperty('--bg',bg);root.style.setProperty('--surface',surface);root.style.setProperty('--surface2',p.section_bg_color||(light?'#eeebe4':'#292923'));root.style.setProperty('--ink',ink);root.style.setProperty('--gold',p.button_color||(light?'#9a7950':'#d9c5a1'));root.style.setProperty('--muted',p.hint_color||(light?'#77736b':'#9d9a90'));root.style.colorScheme=light?'light':'dark';}
 function luma(hex){try{const h=hex.replace('#','');return .2126*parseInt(h.slice(0,2),16)+.7152*parseInt(h.slice(2,4),16)+.0722*parseInt(h.slice(4,6),16)}catch(e){return 30}}
 try{tg?.ready();tg?.expand();theme();tg?.onEvent?.('themeChanged',theme)}catch(e){}
-function setCanvasSize(){if(!img)return;const max=3200,maxPixels=12000000,ratio=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight),Math.sqrt(maxPixels/(img.naturalWidth*img.naturalHeight)));canvas.width=Math.round(img.naturalWidth*ratio);canvas.height=Math.round(img.naturalHeight*ratio)}
+function setCanvasSize(){if(!img)return;const max=3200,maxPixels=6000000,ratio=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight),Math.sqrt(maxPixels/(img.naturalWidth*img.naturalHeight)));canvas.width=Math.round(img.naturalWidth*ratio);canvas.height=Math.round(img.naturalHeight*ratio)}
 async function loadPhoto(f){
  if(!f)return;
  const name=(f.name||'photo').toLowerCase();
@@ -107,13 +107,42 @@ async function loadPhoto(f){
 }
 function applyTransform(){canvas.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';$('#zoomLabel').textContent=Math.round(scale*100)+'%';$('#zoomLabel').classList.toggle('hidden',!img)}
 function schedule(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render()})}
-function render(){if(!img)return;const w=canvas.width,h=canvas.height;ctx.save();ctx.clearRect(0,0,w,h);const exp=Math.pow(2,values.exposure/50),con=1+values.contrast/100,sat=Math.max(0,1+values.saturation/100),sep=Math.max(0,values.temperature/180);ctx.filter='brightness('+Math.max(.35,exp)+') contrast('+Math.max(.4,con)+') saturate('+sat+') sepia('+sep+') blur('+values.softness+'px)';ctx.drawImage(img,0,0,w,h);ctx.filter='none';ctx.restore();
-if(values.highlights||values.shadows||values.tint||values.temperature){const d=ctx.getImageData(0,0,w,h),p=d.data,hi=values.highlights/100,sh=values.shadows/100,ti=values.tint/100,temp=values.temperature/100;for(let i=0;i<p.length;i+=4){const y=(p[i]*.2126+p[i+1]*.7152+p[i+2]*.0722)/255;const hf=Math.max(0,(y-.48)/.52),sf=Math.max(0,(.52-y)/.52);const k=hi*hf*.55+sh*sf*.55;p[i]=clamp(p[i]+k*255+temp*20+ti*14);p[i+1]=clamp(p[i]+k*255-ti*4);p[i+2]=clamp(p[i]+k*255-temp*18-ti*12)}ctx.putImageData(d,0,0)}
-if(values.fade){ctx.fillStyle='rgba(224,211,190,'+(values.fade/100*.34)+')';ctx.fillRect(0,0,w,h)}
-if(values.vignette){const g=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.16,w/2,h/2,Math.max(w,h)*.72);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+(values.vignette/100*.78)+')');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}
-if(values.grain){const d=ctx.getImageData(0,0,w,h),p=d.data,amount=values.grain*.5;for(let i=0;i<p.length;i+=4){const seed=Math.sin((i+17)*12.9898)*43758.5453,n=((seed-Math.floor(seed))-.5)*amount;p[i]=clamp(p[i]+n);p[i+1]=clamp(p[i+1]+n);p[i+2]=clamp(p[i+2]+n)}ctx.putImageData(d,0,0)}
-if(caption){ctx.save();const size=Math.max(24,Math.round(w*.055));ctx.font='500 '+size+'px "DM Sans",sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.shadowColor='#0009';ctx.shadowBlur=size*.25;ctx.fillStyle='#fff';ctx.fillText(caption,w/2,h*.91,w*.86);ctx.restore()}
-$('#lookTag').textContent=preset.toUpperCase();$('#status').textContent=preset==='original'?'MOODCUT CAMERA':preset==='custom'?'CUSTOM LOOK':preset.toUpperCase()}
+function render(){
+ if(!img)return;
+ const w=canvas.width,h=canvas.height;
+ ctx.save();ctx.clearRect(0,0,w,h);
+ ctx.filter=values.softness>0?'blur('+values.softness+'px)':'none';
+ ctx.drawImage(img,0,0,w,h);ctx.filter='none';ctx.restore();
+ const frame=ctx.getImageData(0,0,w,h),p=frame.data;
+ const exposure=Math.pow(2,values.exposure/50),contrast=1+values.contrast/100;
+ const saturation=Math.max(0,1+values.saturation/100);
+ const temp=values.temperature/40,tint=values.tint/30;
+ const hi=values.highlights/50,sh=values.shadows/50;
+ const fade=values.fade/100,grain=values.grain*.85,vignette=values.vignette/100;
+ const cx=w/2,cy=h/2,invX=1/(cx*cx),invY=1/(cy*cy);
+ for(let y=0;y<h;y++){
+  for(let x=0;x<w;x++){
+   const i=(y*w+x)*4;
+   let r=p[i]*exposure,g=p[i+1]*exposure,b=p[i+2]*exposure;
+   r=(r-128)*contrast+128;g=(g-128)*contrast+128;b=(b-128)*contrast+128;
+   const lum=(.2126*r+.7152*g+.0722*b)/255;
+   const shadow=Math.max(0,(.58-lum)/.58),highlight=Math.max(0,(lum-.42)/.58);
+   const tonal=sh*shadow*34-hi*highlight*34;
+   r+=tonal;g+=tonal;b+=tonal;
+   r+=temp*22+tint*9;g+=tint*13;b-=temp*22+tint*9;
+   const l=.2126*r+.7152*g+.0722*b;
+   r=l+(r-l)*saturation;g=l+(g-l)*saturation;b=l+(b-l)*saturation;
+   if(fade){r=r*(1-fade*.16)+255*fade*.10;g=g*(1-fade*.16)+245*fade*.10;b=b*(1-fade*.16)+230*fade*.10;}
+   if(grain){let n=Math.sin((i+1)*12.9898+(y+1)*78.233)*43758.5453;n=(n-Math.floor(n)-.5)*grain;r+=n;g+=n;b+=n;}
+   if(vignette){const dx=(x-cx)*(x-cx)*invX,dy=(y-cy)*(y-cy)*invY,edge=Math.max(0,dx+dy-.20)/1.8;const shade=Math.max(0,1-edge*vignette*1.25);r*=shade;g*=shade;b*=shade;}
+   p[i]=clamp(r);p[i+1]=clamp(g);p[i+2]=clamp(b);
+  }
+ }
+ ctx.putImageData(frame,0,0);
+ if(caption){ctx.save();const size=Math.max(24,Math.round(w*.055));ctx.font='500 '+size+'px "DM Sans",sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.shadowColor='#0009';ctx.shadowBlur=size*.25;ctx.fillStyle='#fff';ctx.fillText(caption,w/2,h*.91,w*.86);ctx.restore()}
+ $('#lookTag').textContent=preset.toUpperCase();
+ $('#status').textContent=preset==='original'?'MOODCUT CAMERA':preset==='custom'?'CUSTOM LOOK':preset.toUpperCase();
+}
 function clamp(v){return Math.max(0,Math.min(255,v))}
 function syncControls(){$$('[data-key]').forEach(el=>{el.value=values[el.dataset.key];el.nextElementSibling.value=el.value});$$('.preset').forEach(b=>b.classList.toggle('active',b.dataset.preset===preset))}
 function checkpoint(){const snap={values:{...values},preset,caption};history=history.slice(0,cursor+1);history.push(snap);if(history.length>35)history.shift();cursor=history.length-1;updateHistory()}
