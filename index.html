@@ -406,6 +406,7 @@ main{background:#0d0d0d}
 #styleCards .aesthetic:nth-child(3n+2) img{height:230px}
 #styleCards .aesthetic:nth-child(3n) img{height:285px}
 #styleCards .aesthetic:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.82));pointer-events:none}
+#styleCards .aesthetic:first-child:after{inset:30% 0 0;background:linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(24,13,8,.18) 34%,rgba(18,9,5,.56) 68%,rgba(10,5,3,.94) 100%)}
 #styleCards .aesthetic div{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:17px 16px 16px;background:transparent}
 #styleCards .aesthetic strong{font-size:19px;color:#fff}
 #styleCards .aesthetic p{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.09em;color:rgba(255,255,255,.76);margin:7px 0 0}
@@ -521,7 +522,7 @@ aside{left:12px;right:12px;bottom:12px;height:64px;border:1px solid rgba(255,255
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
 <div class="cards" id="styleCards">
-<button class="aesthetic" data-cat="Classic" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=85"><div><strong>Quiet Luxury</strong><p>24 PRESETS · NEUTRAL</p></div></button>
+<button class="aesthetic" data-cat="Classic" onclick="selectStyle('Quiet Luxury')"><img src="https://www.iluminedecor.com/cdn/shop/files/lumina12ria-de-mesa-abajur-led-integrado-sem-fio_800x.webp?v=1765315250" alt="Quiet Luxury bedroom still life with warm vintage lamp and roses"><div><strong>Quiet Luxury</strong><p>24 PRESETS · NEUTRAL</p></div></button>
 <button class="aesthetic" data-cat="Classic" onclick="selectStyle('Editorial Minimal')"><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=85"><div><strong>Editorial Minimal</strong><p>18 LOOKS · SOFT LIGHT</p></div></button>
 <button class="aesthetic" data-cat="Film" onclick="selectStyle('Raw 35mm')"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85"><div><strong>Raw 35mm</strong><p>35MM · GRAIN · WARMTH</p></div></button>
 <button class="aesthetic" data-cat="Film" onclick="selectStyle('Neo-Noir')"><img src="https://images.unsplash.com/photo-1525506283742-2e2b3c6b6b6a?auto=format&fit=crop&w=900&q=85"><div><strong>Neo-Noir</strong><p>FLASH · NIGHT · CONTRAST</p></div></button>
@@ -626,7 +627,7 @@ const moodcutStyleProfiles={
 };
 let selectedMoodStyle='Warm Memories',chosenMoodPreset='Original',activeHue=0,activeGray=0;
 const moodcutStyleImages={
-'Quiet Luxury':'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=85',
+'Quiet Luxury':'https://www.iluminedecor.com/cdn/shop/files/lumina12ria-de-mesa-abajur-led-integrado-sem-fio_800x.webp?v=1765315250',
 'Editorial Minimal':'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1200&q=85',
 'Raw 35mm':'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=85',
 'Neo-Noir':'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=85',
