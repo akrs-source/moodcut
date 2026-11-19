@@ -187,6 +187,15 @@ Deno.serve(async (req) => {
       });
       if (pendingError) throw pendingError;
       try {
+        const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "";
+        if (!webhookSecret) throw new Error("TELEGRAM_WEBHOOK_SECRET не задан в Supabase");
+        const webhookUrl = `${supabaseUrl}/functions/v1/quick-worker`;
+        await telegramApi("setWebhook", {
+          url: webhookUrl,
+          secret_token: webhookSecret,
+          allowed_updates: ["message", "pre_checkout_query"],
+          drop_pending_updates: false,
+        });
         const invoiceUrl = await telegramApi("createInvoiceLink", {
           title: "MOODCUT PRO",
           description: "Доступ к MOODCUT PRO на 30 дней. Автоматическое продление каждый месяц.",
