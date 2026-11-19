@@ -475,7 +475,7 @@ main{padding:26px 26px calc(105px + env(safe-area-inset-bottom));min-width:0}
  <button class="mc-profile-link" onclick="showPage('style')"><span><strong>My Style</strong><small>Your signature look and saved styles</small></span><b>→</b></button>
  <button class="mc-profile-link" onclick="showPage('discover')"><span><strong>Collections</strong><small>Explore visual inspiration</small></span><b>→</b></button>
  <button class="mc-profile-link" onclick="showPage('editor')"><span><strong>Photo editor</strong><small>Continue creating</small></span><b>→</b></button>
- <button class="mc-profile-link" id="adminAccess" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
+ <button class="mc-profile-link" id="adminProfileLink" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
 </div>
 <p class="sub mc-profile-note">MOODCUT · Your aesthetic. Your rules.</p>
 </section>
@@ -530,7 +530,8 @@ function renderMoodcutProfile(){
  document.getElementById('mcProfileStatus').textContent=p.is_admin||p.role==='admin'?'Administrator':(p.free_access?'Free access':'Active account');
  document.getElementById('mcProfileAvatar').textContent=(name.trim()[0]||'M').toUpperCase();
  const admin=document.getElementById('adminAccess');
- if(admin&&((p.is_admin)||(p.role==='admin')||(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&String(tg.initDataUnsafe.user.id)==='7738464404')))admin.style.display='flex';
+ const adminLink=document.getElementById('adminProfileLink');
+ if(adminLink&&admin&&admin.style.display!=='none')adminLink.style.display='flex';
 }
 async function refreshMoodcutProfile(){
  const status=document.getElementById('mcProfileStatus');if(status)status.textContent='Updating…';
