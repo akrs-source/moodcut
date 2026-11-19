@@ -93,6 +93,16 @@ Deno.serve(async (req) => {
       return json({ profile: data, isAdmin });
     }
 
+    if (action === "redeem_invite") {
+      const token = String(body.inviteToken || "");
+      if (!token) return json({ error: "invite_token_missing" }, 400);
+      const result = await db.rpc("moodcut_redeem_invite", { p_token_hash: await sha256(token), p_telegram_id: Number(telegramId) });
+      if (result.error) throw result.error;
+      if (!result.data?.ok) return json({ error: result.data?.error || "invite_invalid" }, 400);
+      const { data } = await db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access").eq("telegram_id", telegramId).single();
+      return json({ redeemed: true, profile: data });
+    }
+
     if (!isAdmin) return json({ error: "admin_only" }, 403);
 
     if (action === "admin_list") {
@@ -115,16 +125,6 @@ Deno.serve(async (req) => {
       });
       if (error) throw error;
       return json({ inviteToken: rawToken, inviteUrl: `https://t.me/VAMOPAV_bot?startapp=${rawToken}`, maxUses, expiresAt });
-    }
-
-    if (action === "redeem_invite") {
-      const token = String(body.inviteToken || "");
-      if (!token) return json({ error: "invite_token_missing" }, 400);
-      const result = await db.rpc("moodcut_redeem_invite", { p_token_hash: await sha256(token), p_telegram_id: Number(telegramId) });
-      if (result.error) throw result.error;
-      if (!result.data?.ok) return json({ error: result.data?.error || "invite_invalid" }, 400);
-      const { data } = await db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access").eq("telegram_id", telegramId).single();
-      return json({ redeemed: true, profile: data });
     }
 
     if (action === "revoke_invite") {
