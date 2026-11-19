@@ -27,10 +27,11 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .feed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.feed-grid img{width:100%;aspect-ratio:1;object-fit:cover}.empty-cell{aspect-ratio:1;background:#e9e1d7;display:grid;place-items:center;color:#988c82;font-size:10px}.channel-preview{max-width:500px;margin:auto;background:#e8e2da;padding:20px}.channel-top{font-family:'Playfair Display',serif;font-size:25px;text-align:center;padding:20px;background:#f7f2eb;margin-bottom:14px}.post{background:white;margin:12px 0;padding:14px}.post img{width:100%;max-height:240px;object-fit:cover}.post p{font-size:11px;line-height:1.7;margin:10px 0 0}.moodboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.moodboard img{width:100%;aspect-ratio:1;object-fit:cover}.swatches{display:flex;gap:10px;margin:18px 0}.swatch{width:42px;height:42px;border-radius:50%}.style-card{background:var(--paper);padding:25px;margin-top:20px}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;font-size:11px;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1}footer{padding:30px;text-align:center;color:var(--muted);font-size:9px;letter-spacing:3px}
 @media(max-width:700px){header{height:62px;padding:0 18px}.logo{font-size:23px}.layout{display:block;padding-bottom:65px}aside{position:fixed;z-index:10;bottom:0;left:0;right:0;height:62px;background:var(--bg);border-top:1px solid var(--line);border-right:0;padding:4px 3px;display:flex;justify-content:space-around}.nav-label{display:none}.nav{display:flex;flex-direction:column;gap:2px;padding:6px 2px;margin:0;width:20%;font-size:9px;text-align:center;justify-content:center}.nav-icon{font-size:16px}main{padding:26px 17px}.hero{grid-template-columns:1fr;gap:17px;margin-bottom:35px}.hero-image{height:280px;grid-row:1}.hero-copy{padding:0}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.aesthetic img{height:145px}.aesthetic div{padding:10px}.editor-grid{grid-template-columns:1fr}.preview{min-height:290px}.social-cards{gap:8px}.social-card{padding:18px 7px}.social-card strong{font-size:15px}.panel{padding:16px}h2{font-size:30px}}
 </style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 <div class="app">
-<header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" onclick="notify('Language settings coming soon')">RU / EN</button><div class="avatar">M</div></div></header>
+<header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" onclick="notify('Language settings coming soon')">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
 <aside><div class="nav-label">MENU</div>
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
@@ -86,7 +87,7 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <section id="style" class="page hidden"><div class="eyebrow">YOUR SIGNATURE LOOK</div><h2>My Style</h2><p class="sub">Your personal visual identity, collected in one place.</p>
 <div class="style-card"><div class="eyebrow">CURRENT MOOD</div><h2 id="selectedStyle">Warm Memories</h2><p class="sub">Warm tones, soft contrast, muted colours and a touch of film grain.</p><div class="swatches"><div class="swatch" style="background:#713344"></div><div class="swatch" style="background:#c5a68e"></div><div class="swatch" style="background:#e9e1d7"></div><div class="swatch" style="background:#82766d"></div></div><button class="btn" onclick="showPage('editor')">Create with this style</button></div>
 <div class="section-head"><h2>Saved styles</h2></div><div class="panel"><h3 id="savedStyle">Warm Memories</h3><p class="sub">Your collection will grow as you explore.</p></div></section>
-<footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
+<section id="admin" class="page hidden"><div class="eyebrow">MOODCUT CONTROL</div><h2>Admin panel</h2><p class="sub" id="adminWelcome">Manage users and free access.</p><div class="panel"><h3>Create invitation</h3><div class="control"><label>Number of uses</label><input id="inviteUses" type="number" min="1" max="100" value="1" style="width:100%;padding:12px;border:1px solid var(--line)"></div><div class="control"><label>Expires in days (0 = no expiration)</label><input id="inviteDays" type="number" min="0" value="7" style="width:100%;padding:12px;border:1px solid var(--line)"></div><button class="btn wine" onclick="createMoodcutInvite()">Create invite link</button><div id="inviteResult" class="sub" style="margin-top:14px;overflow-wrap:anywhere"></div></div><div class="section-head"><h2>Users</h2><button class="small-link" onclick="loadAdminData()">REFRESH ↻</button></div><div id="adminUsers" class="panel"><p class="sub">Loading users…</p></div><div class="section-head"><h2>Invitations</h2></div><div id="adminInvites" class="panel"><p class="sub">Loading invitations…</p></div></section><footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
 <script>
 let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
 function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick').includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
@@ -105,6 +106,53 @@ function savePhoto(){if(!originalPhoto){notify('Upload a photo first');return}le
 function selectStyle(name){document.getElementById('selectedStyle').textContent=name;document.getElementById('savedStyle').textContent=name;showPage('style');notify(name+' selected')}
 function filterStyles(cat,btn){document.querySelectorAll('#discover .platform').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#styleCards .aesthetic').forEach(x=>x.style.display=cat==='All'||x.dataset.cat===cat?'block':'none')}
 function channelCover(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>document.getElementById('channelImage').src=x.target.result;r.readAsDataURL(f)}
+</script>
+
+<script>
+const MOODCUT_SUPABASE_URL = "https://tidrkegmipucdcoqdxvd.supabase.co";
+const MOODCUT_PUBLIC_KEY = "sb_publishable_j5lH2msrU2kpLBLk0mg4OA_9hXr-l_t";
+let moodcutProfile = null;
+function moodcutEscape(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+async function moodcutApi(action,extra){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg||!tg.initData)throw new Error("Открой MOODCUT через Telegram.");
+ const res=await fetch(MOODCUT_SUPABASE_URL+"/functions/v1/moodcut-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":MOODCUT_PUBLIC_KEY},body:JSON.stringify(Object.assign({initData:tg.initData,action:action},extra||{}))});
+ const data=await res.json();if(!res.ok)throw new Error(data.error||"Ошибка сервера");return data;
+}
+async function initMoodcutAccount(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg||!tg.initData){notify("Открой MOODCUT из Telegram, чтобы войти.");return;}
+ tg.ready();tg.expand();
+ try{
+  const result=await moodcutApi("me");moodcutProfile=result.profile;
+  if(result.isAdmin){document.getElementById("adminAccess").style.display="grid";document.getElementById("adminWelcome").textContent="Администратор · Telegram ID "+moodcutProfile.telegram_id;await loadAdminData();}
+  const startParam=tg.initDataUnsafe&&tg.initDataUnsafe.start_param;
+  if(startParam){const redeemed=await moodcutApi("redeem_invite",{inviteToken:startParam});moodcutProfile=redeemed.profile||moodcutProfile;notify("Бесплатный доступ активирован.");}
+ }catch(e){notify(e.message||"Не удалось войти.");}
+}
+async function loadAdminData(){
+ try{
+  const d=await moodcutApi("admin_list");const users=d.users||[];const invites=d.invites||[];
+  document.getElementById("adminUsers").innerHTML=users.length?users.map(function(u){
+   const label=[u.first_name,u.last_name].filter(Boolean).join(" ")||(u.username?"@"+u.username:"Пользователь");
+   return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(label)+'</strong><div class="sub">ID: '+moodcutEscape(u.telegram_id)+' · '+(u.free_access?"Бесплатный доступ":"Обычный доступ")+'</div><button class="small-link" onclick="setMoodcutAccess(\''+moodcutEscape(u.telegram_id)+'\','+(!u.free_access)+')">'+(u.free_access?"ОТКЛЮЧИТЬ БЕСПЛАТНЫЙ ДОСТУП":"ДАТЬ БЕСПЛАТНЫЙ ДОСТУП")+'</button></div>';
+  }).join(""):'<p class="sub">Пока нет пользователей.</p>';
+  document.getElementById("adminInvites").innerHTML=invites.length?invites.map(function(i){
+   return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(i.uses_count)+' / '+moodcutEscape(i.max_uses)+' использований</strong><div class="sub">'+(i.revoked_at?"Отозвана":(i.expires_at?"Истекает: "+moodcutEscape(new Date(i.expires_at).toLocaleString()):"Без срока действия"))+'</div>'+(i.revoked_at?"":'<button class="small-link" onclick="revokeMoodcutInvite(\''+moodcutEscape(i.id)+'\')">ОТОЗВАТЬ ССЫЛКУ</button>')+'</div>';
+  }).join(""):'<p class="sub">Приглашений пока нет.</p>';
+ }catch(e){document.getElementById("adminUsers").textContent=e.message;}
+}
+async function createMoodcutInvite(){
+ try{
+  const maxUses=Number(document.getElementById("inviteUses").value||1);const expiresInDays=Number(document.getElementById("inviteDays").value||0);
+  const d=await moodcutApi("create_invite",{maxUses:maxUses,expiresInDays:expiresInDays});
+  document.getElementById("inviteResult").textContent="Ссылка создана: "+d.inviteUrl;
+  await loadAdminData();
+ }catch(e){notify(e.message);}
+}
+async function setMoodcutAccess(id,enabled){try{await moodcutApi("set_free_access",{telegramId:id,enabled:enabled});await loadAdminData();notify("Доступ обновлён.");}catch(e){notify(e.message);}}
+async function revokeMoodcutInvite(id){try{await moodcutApi("revoke_invite",{inviteId:id});await loadAdminData();notify("Приглашение отозвано.");}catch(e){notify(e.message);}}
+window.addEventListener("load",initMoodcutAccount);
 </script>
 </body>
 </html>
