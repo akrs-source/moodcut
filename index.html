@@ -308,6 +308,57 @@ body:has(.moodcut-reference-home:not(.hidden)) main{padding:0 0 88px;min-width:0
  .mc-note button{font-size:9px}
 }
 
+
+/* MOODCUT unified dark editorial design — all app sections */
+:root{--bg:#171412;--paper:#211c19;--ink:#eee3db;--wine:#713344;--muted:#a99a90;--line:rgba(238,224,214,.13);--soft:#302722}
+html{background:#171412}
+body{background:#171412!important;color:#eee3db!important;font-family:'DM Sans',sans-serif}
+.app{background:#171412;color:#eee3db}
+header{background:#1b1715;border-color:var(--line);color:#eee3db}
+.logo{color:#eadbd2}
+.logo span{color:#c4a99b}
+.header-right .lang{color:#e7d9d0}
+.avatar{background:#765247;color:#f5e8df}
+.layout{background:#171412;grid-template-columns:1fr;min-height:100vh}
+aside.mc-bottom-nav{position:fixed;z-index:50;bottom:0;left:0;right:0;height:calc(76px + env(safe-area-inset-bottom));padding:7px 12px calc(7px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;background:rgba(25,22,20,.97);border-top:1px solid rgba(239,224,213,.12);backdrop-filter:blur(18px)}
+.mc-bottom-nav .nav{width:25%;margin:0;padding:3px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;color:#938982;font-size:11px;font-weight:400;border-radius:12px}
+.mc-bottom-nav .nav.active,.mc-bottom-nav .nav:hover{background:transparent;color:#f0dfd5}
+.mc-bottom-nav .nav-icon{width:auto;font-size:23px;line-height:1.1}
+main{padding:26px 26px calc(105px + env(safe-area-inset-bottom));min-width:0}
+.page:not(.moodcut-reference-home){max-width:1040px;margin:0 auto!important;padding:22px 0 35px!important;color:#eee3db}
+.page:not(.moodcut-reference-home)>h2,.page:not(.moodcut-reference-home) .section-head h2{font:400 clamp(34px,5vw,48px)/1.08 'Playfair Display',serif!important;letter-spacing:-.7px;color:#eadbd2!important;margin:8px 0 12px!important}
+.page:not(.moodcut-reference-home) h3,.page:not(.moodcut-reference-home) .section-head h3{font:400 24px/1.15 'Playfair Display',serif;color:#eadbd2}
+.eyebrow{font-size:9px;letter-spacing:2.5px;color:#b69d90!important}
+.sub{color:#b5a79e!important;font-size:13px;line-height:1.65}
+.page:not(.moodcut-reference-home) .panel,.page:not(.moodcut-reference-home) .style-card,.page:not(.moodcut-reference-home) .preview{background:linear-gradient(145deg,#28211d,#201b18)!important;border:1px solid var(--line)!important;border-radius:18px!important;color:#eee3db;box-shadow:0 12px 35px rgba(0,0,0,.12)}
+.page:not(.moodcut-reference-home) .panel{padding:22px}
+.page:not(.moodcut-reference-home) .aesthetic,.page:not(.moodcut-reference-home) .social-card,.page:not(.moodcut-reference-home) .format,.page:not(.moodcut-reference-home) .platform,.page:not(.moodcut-reference-home) .preset{background:#29221e!important;border:1px solid var(--line)!important;color:#e9ddd5!important;border-radius:14px!important}
+.page:not(.moodcut-reference-home) .aesthetic,.page:not(.moodcut-reference-home) .social-card,.page:not(.moodcut-reference-home) .format{overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.page:not(.moodcut-reference-home) .aesthetic strong,.page:not(.moodcut-reference-home) .social-card strong,.page:not(.moodcut-reference-home) .format strong{font:400 21px/1.15 'Playfair Display',serif;color:#f0e2d9}
+.page:not(.moodcut-reference-home) .aesthetic p,.page:not(.moodcut-reference-home) .social-card p,.page:not(.moodcut-reference-home) .format p{color:#b8a9a0}
+.page:not(.moodcut-reference-home) .platform.active,.page:not(.moodcut-reference-home) .preset.active{background:#e6d5ca!important;color:#211b18!important;border-color:#e6d5ca!important}
+.page:not(.moodcut-reference-home) .btn,.page:not(.moodcut-reference-home) .upload{background:#e6d5ca!important;color:#211b18!important;border:0!important;border-radius:30px!important}
+.page:not(.moodcut-reference-home) .btn.wine{background:#75483f!important;color:#f5e9e1!important}
+.page:not(.moodcut-reference-home) input:not([type=file]):not([type=range]),.page:not(.moodcut-reference-home) textarea,.page:not(.moodcut-reference-home) select{background:#171412!important;color:#eee3db!important;border:1px solid rgba(238,224,214,.2)!important;border-radius:10px!important}
+.page:not(.moodcut-reference-home) input[type=range]{accent-color:#c7a99a}
+.page:not(.moodcut-reference-home) .control label{color:#d5c7bf}
+.page:not(.moodcut-reference-home) .swatch{border:2px solid rgba(255,255,255,.15);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.page:not(.moodcut-reference-home) .preview{background:#171412!important}
+.page:not(.moodcut-reference-home) .empty{color:#aa9b91}
+.page:not(.moodcut-reference-home) .preview-label{background:rgba(20,17,15,.7);color:#e8d9d0}
+.page:not(.moodcut-reference-home) .small-link{color:#d9c4b8}
+.page:not(.moodcut-reference-home) footer{color:#897b72;border-color:var(--line)}
+.toast{background:#e6d5ca!important;color:#211b18!important}
+@media(max-width:700px){
+ header{height:66px;padding:0 20px}
+ main{padding:18px 15px calc(100px + env(safe-area-inset-bottom))}
+ .page:not(.moodcut-reference-home){padding:16px 0 28px!important}
+ .page:not(.moodcut-reference-home)>h2{font-size:37px!important}
+ .page:not(.moodcut-reference-home) .panel{padding:17px}
+ .page:not(.moodcut-reference-home) .cards{gap:11px}
+ .page:not(.moodcut-reference-home) .aesthetic{border-radius:15px!important}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
