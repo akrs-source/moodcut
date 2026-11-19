@@ -691,6 +691,59 @@ const enToRu={
 "Social Studio":"Студия соцсетей",
 "My Style":"Мой стиль" 
 };
+"MOOD":"НАСТРОЕНИЕ",
+"CUT":"ОБРАБОТКА",
+"Collections":"Коллекции",
+"Saved":"Сохранённое",
+"Profile":"Профиль",
+"Your visual":"Твой визуальный мир",
+"identity":"стиль",
+"Create. Curate. Inspire.":"Создавай. Собирай. Вдохновляй.",
+"Edit photos, build moodboards":"Обрабатывай фото, создавай мудборды",
+"and design your aesthetic space":"и оформляй своё эстетичное пространство",
+"in one place.":"в одном месте.",
+"Start creating":"Начать",
+"What do you want to do?":"Что хочешь создать?",
+"Edit Photos":"Обработка фото",
+"Filters, effects, perfection":"Фильтры, эффекты и идеальный результат",
+"Create Moodboards":"Создать мудборд",
+"Collect your inspiration":"Собирай вдохновение",
+"Design for Socials":"Дизайн для соцсетей",
+"Posts, covers, ideas":"Публикации, обложки и идеи",
+"Find Your Aesthetic":"Найти свою эстетику",
+"Explore styles & palettes":"Исследуй стили и палитры",
+"Your personal space for creativity,":"Твоё личное пространство для творчества,",
+"inspiration and self-expression.":"вдохновения и самовыражения.",
+"About MOODCUT":"О MOODCUT",
+"Old Money":"Олд мани",
+"Soft Luxury":"Мягкая роскошь",
+"Vintage Film":"Винтажная плёнка",
+"90s Flash":"Вспышка 90-х",
+"Dark Romance":"Тёмная романтика",
+"Coquette":"Кокетство",
+"Italian Summer":"Итальянское лето",
+"Nordic Minimalism":"Скандинавский минимализм",
+"Clean Girl":"Эстетика Clean Girl",
+"Telegram":"Телеграм",
+"Instagram":"Инстаграм",
+"Pinterest":"Пинтерест",
+"Warm Memories":"Тёплые воспоминания",
+"YOUR PERSONAL SPACE":"ТВОЁ ЛИЧНОЕ ПРОСТРАНСТВО",
+"Your MOODCUT account and creative space.":"Твой аккаунт MOODCUT и личное творческое пространство.",
+"Your profile":"Твой профиль",
+"Connect your Telegram account":"Подключи аккаунт Telegram",
+"TELEGRAM ID":"TELEGRAM ID",
+"ACCOUNT STATUS":"СТАТУС АККАУНТА",
+"Checking account…":"Проверяем аккаунт…",
+"Refresh account":"Обновить данные аккаунта",
+"Your space":"Твоё пространство",
+"Your signature look and saved styles":"Твои фирменные образы и сохранённые стили",
+"Explore visual inspiration":"Найти вдохновение",
+"Continue creating":"Продолжить создание",
+"Manage access and invitations":"Управление доступом и приглашениями",
+"MOODCUT · Your aesthetic. Your rules.":"MOODCUT · Твоя эстетика. Твои правила.",
+"MOODCUT · YOUR AESTHETIC. YOUR RULES.":"MOODCUT · ТВОЯ ЭСТЕТИКА. ТВОИ ПРАВИЛА.",
+"EN / RU":"EN / RU",
 const ruToEn=Object.fromEntries(Object.entries(enToRu).map(([a,b])=>[b,a]));
 let lang=localStorage.getItem("moodcut-language")||"en";
 const originalText=new WeakMap();
@@ -701,14 +754,11 @@ function translateNode(node){
   const source=originalText.get(node);
   const trimmed=source.trim();
   if(!trimmed)return;
-  let translated=dict[trimmed];
-  if(!translated){
-   translated=source;
-   Object.keys(dict).sort((a,b)=>b.length-a.length).forEach(key=>{
-    if(key.length>2)translated=translated.split(key).join(dict[key]);
-   });
-  }
-  const nextValue=source.replace(trimmed,translated);if(node.nodeValue!==nextValue)node.nodeValue=nextValue;
+  const translated=dict[trimmed];
+  // Translate complete phrases only. Partial word replacement caused mixed,
+  // broken sentences when English and Russian strings shared common words.
+  const nextValue=translated ? source.replace(trimmed,translated) : source;
+  if(node.nodeValue!==nextValue)node.nodeValue=nextValue;
  } else if(node.nodeType===Node.ELEMENT_NODE){
   ["placeholder","title","aria-label"].forEach(attr=>{
    const val=node.getAttribute(attr);
