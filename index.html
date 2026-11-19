@@ -671,6 +671,17 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
  #editor .mc-editor-panels .btn{grid-column:1/-1!important;margin:3px 0 0!important;padding:8px!important;font-size:8px!important}
 }
 
+
+/* Premium dark photo stage: tap the canvas to add or replace an image */
+#editor .mc-editor-photo-stage{background:radial-gradient(ellipse at 50% 42%,#292522 0%,#1a1816 58%,#11100f 100%)!important;border:1px solid rgba(221,205,190,.16)!important;border-radius:16px!important;cursor:pointer;isolation:isolate;touch-action:manipulation}
+#editor .mc-editor-photo-stage:focus-visible{outline:2px solid #c9aa91;outline-offset:3px}
+#editor .mc-editor-photo-stage #photo{pointer-events:none}
+#editor .mc-editor-photo-stage .mc-grain-overlay,#editor .mc-editor-photo-stage .mc-vignette-overlay,#editor .mc-editor-photo-stage .mc-matte-overlay,#editor .mc-editor-photo-stage .mc-gobo-overlay{pointer-events:none}
+#editor .mc-editor-photo-stage .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:#eee4dc;font-size:0;pointer-events:none}
+#editor .mc-editor-photo-stage .empty span{display:grid;place-items:center;width:54px;height:54px;border:1px solid rgba(226,207,190,.45);border-radius:50%;font:300 30px/1 'DM Sans',sans-serif;color:#e5d2c2}
+#editor .mc-editor-photo-stage .empty strong{font:500 10px/1.4 'DM Sans',sans-serif;letter-spacing:2px;color:#f0e6de}
+#editor .mc-editor-photo-stage .empty small{font:400 11px/1.5 'DM Sans',sans-serif;letter-spacing:.2px;color:#a99b91}
+#editor .mc-editor-photo-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -740,7 +751,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <button class="mc-tool" type="button" data-tool="film" onclick="switchEditorTool('film',this)"><span>▧</span><small>Film</small></button>
 <button class="mc-tool" type="button" data-tool="lens" onclick="switchEditorTool('lens',this)"><span>◎</span><small>Lens</small></button>
 </div>
-<div class="preview"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><label class="upload mc-photo-upload"><input type="file" accept="image/*" onchange="loadPhoto(event)"><span>＋ ADD PHOTO</span></label><div class="preview-label">MOODCUT EDITOR</div></div>
+<div class="preview mc-editor-photo-stage" role="button" tabindex="0" aria-label="Add or change photo" onclick="document.getElementById('editorPhotoInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('editorPhotoInput').click()}"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>＋</span><strong>ADD YOUR PHOTO</strong><small>Tap anywhere to choose from gallery</small></div><img id="photo"><div class="preview-label">MOODCUT EDITOR</div><input id="editorPhotoInput" class="mc-editor-photo-input" type="file" accept="image/*" onchange="loadPhoto(event)" aria-label="Choose photo"></div>
 <label class="upload mc-batch-upload"><input id="batchPhotoInput" type="file" accept="image/*" multiple onchange="loadBatchPhotos(event)"><span>＋ ADD 3–9 PHOTOS</span></label>
 <div id="batchWorkspace" class="mc-batch-workspace hidden"><div class="section-head"><h3>Batch preview</h3><span id="batchCount" class="eyebrow">0 PHOTOS</span></div><div id="batchGrid" class="mc-batch-grid"></div><button class="btn wine" onclick="saveBatchPhotos()">Save all photos</button></div>
 <button class="btn light" onclick="toggleBefore()">BEFORE / AFTER</button><div id="editorSelectedStyle" class="mc-editor-selected hidden"><div><span class="eyebrow">SELECTED STYLE</span><strong id="editorSelectedStyleName">Quiet Luxury</strong></div><button class="small-link" onclick="showPage('discover')">CHANGE STYLE ↗</button></div><div id="editorStylePicker"><div class="section-head"><h3>Presets</h3></div>
