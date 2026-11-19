@@ -281,7 +281,7 @@ function translateNode(node){
     if(key.length>2)translated=translated.split(key).join(dict[key]);
    });
   }
-  node.nodeValue=source.replace(trimmed,translated);
+  const nextValue=source.replace(trimmed,translated);if(node.nodeValue!==nextValue)node.nodeValue=nextValue;
  } else if(node.nodeType===Node.ELEMENT_NODE){
   ["placeholder","title","aria-label"].forEach(attr=>{
    const val=node.getAttribute(attr);
