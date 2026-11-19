@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
         .select("telegram_id").eq("telegram_id", payerId).maybeSingle();
       if ((!pending || String(pending.telegram_id) !== payerId) && !(isRecurring && existingSubscription)) return json({ ok: true, ignored: true });
       if (pending && new Date(pending.expires_at).getTime() <= Date.now() && !isRecurring) return json({ ok: true, ignored: true });
-      if (String(payment.currency || "") !== "XTR" || Number(payment.total_amount || 0) !== 330) {
+      if (String(payment.currency || "") !== "XTR" || Number(payment.total_amount || 0) !== 10) {
         return json({ error: "payment_amount_or_currency_invalid" }, 400);
       }
 
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
       if (!chargeId) return json({ error: "payment_charge_missing" }, 400);
       const { error: eventError } = await db.from("moodcut_payment_events").insert({
         telegram_payment_charge_id: chargeId, telegram_id: Number(payerId),
-        invoice_payload: payload, total_amount: Number(payment.total_amount || 330),
+        invoice_payload: payload, total_amount: Number(payment.total_amount || 10),
         currency: String(payment.currency || "XTR"), raw_payment: payment,
       });
       if (eventError) {
@@ -191,10 +191,10 @@ Deno.serve(async (req) => {
           title: "MOODCUT PRO",
           description: "Доступ к MOODCUT PRO на 30 дней. Автоматическое продление каждый месяц.",
           payload, provider_token: "", currency: "XTR",
-          prices: [{ label: "MOODCUT PRO · 30 дней", amount: 330 }],
+          prices: [{ label: "MOODCUT PRO · 30 дней", amount: 10 }],
           subscription_period: 2592000,
         });
-        return json({ invoiceUrl, priceStars: 330, periodDays: 30 });
+        return json({ invoiceUrl, priceStars: 10, periodDays: 30 });
       } catch (error) {
         await db.from("moodcut_pending_payments").delete().eq("invoice_payload", payload);
         throw error;
