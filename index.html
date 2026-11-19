@@ -585,69 +585,89 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 #editor .preview img{transition:filter .12s ease,opacity .12s ease}
 @media(max-width:700px){#editor .mc-editor-tools{position:sticky;top:4px;z-index:5;box-shadow:0 8px 22px rgba(0,0,0,.18)}#editor .mc-editor-panels .mc-tool-panel{padding:15px}#editor .mc-preset-card{min-width:116px}}
 
-/* MOODCUT mobile editor: native-feeling, no page-length scrolling */
+/* MOODCUT mobile editor v2 — large photo stage + compact control dock */
 @media(max-width:700px){
- body:has(#editor:not(.hidden)){overflow:hidden;height:100dvh}
+ body:has(#editor:not(.hidden)){overflow:hidden}
  #editor.page:not(.hidden){
-  position:fixed;z-index:20;top:62px;left:0;right:0;
-  bottom:calc(62px + env(safe-area-inset-bottom));
-  width:100%;height:auto;margin:0;padding:10px 12px 8px;
-  overflow:hidden;background:#11100f;color:#f5eee7;
-  display:flex;flex-direction:column;gap:8px;
+  position:fixed!important;z-index:11!important;top:62px!important;left:0!important;right:0!important;
+  bottom:62px!important;width:100%!important;height:auto!important;margin:0!important;
+  padding:8px 10px 8px!important;overflow:hidden!important;background:#11100f!important;color:#f4eee8!important;
+  display:flex!important;flex-direction:column!important;gap:0!important
  }
- #editor>.eyebrow,#editor>h2,#editor>.sub{display:none}
+ #editor>.eyebrow,#editor>h2,#editor>.sub{display:none!important}
  #editor .editor-grid{
-  flex:1;min-height:0;display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  grid-template-rows:minmax(0,1fr) auto auto minmax(112px,27dvh);
-  gap:8px;overflow:hidden
+  position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr) 56px min(24dvh,205px)!important;
+  gap:7px!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important
  }
- #editor .editor-grid>div:first-child{display:contents}
+ #editor .editor-grid>div:first-child{display:contents!important}
  #editor .preview{
-  grid-column:1/-1;grid-row:1;min-height:0;height:100%;
-  background:#191817;border-radius:12px;aspect-ratio:auto
+  grid-column:1!important;grid-row:1!important;position:relative!important;top:auto!important;
+  width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;align-self:stretch!important;border-radius:9px!important;background:#090909!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important
  }
- #editor .preview img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
- #editor .preview-label{top:10px;left:10px;background:rgba(20,18,17,.72);color:#f5eee7;border-radius:3px}
+ #editor .preview img,#editor #photo{
+  display:block;max-width:100%!important;max-height:100%!important;width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center!important
+ }
+ #editor .preview .empty{font-size:12px;color:#aaa}
+ #editor .preview-label{top:9px!important;left:9px!important;padding:6px 8px!important;font-size:7px!important;background:rgba(20,18,17,.65)!important;color:#eee!important}
+ #editor .upload{
+  position:absolute!important;z-index:5!important;top:9px!important;left:9px!important;margin:0!important;
+  display:block!important
+ }
+ #editor .upload span{padding:7px 9px!important;border:1px solid rgba(255,255,255,.4)!important;
+  border-radius:4px!important;background:rgba(20,18,17,.65)!important;color:#fff!important;font-size:7px!important}
+ #editor .mc-batch-upload,#editor #batchWorkspace{display:none!important}
+ #editor .editor-grid>.btn.light{
+  position:absolute!important;z-index:5!important;top:9px!important;right:9px!important;margin:0!important;
+  padding:7px 9px!important;border:1px solid rgba(255,255,255,.4)!important;border-radius:4px!important;
+  background:rgba(20,18,17,.65)!important;color:#fff!important;font-size:7px!important
+ }
+ #editor #editorSelectedStyle,#editor #editorStylePicker{display:none!important}
  #editor .mc-editor-tools{
-  grid-column:1/-1;grid-row:2;display:grid!important;
-  grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;
-  position:static!important;padding:5px;background:#1d1b1a;
-  border:1px solid rgba(255,255,255,.1);border-radius:10px;box-shadow:none!important
+  grid-column:1!important;grid-row:2!important;display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;
+  padding:4px!important;margin:0!important;background:#211e1c!important;
+  border:1px solid rgba(255,255,255,.1)!important;border-radius:8px!important
  }
  #editor .mc-editor-tools .mc-tool{
-  min-height:48px;border:0;border-radius:7px;background:transparent;color:#a99d93;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px
+  display:flex!important;min-width:0!important;min-height:0!important;height:46px!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;
+  padding:2px!important;border:0!important;border-radius:5px!important;background:transparent!important;color:#b9aea5!important
  }
- #editor .mc-editor-tools .mc-tool.active{background:#3a2b2b;color:#f1d9c7}
- #editor .mc-editor-tools .mc-tool span{font-size:17px;line-height:1}
- #editor .mc-editor-tools .mc-tool small{font-size:8px;letter-spacing:.08em}
- #editor .upload{grid-row:3;display:block!important;margin:0;min-width:0;text-align:center}
- #editor .upload span{width:100%;padding:11px 5px;border:1px solid rgba(255,255,255,.25);color:#f5eee7;border-radius:7px;font-size:8px;letter-spacing:.06em;white-space:nowrap}
- #editor .mc-batch-upload{opacity:.8}
- #editor>.editor-grid .btn.light{grid-row:3;grid-column:3;margin:0;padding:10px 4px;font-size:8px;white-space:nowrap;border-color:rgba(255,255,255,.25);color:#f5eee7}
- #editor .mc-editor-selected,#editor #editorStylePicker{display:none!important}
+ #editor .mc-editor-tools .mc-tool.active{background:#49343a!important;color:#fff!important}
+ #editor .mc-editor-tools .mc-tool span{font-size:17px!important;line-height:1!important}
+ #editor .mc-editor-tools .mc-tool small{font-size:7px!important;line-height:1.2!important;letter-spacing:.04em!important}
  #editor .mc-editor-panels{
-  grid-column:1/-1;grid-row:4;min-height:0;max-height:none;height:100%;
-  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
-  margin:0;padding:0;background:transparent;border:0;border-radius:10px
+  grid-column:1!important;grid-row:3!important;display:block!important;
+  width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:7px 10px!important;overflow:hidden!important;
+  background:#211e1c!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:8px!important
  }
  #editor .mc-editor-panels .mc-tool-panel{
-  min-height:100%;margin:0;padding:12px 14px 18px;
-  background:#1d1b1a;border:1px solid rgba(255,255,255,.1);border-radius:10px
+  display:none!important;width:100%!important;height:100%!important;min-height:0!important;
+  margin:0!important;padding:2px 2px 6px!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;background:transparent!important;border:0!important
  }
- #editor .mc-editor-panels .mc-tool-panel h3{margin:0 0 8px;font-size:10px}
- #editor .mc-editor-panels .control{margin:10px 0}
- #editor .mc-editor-panels .control label{font-size:10px;margin-bottom:5px}
- #editor .mc-editor-panels input[type=range]{height:22px}
- #editor .mc-editor-panels .mc-smart-apply-row{padding:8px 10px;margin:0 0 8px}
- #editor .mc-preset-gallery{display:flex;gap:8px;overflow-x:auto;flex-wrap:nowrap;padding:2px 1px 8px;scroll-snap-type:x mandatory}
- #editor .mc-preset-card{flex:0 0 104px;min-width:104px;scroll-snap-align:start;padding:0 0 8px}
- #editor .mc-preset-card img{width:100%;height:82px;object-fit:cover;border-radius:6px}
- #editor .mc-preset-card span{display:block;font-size:9px;padding:5px 6px 0}
- #editor .mc-preset-card i{font-size:7px}
- #editor .mc-editor-panels .btn{padding:12px;margin-top:7px}
- #editor .mc-batch-workspace{grid-column:1/-1;grid-row:1;z-index:2;max-height:40%;overflow:auto;background:#1d1b1a}
+ #editor .mc-editor-panels .mc-tool-panel:not(.hidden){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:start!important;column-gap:12px!important;row-gap:3px!important}
+ #editor .mc-editor-panels .mc-tool-panel h3,.mc-editor-panels .section-head{grid-column:1/-1!important;margin:0 0 3px!important;font-size:13px!important}
+ #editor .mc-editor-panels .control{min-width:0!important;margin:3px 0!important;padding:0!important}
+ #editor .mc-editor-panels .control label{font-size:8px!important;margin:0 0 2px!important;line-height:1.2!important;color:#e6ddd5!important}
+ #editor .mc-editor-panels .control input[type=range]{width:100%!important;height:18px!important;margin:0!important;accent-color:#c49a9e!important}
+ #editor .mc-editor-panels .mc-smart-apply-row{grid-column:1/-1!important;margin:0 0 4px!important;padding:5px 7px!important;min-height:30px!important;background:#302a27!important;border-color:rgba(255,255,255,.1)!important}
+ #editor .mc-editor-panels .mc-smart-apply-row strong{font-size:8px!important;color:#fff!important}
+ #editor .mc-editor-panels .mc-smart-apply-row small{font-size:7px!important}
+ #editor .mc-editor-panels .mc-preset-gallery{grid-column:1/-1!important;display:flex!important;flex-wrap:nowrap!important;gap:7px!important;
+  overflow-x:auto!important;overflow-y:hidden!important;padding:2px 1px 7px!important;margin:0!important;
+  scroll-snap-type:x mandatory!important;-webkit-overflow-scrolling:touch!important}
+ #editor .mc-editor-panels .mc-preset-card{position:relative!important;flex:0 0 82px!important;width:82px!important;height:94px!important;
+  padding:0!important;overflow:hidden!important;border-radius:5px!important;scroll-snap-align:start!important}
+ #editor .mc-editor-panels .mc-preset-card img{width:100%!important;height:100%!important;object-fit:cover!important}
+ #editor .mc-editor-panels .mc-preset-card span{position:absolute!important;z-index:1!important;left:5px!important;right:4px!important;bottom:7px!important;font:10px 'Cormorant Garamond',serif!important;color:#fff!important}
+ #editor .mc-editor-panels .mc-preset-card i{display:none!important}
+ #editor .mc-editor-panels .btn{grid-column:1/-1!important;margin:3px 0 0!important;padding:8px!important;font-size:8px!important}
 }
 
 </style>
