@@ -202,7 +202,7 @@ file.addEventListener('change',e=>{const selected=e.target.files&&e.target.files
 file.addEventListener('cancel',()=>toast('Фото не выбрано'));
 window.addEventListener('error',e=>{console.error('MOODCUT runtime error',e.message);if(!img)$('#status').textContent='READY WHEN YOU ARE'});
 $$('.tab').forEach(b=>b.onclick=()=>{haptic();$$('.tab').forEach(x=>x.classList.toggle('active',x===b));$$('.panel').forEach(p=>p.classList.toggle('hidden',p.id!==b.dataset.tab))});
-$('.preset').forEach(b=>b.onclick=()=>applyPreset(b.dataset.preset));
+$('.preset').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
 renderPresetThumbnails();
 $$('.analog-look').forEach(b=>b.onclick=()=>{if(!img){toast('Сначала открой фото');return}$$('.analog-look').forEach(x=>x.classList.toggle('active',x===b));applyPreset(b.dataset.film);$('#lookTag').textContent=b.querySelector('b').textContent.toUpperCase()});
 document.querySelectorAll('[data-key]').forEach(el=>{el.addEventListener('input',()=>{values[el.dataset.key]=Number(el.value);el.nextElementSibling.value=el.value;preset='custom';document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'));schedule()});el.addEventListener('change',checkpoint)});
