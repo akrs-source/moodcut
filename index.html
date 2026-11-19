@@ -116,7 +116,7 @@ function moodcutEscape(v){return String(v==null?"":v).replace(/[&<>"']/g,functio
 async function moodcutApi(action,extra){
  const tg=window.Telegram&&window.Telegram.WebApp;
  if(!tg||!tg.initData)throw new Error("Открой MOODCUT через Telegram.");
- const res=await fetch(MOODCUT_SUPABASE_URL+"/functions/v1/moodcut-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":MOODCUT_PUBLIC_KEY},body:JSON.stringify(Object.assign({initData:tg.initData,action:action},extra||{}))});
+ const res=await fetch(MOODCUT_SUPABASE_URL+"/functions/v1/quick-worker",{method:"POST",headers:{"Content-Type":"application/json","apikey":MOODCUT_PUBLIC_KEY},body:JSON.stringify(Object.assign({initData:tg.initData,action:action},extra||{}))});
  const data=await res.json();if(!res.ok)throw new Error(data.error||"Ошибка сервера");return data;
 }
 async function initMoodcutAccount(){
