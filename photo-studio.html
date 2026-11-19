@@ -25,7 +25,7 @@ header{height:62px;flex:none;display:flex;align-items:center;justify-content:spa
 .zoom-label{position:absolute;bottom:13px;right:13px;padding:7px 10px;background:rgba(23,20,18,.86);border:1px solid rgba(238,224,214,.18);border-radius:20px;font:700 9px 'DM Sans'}
 .meta{height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 3px;font:700 8px 'DM Sans';letter-spacing:.12em;color:var(--muted)}.meta strong{color:var(--gold);font-size:8px}
 .history{display:flex;gap:8px;padding:0 17px 13px}.history button{border:0;background:transparent;color:var(--muted);font:700 8px 'DM Sans';letter-spacing:.1em;padding:6px 0}.history button:disabled{opacity:.25}.history #fit{margin-left:auto;color:var(--gold)}
-.dock{flex:0 0 clamp(228px,36dvh,292px);height:clamp(228px,36dvh,292px);min-height:0;max-height:none;min-width:0;display:flex;flex-direction:column;overflow:hidden;margin-top:0;background:var(--panel);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:9px 16px calc(8px + var(--safe));}
+.dock{flex:0 0 clamp(250px,39dvh,320px);height:clamp(250px,39dvh,320px);min-height:0;max-height:none;min-width:0;display:flex;flex-direction:column;overflow:hidden;margin-top:0;background:var(--bg);border-top:1px solid var(--line);border-radius:0;padding:8px 16px calc(8px + var(--safe));}
 .tabs{flex:none;display:flex;justify-content:space-between;gap:4px;padding:0 0 9px;border-bottom:1px solid var(--line)}
 .tab{flex:1;min-width:0;border:0;background:transparent;color:#938982;padding:8px 2px 5px;font:700 8px 'DM Sans';letter-spacing:.07em;display:flex;flex-direction:column;align-items:center;gap:5px}
 .tab .glyph{font-size:17px;line-height:1}.tab.active{color:var(--gold)}.tab.active .glyph{transform:translateY(-1px)}
@@ -45,7 +45,7 @@ header{height:62px;flex:none;display:flex;align-items:center;justify-content:spa
 input[type=range]{width:100%;height:3px;accent-color:var(--gold)}
 .actions{display:flex;gap:9px;padding:14px 0 2px;border-top:1px solid var(--line);margin-top:8px}.action{height:43px;border-radius:30px;font:800 9px 'DM Sans';letter-spacing:.1em}.reset{flex:1;background:transparent;border:1px solid var(--line);color:var(--muted)}.save{flex:1.5;background:var(--gold);border:0;color:#211b18}
 .hidden{display:none!important}.toast{position:fixed;z-index:20;left:50%;bottom:calc(250px + var(--safe));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:#e9d7cc;color:#211b18;border-radius:30px;padding:11px 16px;font:600 10px 'DM Sans';transition:.22s;white-space:nowrap;max-width:90vw}.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-height:740px){.dock{flex-basis:clamp(210px,35dvh,260px);height:clamp(210px,35dvh,260px)}.workspace{padding-top:7px}.meta{height:26px}.tabs{padding-bottom:7px}.tab{padding-top:6px;padding-bottom:3px}}
+@media(max-height:740px){.dock{flex-basis:clamp(228px,39dvh,278px);height:clamp(228px,39dvh,278px)}.workspace{padding-top:7px}.meta{height:26px}.tabs{padding-bottom:7px}.tab{padding-top:6px;padding-bottom:3px}}
 @media(min-width:600px){body{padding:16px 0;height:100dvh}.app{border:1px solid var(--line);border-radius:20px;height:calc(100dvh - 32px);min-height:0;overflow:hidden}.dock{border-radius:0 0 20px 20px}}
 @keyframes mcDevelop{0%{opacity:0;transform:translateX(-120%) skewX(-12deg)}18%{opacity:.85}70%{opacity:.42}100%{opacity:0;transform:translateX(120%) skewX(-12deg)}}
 .stage.developing:after{content:"";position:absolute;z-index:4;inset:-15% -30%;pointer-events:none;background:linear-gradient(100deg,transparent 25%,rgba(255,190,125,.05) 38%,rgba(255,214,164,.52) 49%,rgba(238,128,94,.22) 57%,transparent 72%);mix-blend-mode:screen;animation:mcDevelop .9s ease-out forwards}
@@ -196,7 +196,34 @@ function dialSound(){try{const AC=window.AudioContext||window.webkitAudioContext
 function develop(){stage.classList.remove('developing');void stage.offsetWidth;stage.classList.add('developing');clearTimeout(develop.t);develop.t=setTimeout(()=>stage.classList.remove('developing'),950);dialSound()}
 function applyPreset(name){values={...defaults,...looks[name]};preset=name;syncControls();render();checkpoint();develop();haptic()}
 function reset(){values={...defaults};preset='original';caption='';$('#caption').value='';syncControls();render();checkpoint();haptic()}
-function exportPhoto(){if(!img){file.click();return}const mime='image/jpeg';canvas.toBlob(blob=>{if(!blob){toast('Не удалось сохранить фото');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='moodcut-'+Date.now()+'.jpg';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Фото подготовлено · JPEG');haptic()},mime,.96)}
+async function exportPhoto(){
+ if(!img){file.click();return}
+ const button=$('#exportTop');if(button.disabled)return;
+ button.disabled=true;button.textContent='EXPORTING…';
+ try{
+  const output=document.createElement('canvas');
+  output.width=canvas.width;output.height=canvas.height;
+  const out=output.getContext('2d',{alpha:false});
+  if(!out)throw new Error('Export canvas unavailable');
+  out.imageSmoothingEnabled=true;out.imageSmoothingQuality='high';
+  out.drawImage(canvas,0,0,canvas.width,canvas.height);
+  const blob=await new Promise((resolve,reject)=>output.toBlob(b=>b?resolve(b):reject(new Error('JPEG encoding failed')),'image/jpeg',.96));
+  const fileName='moodcut-'+Date.now()+'.jpg';
+  const imageFile=new File([blob],fileName,{type:'image/jpeg'});
+  if(navigator.canShare&&navigator.canShare({files:[imageFile]})&&navigator.share){
+   await navigator.share({files:[imageFile],title:'MOODCUT photo'});
+   toast('Фото готово к сохранению');
+  }else{
+   const url=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=url;a.download=fileName;a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   toast('Фото экспортировано · JPEG');
+  }
+  haptic();
+ }catch(err){
+  if(err?.name!=='AbortError'){console.error('MOODCUT export failed',err);toast('Не удалось экспортировать фото. Попробуй ещё раз')}
+ }finally{button.disabled=false;button.textContent='EXPORT'}
+}
 function compareOn(){if(!img||comparing)return;comparing=true;renderOriginal()}
 function renderOriginal(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);$('#lookTag').textContent='ORIGINAL'}
 function compareOff(){if(!comparing)return;comparing=false;render()}
