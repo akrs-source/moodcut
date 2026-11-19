@@ -584,6 +584,72 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 #editor .mc-preset-card:active img{transform:scale(1.04)}
 #editor .preview img{transition:filter .12s ease,opacity .12s ease}
 @media(max-width:700px){#editor .mc-editor-tools{position:sticky;top:4px;z-index:5;box-shadow:0 8px 22px rgba(0,0,0,.18)}#editor .mc-editor-panels .mc-tool-panel{padding:15px}#editor .mc-preset-card{min-width:116px}}
+
+/* MOODCUT mobile editor: native-feeling, no page-length scrolling */
+@media(max-width:700px){
+ body:has(#editor:not(.hidden)){overflow:hidden;height:100dvh}
+ #editor.page:not(.hidden){
+  position:fixed;z-index:20;top:62px;left:0;right:0;
+  bottom:calc(62px + env(safe-area-inset-bottom));
+  width:100%;height:auto;margin:0;padding:10px 12px 8px;
+  overflow:hidden;background:#11100f;color:#f5eee7;
+  display:flex;flex-direction:column;gap:8px;
+ }
+ #editor>.eyebrow,#editor>h2,#editor>.sub{display:none}
+ #editor .editor-grid{
+  flex:1;min-height:0;display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:minmax(0,1fr) auto auto minmax(112px,27dvh);
+  gap:8px;overflow:hidden
+ }
+ #editor .editor-grid>div:first-child{display:contents}
+ #editor .preview{
+  grid-column:1/-1;grid-row:1;min-height:0;height:100%;
+  background:#191817;border-radius:12px;aspect-ratio:auto
+ }
+ #editor .preview img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
+ #editor .preview-label{top:10px;left:10px;background:rgba(20,18,17,.72);color:#f5eee7;border-radius:3px}
+ #editor .mc-editor-tools{
+  grid-column:1/-1;grid-row:2;display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;
+  position:static!important;padding:5px;background:#1d1b1a;
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;box-shadow:none!important
+ }
+ #editor .mc-editor-tools .mc-tool{
+  min-height:48px;border:0;border-radius:7px;background:transparent;color:#a99d93;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px
+ }
+ #editor .mc-editor-tools .mc-tool.active{background:#3a2b2b;color:#f1d9c7}
+ #editor .mc-editor-tools .mc-tool span{font-size:17px;line-height:1}
+ #editor .mc-editor-tools .mc-tool small{font-size:8px;letter-spacing:.08em}
+ #editor .upload{grid-row:3;display:block!important;margin:0;min-width:0;text-align:center}
+ #editor .upload span{width:100%;padding:11px 5px;border:1px solid rgba(255,255,255,.25);color:#f5eee7;border-radius:7px;font-size:8px;letter-spacing:.06em;white-space:nowrap}
+ #editor .mc-batch-upload{opacity:.8}
+ #editor>.editor-grid .btn.light{grid-row:3;grid-column:3;margin:0;padding:10px 4px;font-size:8px;white-space:nowrap;border-color:rgba(255,255,255,.25);color:#f5eee7}
+ #editor .mc-editor-selected,#editor #editorStylePicker{display:none!important}
+ #editor .mc-editor-panels{
+  grid-column:1/-1;grid-row:4;min-height:0;max-height:none;height:100%;
+  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  margin:0;padding:0;background:transparent;border:0;border-radius:10px
+ }
+ #editor .mc-editor-panels .mc-tool-panel{
+  min-height:100%;margin:0;padding:12px 14px 18px;
+  background:#1d1b1a;border:1px solid rgba(255,255,255,.1);border-radius:10px
+ }
+ #editor .mc-editor-panels .mc-tool-panel h3{margin:0 0 8px;font-size:10px}
+ #editor .mc-editor-panels .control{margin:10px 0}
+ #editor .mc-editor-panels .control label{font-size:10px;margin-bottom:5px}
+ #editor .mc-editor-panels input[type=range]{height:22px}
+ #editor .mc-editor-panels .mc-smart-apply-row{padding:8px 10px;margin:0 0 8px}
+ #editor .mc-preset-gallery{display:flex;gap:8px;overflow-x:auto;flex-wrap:nowrap;padding:2px 1px 8px;scroll-snap-type:x mandatory}
+ #editor .mc-preset-card{flex:0 0 104px;min-width:104px;scroll-snap-align:start;padding:0 0 8px}
+ #editor .mc-preset-card img{width:100%;height:82px;object-fit:cover;border-radius:6px}
+ #editor .mc-preset-card span{display:block;font-size:9px;padding:5px 6px 0}
+ #editor .mc-preset-card i{font-size:7px}
+ #editor .mc-editor-panels .btn{padding:12px;margin-top:7px}
+ #editor .mc-batch-workspace{grid-column:1/-1;grid-row:1;z-index:2;max-height:40%;overflow:auto;background:#1d1b1a}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
