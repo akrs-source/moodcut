@@ -42,7 +42,7 @@ async function verifyTelegram(initData: string, botToken: string) {
   if (!receivedHash || !authDate) throw new Error("telegram_auth_missing");
   if (Math.abs(Date.now() / 1000 - authDate) > 86400) throw new Error("telegram_auth_expired");
 
-  const entries = [...params.entries()].filter(([key]) => key !== "hash").sort(([a], [b]) => a.localeCompare(b));
+  const entries = [...params.entries()].filter(([key]) => key !== "hash").sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0);
   const checkString = entries.map(([key, value]) => `${key}=${value}`).join("\n");
   const secretKey = await hmac(new TextEncoder().encode("WebAppData"), botToken);
   const calculatedHash = hex(await hmac(secretKey, checkString));
