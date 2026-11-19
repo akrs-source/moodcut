@@ -133,6 +133,67 @@ header{height:48px!important;min-height:48px!important;flex:0 0 48px!important;p
  .dock .tabs{flex-basis:51px!important;height:51px!important;min-height:51px!important}
  .dock .tab{height:44px!important;min-height:44px!important}
 }
+
+/* Restore usable editing area without changing the photo-first stage rules */
+.dock{
+  flex:0 0 218px!important;
+  height:218px!important;
+  min-height:218px!important;
+  max-height:218px!important;
+  padding:0 11px calc(5px + var(--safe))!important;
+  overflow:hidden!important;
+}
+.dock .tabs{
+  flex:0 0 52px!important;
+  height:52px!important;
+  min-height:52px!important;
+  padding:4px 0 2px!important;
+}
+.dock .tab{
+  flex:0 0 64px!important;
+  min-width:64px!important;
+  height:46px!important;
+  min-height:46px!important;
+  padding:3px 1px!important;
+}
+.dock .panel{
+  display:block!important;
+  flex:1 1 0!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:9px 2px 7px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+.dock .panel.hidden{display:none!important}
+.dock .panel-title{margin:0 0 9px!important}
+.dock .presets{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  min-height:86px!important;
+  gap:9px!important;
+  padding:0 2px 8px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+}
+.dock .presets>.preset{
+  display:flex!important;
+  flex:0 0 74px!important;
+  width:74px!important;
+  min-width:74px!important;
+  max-width:74px!important;
+}
+.dock .swatch{height:54px!important}
+.dock .preset{font-size:8px!important;gap:4px!important}
+.dock .controls{gap:10px!important;padding:2px 0 8px!important}
+@media(max-height:700px){
+  .dock{flex-basis:205px!important;height:205px!important;min-height:205px!important;max-height:205px!important}
+  .dock .tabs{flex-basis:49px!important;height:49px!important;min-height:49px!important}
+  .dock .tab{height:43px!important;min-height:43px!important}
+  .dock .presets{min-height:79px!important}
+  .dock .swatch{height:48px!important}
+}
+
 </style></head><body><div class="app">
 <header><button class="icon" id="back" aria-label="Назад">‹</button><div class="brand">MOODCUT<span>PHOTO STUDIO</span></div><div class="head-actions"><button class="icon" id="undo" title="Отменить" disabled>↶</button><button class="icon" id="redo" title="Повторить" disabled>↷</button><button class="export" id="exportTop">EXPORT</button></div></header>
 <main class="workspace"><div class="stage" id="stage"><canvas id="canvas"></canvas><div class="empty" id="empty"><div class="monogram">m.</div><div class="eyebrow">YOUR PHOTO. YOUR SIGNATURE.</div><p>Загрузи фотографию и создай собственный визуальный стиль.</p><label class="open-photo" for="file">ВЫБРАТЬ ФОТО</label></div><div class="hud"><span class="pill" id="lookTag">ORIGINAL</span><div class="hud-right"><label class="change-photo" for="file">＋ PHOTO</label><button class="compare" id="compare">HOLD · BEFORE</button></div></div><span class="zoom-label hidden" id="zoomLabel">100%</span></div><div class="meta"><span id="photoName">NO PHOTO SELECTED</span><strong id="status">READY WHEN YOU ARE</strong></div><input id="file" class="file-picker" type="file" accept="image/*,.heic,.heif" aria-label="Выбрать фотографию"></main>
