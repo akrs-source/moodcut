@@ -86,6 +86,77 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .insp-1 img{height:245px}.insp-2 img{height:175px}.insp-3 img{height:215px}.insp-4 img{height:195px}.insp-5 img{height:155px}.insp-6 img{height:220px}
 .home-bottom-note{gap:10px;margin-top:30px}.home-bottom-note p{font-size:14px;line-height:1.45}.home-bottom-note button{font-size:7px}
 }
+
+/* MOODCUT — fashion editorial home redesign */
+.home-v2{--v2-bg:#171615;--v2-cream:#f2eee8;--v2-muted:#b8aea4;background:var(--v2-bg)!important;color:var(--v2-cream)!important;margin:-38px -5% 0!important;padding:0 0 54px!important;overflow:hidden}
+.home-v2 *{box-sizing:border-box}
+.home-v2 h1,.home-v2 h2,.home-v2 p{color:inherit}
+.editorial-cover{height:min(690px,78vh);min-height:560px;position:relative;overflow:hidden;background:#24201f;color:#fff}
+.cover-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 34%;filter:brightness(.67) saturate(.72)}
+.cover-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,12,12,.78) 0%,rgba(13,12,12,.28) 58%,rgba(13,12,12,.04) 100%),linear-gradient(0deg,rgba(0,0,0,.48),transparent 25%)}
+.cover-top,.cover-foot{position:absolute;left:5%;right:5%;display:flex;justify-content:space-between;align-items:center;letter-spacing:2px;font-size:9px}
+.cover-top{top:28px;border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:17px}
+.cover-top span:first-child{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:5px}
+.cover-copy{position:absolute;left:8%;top:50%;transform:translateY(-43%);max-width:570px}
+.cover-kicker,.editorial-overline{font-size:9px;letter-spacing:3px;color:#d7b9b5}
+.cover-copy h1{font-family:'Playfair Display',serif!important;font-weight:400!important;font-size:clamp(66px,9vw,118px)!important;line-height:.88!important;letter-spacing:-3px!important;margin:24px 0!important;color:#fff!important}
+.cover-copy h1 em,.editorial-intro h2 em,.editorial-tools-title h2 em{font-weight:400;color:#c49a9e}
+.cover-copy p{max-width:340px;font-size:13px;line-height:1.8;color:#e5ded8;margin:25px 0 30px}
+.cover-cta{background:#f2eee8;color:#191716;border:0;padding:16px 22px;font-size:9px;letter-spacing:2px}
+.cover-cta span{margin-left:24px}
+.cover-foot{bottom:22px;color:#e6dfd8}
+.editorial-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:35px;padding:78px 7% 66px;background:#171615}
+.editorial-overline{color:#b98791}
+.editorial-intro h2,.editorial-tools-title h2{font-family:'Playfair Display',serif!important;font-size:clamp(38px,5vw,62px)!important;font-weight:400!important;line-height:1.02!important;letter-spacing:-1.5px;margin:18px 0 0!important}
+.editorial-intro>p{max-width:330px;color:#b9b0a8;font-size:12px;line-height:1.9;margin:0 0 5px}
+.editorial-mosaic-head{display:flex;justify-content:space-between;align-items:center;padding:0 7% 20px;color:#bdb3aa;font-size:9px;letter-spacing:2px}
+.editorial-mosaic-head button,.editorial-signoff button{background:none;border:0;color:#d1a6ad;font-size:9px;letter-spacing:1.6px}
+.editorial-mosaic{padding:0 7%;display:grid;grid-template-columns:1.12fr .88fr 1fr;grid-template-rows:210px 210px;gap:10px}
+.mosaic-tile{position:relative;display:block;overflow:hidden;border:0;padding:0;background:#302a28;text-align:left;min-width:0}
+.mosaic-tile img,.tool-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;filter:saturate(.78)}
+.mosaic-tile:hover img,.tool-tile:hover img{transform:scale(1.045)}
+.mosaic-tile:after,.tool-tile:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.5))}
+.mosaic-tile span{position:absolute;z-index:1;left:15px;bottom:14px;color:#fff;font-size:8px;letter-spacing:2px}
+.mosaic-fashion{grid-row:span 2}.mosaic-still{grid-column:2;grid-row:1}.mosaic-space{grid-column:3;grid-row:1}.mosaic-art{grid-column:2;grid-row:2}.mosaic-film{grid-column:3;grid-row:2}
+.editorial-tools{padding:88px 7% 70px;display:grid;grid-template-columns:1.1fr repeat(3,1fr);gap:12px;align-items:stretch}
+.editorial-tools-title{padding:16px 20px 16px 0}.editorial-tools-title>span{font-size:8px;letter-spacing:2px;color:#b98791}
+.editorial-tools-title h2{font-size:36px!important}
+.tool-tile{position:relative;height:245px;border:0;padding:0;background:#2a2523;text-align:left;color:white;overflow:hidden}
+.tool-tile img{position:absolute;inset:0}
+.tool-tile>span,.tool-tile strong,.tool-tile small{position:absolute;z-index:2;left:15px}
+.tool-tile>span{top:14px;font-size:9px;letter-spacing:2px}.tool-tile strong{bottom:37px;font-size:10px;letter-spacing:2px}.tool-tile small{bottom:17px;font-size:9px;color:#eee}
+.editorial-signoff{margin:0 7%;border-top:1px solid #4b4440;padding:27px 0 0;display:flex;align-items:center;justify-content:space-between}
+.editorial-signoff>span{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:4px}
+.editorial-signoff p{color:#a99f96;font-size:11px}
+@media(max-width:700px){
+.home-v2{margin:-26px -17px 0!important;padding-bottom:35px!important}
+.editorial-cover{height:640px;min-height:0}
+.cover-image{object-position:58% center}
+.cover-shade{background:linear-gradient(90deg,rgba(12,11,11,.55),rgba(12,11,11,.08)),linear-gradient(0deg,rgba(0,0,0,.55),transparent 55%)}
+.cover-top{top:20px;left:17px;right:17px}.cover-top span:first-child{font-size:19px}
+.cover-top span:last-child{font-size:7px;letter-spacing:1.2px}
+.cover-copy{left:22px;right:18px;top:auto;bottom:82px;transform:none}
+.cover-copy h1{font-size:clamp(64px,17vw,88px)!important;letter-spacing:-2.5px!important}
+.cover-copy p{font-size:12px;max-width:290px}
+.cover-foot{left:20px;right:20px;bottom:19px;font-size:7px;letter-spacing:1.3px}
+.editorial-intro{display:block;padding:55px 22px 42px}
+.editorial-intro h2{font-size:46px!important}
+.editorial-intro>p{margin-top:22px;font-size:11px;max-width:300px}
+.editorial-mosaic-head{padding:0 22px 16px;font-size:8px}
+.editorial-mosaic{padding:0 22px;grid-template-columns:1fr 1fr;grid-template-rows:210px 130px 160px;gap:8px}
+.mosaic-fashion{grid-column:1;grid-row:1 / span 2}
+.mosaic-still{grid-column:2;grid-row:1}
+.mosaic-space{grid-column:2;grid-row:2}
+.mosaic-art{grid-column:1;grid-row:3}
+.mosaic-film{grid-column:2;grid-row:3}
+.editorial-tools{padding:58px 22px 45px;grid-template-columns:1fr 1fr;gap:9px}
+.editorial-tools-title{grid-column:1 / -1;padding:0 0 15px}
+.editorial-tools-title h2{font-size:39px!important}
+.tool-tile{height:205px}
+.editorial-signoff{margin:0 22px;flex-wrap:wrap;gap:12px}
+.editorial-signoff p{order:3;width:100%;margin:0}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -100,37 +171,41 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <button class="nav" onclick="showPage('social',this)"><span class="nav-icon">▤</span>Social Studio</button>
 <div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
 <main>
-<section id="home" class="page home-editorial">
-<div class="home-hero">
-  <div class="home-hero-copy">
-    <div class="home-brandline">MOODCUT · YOUR VISUAL WORLD</div>
-    <div class="eyebrow">CREATE · CURATE · EXPRESS</div>
-    <h1>Your visual identity<br>starts here.</h1>
-    <p class="home-lead">A space to shape your aesthetic. Edit photos, collect inspiration and create a visual style that feels like you.</p>
-    <button class="home-cta" onclick="showPage('editor')">START CREATING <span>↗</span></button>
+<section id="home" class="page home-editorial home-v2">
+  <div class="editorial-cover">
+    <img class="cover-image" src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800&auto=format&fit=crop" alt="Fashion editorial portrait">
+    <div class="cover-shade"></div>
+    <div class="cover-top"><span>MOODCUT</span><span>YOUR AESTHETIC. YOUR RULES.</span></div>
+    <div class="cover-copy">
+      <div class="cover-kicker">THE VISUAL CULTURE CLUB · 2026</div>
+      <h1>Make it<br><em>your mood.</em></h1>
+      <p>Curate the feeling. Create the image. Make the ordinary look extraordinary.</p>
+      <button class="cover-cta" onclick="showPage('editor')">ENTER THE STUDIO <span>↗</span></button>
+    </div>
+    <div class="cover-foot"><span>01 — PERSONAL STYLE</span><span>SCROLL TO EXPLORE ↓</span></div>
   </div>
-  <div class="home-hero-photo">
-    <img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=1000" alt="Classical art and sculpture">
-    <span class="photo-caption">01 / THE ART OF SEEING</span>
+
+  <div class="editorial-intro">
+    <div><span class="editorial-overline">A WORLD OF YOUR OWN</span><h2>See it. Feel it.<br><em>Make it yours.</em></h2></div>
+    <p>MOODCUT is your visual playground — a place to edit, collect and shape the aesthetic that feels unmistakably you.</p>
   </div>
-</div>
-<div class="home-intro-row"><div><div class="home-kicker">YOUR CREATIVE SPACE</div><h2>What inspires you today?</h2></div><span class="home-index">01 — 04</span></div>
-<div class="home-actions">
-  <button class="home-action action-tall" onclick="showPage('editor')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800" alt=""><span class="action-no">01</span><span class="action-title">Edit your photos</span><span class="action-sub">Find your signature look</span><span class="action-arrow">↗</span></button>
-  <button class="home-action" onclick="showPage('discover')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=800" alt=""><span class="action-no">02</span><span class="action-title">Explore aesthetics</span><span class="action-sub">Discover moods & colours</span><span class="action-arrow">↗</span></button>
-  <button class="home-action" onclick="showPage('social')"><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800" alt=""><span class="action-no">03</span><span class="action-title">Create for socials</span><span class="action-sub">Make every detail count</span><span class="action-arrow">↗</span></button>
-  <button class="home-action" onclick="showPage('style')"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800" alt=""><span class="action-no">04</span><span class="action-title">Build your style</span><span class="action-sub">Collect what feels like you</span><span class="action-arrow">↗</span></button>
-</div>
-<div class="home-inspiration-head"><div><div class="home-kicker">A LITTLE VISUAL INSPIRATION</div><h2>Collected moments.</h2><p>Ideas, textures and places to start somewhere beautiful.</p></div><button class="home-text-link" onclick="showPage('discover')">EXPLORE ALL ↗</button></div>
-<div class="inspiration-grid">
-  <button class="inspiration-card insp-1" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800" alt="Fashion editorial"><span>FASHION / 01</span></button>
-  <button class="inspiration-card insp-2" onclick="selectStyle('Slow Living')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800" alt="Flowers"><span>STILL LIFE / 02</span></button>
-  <button class="inspiration-card insp-3" onclick="selectStyle('Warm Minimalism')"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800" alt="Interior"><span>SPACES / 03</span></button>
-  <button class="inspiration-card insp-4" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800" alt="Landscape"><span>PLACES / 04</span></button>
-  <button class="inspiration-card insp-5" onclick="selectStyle('Artful Details')"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800" alt="Artwork"><span>ART / 05</span></button>
-  <button class="inspiration-card insp-6" onclick="selectStyle('Soft Romance')"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800" alt="Flowers and details"><span>DETAILS / 06</span></button>
-</div>
-<div class="home-bottom-note"><span>✳</span><p>Not just editing. A place to discover what feels like you.</p><button onclick="showPage('style')">YOUR STYLE ↗</button></div>
+
+  <div class="editorial-mosaic-head"><span>THE MOODBOARD / 001</span><button onclick="showPage('discover')">DISCOVER MORE ↗</button></div>
+  <div class="editorial-mosaic">
+    <button class="mosaic-tile mosaic-fashion" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1000&auto=format&fit=crop" alt="Fashion portrait"><span>01 / FASHION</span></button>
+    <button class="mosaic-tile mosaic-still" onclick="selectStyle('Slow Living')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900&auto=format&fit=crop" alt="Flowers"><span>02 / STILL LIFE</span></button>
+    <button class="mosaic-tile mosaic-space" onclick="selectStyle('Warm Minimalism')"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=900&auto=format&fit=crop" alt="Interior"><span>03 / SPACES</span></button>
+    <button class="mosaic-tile mosaic-art" onclick="selectStyle('Artful Details')"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&auto=format&fit=crop" alt="Art"><span>04 / ART</span></button>
+    <button class="mosaic-tile mosaic-film" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900&auto=format&fit=crop" alt="Golden landscape"><span>05 / ATMOSPHERE</span></button>
+  </div>
+
+  <div class="editorial-tools">
+    <div class="editorial-tools-title"><span>MAKE SOMETHING BEAUTIFUL</span><h2>Your next obsession<br><em>starts here.</em></h2></div>
+    <button class="tool-tile" onclick="showPage('editor')"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop" alt="Fashion styling"><span>01</span><strong>THE EDITOR</strong><small>Transform your photos ↗</small></button>
+    <button class="tool-tile" onclick="showPage('discover')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900&auto=format&fit=crop" alt="Curated inspiration"><span>02</span><strong>DISCOVER</strong><small>Find your visual language ↗</small></button>
+    <button class="tool-tile" onclick="showPage('social')"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&auto=format&fit=crop" alt="Creative workspace"><span>03</span><strong>SOCIAL STUDIO</strong><small>Design your next post ↗</small></button>
+  </div>
+  <div class="editorial-signoff"><span>MOODCUT</span><p>Not a trend. Your point of view.</p><button onclick="showPage('style')">DEFINE YOUR STYLE ↗</button></div>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
