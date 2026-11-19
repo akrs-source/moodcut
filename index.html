@@ -528,6 +528,46 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
  #editor .mc-preset-card.active{outline:2px solid #e7d8cc;outline-offset:-2px}
 }
 
+
+/* Minimal icon-led mobile editing workspace */
+@media(max-width:700px){
+ #editor .editor-grid{display:flex!important;flex-direction:column;gap:12px}
+ #editor .editor-grid>div:first-child{display:contents}
+ #editor .preview{order:0;position:relative!important;top:auto!important;height:clamp(220px,38vh,330px);min-height:220px;margin:0;border-radius:13px!important;background:#090909!important}
+ #editor .preview img{width:100%;height:100%;max-height:none;object-fit:contain}
+ #editor #mcEditorTools{order:1}
+ #editor .upload{order:2;margin-top:0}
+ #editor .mc-batch-upload,#editor #batchWorkspace{order:3}
+ #editor .editor-grid>.btn{order:4}
+ #editor #editorSelectedStyle{order:5}
+ #editor #editorStylePicker{display:none!important}
+ #editor .mc-editor-panels{order:6;width:100%;margin:0;padding:16px!important;border-radius:14px!important}
+ #editor .mc-editor-panels .mc-tool-panel{display:block}
+ #editor .mc-editor-panels .mc-tool-panel.hidden{display:none!important}
+ #editor .mc-editor-panels .mc-preset-gallery{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:9px;padding:3px 1px 10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+ #editor .mc-editor-panels .mc-preset-card{flex:0 0 105px;width:105px;height:132px;position:relative;padding:0!important;overflow:hidden;border-radius:9px!important;scroll-snap-align:start}
+ #editor .mc-editor-panels .mc-preset-card img{width:100%;height:100%;object-fit:cover;display:block}
+ #editor .mc-editor-panels .mc-preset-card:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+ #editor .mc-editor-panels .mc-preset-card span{position:absolute;z-index:1;bottom:9px;left:8px;color:#fff!important;font:500 14px 'Cormorant Garamond',serif}
+ #editor .mc-editor-panels .mc-preset-card i{display:none}
+ #editor .mc-editor-panels .mc-preset-card.active{outline:2px solid #e7d8cc;outline-offset:-2px}
+ #editor .mc-editor-tools{order:1;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:5px;background:#151515;border:1px solid rgba(255,255,255,.1);border-radius:12px}
+ #editor .mc-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:58px;border:0;border-radius:8px;background:transparent;color:#aaa39d}
+ #editor .mc-tool span{font-size:21px;line-height:1}
+ #editor .mc-tool small{font:9px 'DM Mono',monospace;letter-spacing:.04em}
+ #editor .mc-tool.active{background:#292421;color:#f0dfd5}
+ #editor .mc-tool-panel h3{margin:0 0 14px!important}
+ #editor .mc-editor-panels .mc-smart-apply-row{margin:0 0 12px}
+ #editor .mc-editor-panels .control{margin:17px 0}
+ #editor .mc-editor-panels .control label{font-size:11px}
+ #editor .mc-editor-panels input[type=range]{height:24px}
+ #editor .mc-editor-panels .btn{margin-top:10px}
+}
+@media(min-width:701px){
+ #editor .mc-editor-tools{display:none}
+ #editor .mc-editor-panels .mc-tool-panel{display:block!important}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -590,26 +630,27 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Nordic Minimalism')"><img src="https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=900&q=85"><div><strong>Nordic Minimalism</strong><p>COOL TONES · MINIMAL</p></div></button>
 <button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Clean Girl')"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85"><div><strong>Clean Girl</strong><p>NATURAL LIGHT · SKIN</p></div></button></div></section>
 <section id="editor" class="page hidden"><div class="eyebrow">MAKE IT YOURS</div><h2>Photo editor</h2><p class="sub">Upload a photo, explore presets and create your signature look.</p>
-<div class="editor-grid"><div><div class="preview"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><div class="preview-label">MOODCUT EDITOR</div></div>
+<div class="editor-grid"><div><div class="mc-editor-tools" id="mcEditorTools" role="tablist" aria-label="Photo editing tools">
+<button class="mc-tool active" type="button" data-tool="presets" onclick="switchEditorTool('presets',this)"><span>◈</span><small>Presets</small></button>
+<button class="mc-tool" type="button" data-tool="light" onclick="switchEditorTool('light',this)"><span>☼</span><small>Light</small></button>
+<button class="mc-tool" type="button" data-tool="color" onclick="switchEditorTool('color',this)"><span>◉</span><small>Color</small></button>
+<button class="mc-tool" type="button" data-tool="effects" onclick="switchEditorTool('effects',this)"><span>✧</span><small>Effects</small></button>
+</div>
+<div class="preview"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><div class="preview-label">MOODCUT EDITOR</div></div>
 <label class="upload"><input type="file" accept="image/*" onchange="loadPhoto(event)"><span>＋ UPLOAD PHOTO</span></label>
 <label class="upload mc-batch-upload"><input id="batchPhotoInput" type="file" accept="image/*" multiple onchange="loadBatchPhotos(event)"><span>＋ ADD 3–9 PHOTOS</span></label>
 <div id="batchWorkspace" class="mc-batch-workspace hidden"><div class="section-head"><h3>Batch preview</h3><span id="batchCount" class="eyebrow">0 PHOTOS</span></div><div id="batchGrid" class="mc-batch-grid"></div><button class="btn wine" onclick="saveBatchPhotos()">Save all photos</button></div>
 <button class="btn light" onclick="toggleBefore()">BEFORE / AFTER</button><div id="editorSelectedStyle" class="mc-editor-selected hidden"><div><span class="eyebrow">SELECTED STYLE</span><strong id="editorSelectedStyleName">Quiet Luxury</strong></div><button class="small-link" onclick="showPage('discover')">CHANGE STYLE ↗</button></div><div id="editorStylePicker"><div class="section-head"><h3>Presets</h3></div>
 <div class="mc-smart-apply-row"><span><strong>Smart Apply</strong><small id="smartApplyStatus">Adapts the look to your photo</small></span><button type="button" class="mc-smart-toggle active" id="smartApplyToggle" onclick="toggleSmartApply()">ON</button></div><div class="presets mc-preset-gallery" id="editorPresets"><button class="preset mc-preset-card active" onclick="preset('Original',this)"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=80" alt="Original" loading="lazy"><span>Original</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Quiet Luxury',this)"><img src="https://www.iluminedecor.com/cdn/shop/files/lumina12ria-de-mesa-abajur-led-integrado-sem-fio_800x.webp?v=1765315250" alt="Quiet Luxury" loading="lazy"><span>Quiet Luxury</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Editorial Minimal',this)"><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=500&q=80" alt="Editorial Minimal" loading="lazy"><span>Editorial Minimal</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Raw 35mm',this)"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=500&q=80" alt="Raw 35mm" loading="lazy"><span>Raw 35mm</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Neo-Noir',this)"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80" alt="Neo-Noir" loading="lazy"><span>Neo-Noir</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Dark Romance',this)"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=500&q=80" alt="Dark Romance" loading="lazy"><span>Dark Romance</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Coquette',this)"><img src="https://i.postimg.cc/4ndzKn4G/IMG-5992.jpg" alt="Coquette" loading="lazy"><span>Coquette</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Italian Summer',this)"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=500&q=80" alt="Italian Summer" loading="lazy"><span>Italian Summer</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Nordic Minimalism',this)"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=500&q=80" alt="Nordic Minimalism" loading="lazy"><span>Nordic Minimalism</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Clean Girl',this)"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80" alt="Clean Girl" loading="lazy"><span>Clean Girl</span><i>PREVIEW ↗</i></button></div></div></div>
-<div class="panel"><h3>Adjustments</h3><div class="eyebrow">LIGHT</div>
-<div class="control"><label>Brightness <span id="brightnessVal">100</span></label><input type="range" min="50" max="150" value="100" id="brightness" oninput="adjust()"></div>
-<div class="control"><label>Contrast <span id="contrastVal">100</span></label><input type="range" min="50" max="160" value="100" id="contrast" oninput="adjust()"></div>
-<div class="control"><label>Saturation <span id="saturationVal">100</span></label><input type="range" min="0" max="180" value="100" id="saturation" oninput="adjust()"></div>
-<div class="eyebrow">COLOR</div><div class="control"><label>Warmth <span id="warmthVal">0</span></label><input type="range" min="-30" max="30" value="0" id="warmth" oninput="adjust()"></div>
-<div class="eyebrow">EFFECTS</div><div class="control"><label>Filter intensity <span id="intensityVal">100</span>%</label><input type="range" min="0" max="100" value="100" id="intensity" oninput="adjust()"></div>
-<div class="control"><label>Film grain <span id="grainVal">0</span></label><input type="range" min="0" max="100" value="0" id="grain" oninput="adjust()"></div>
-<div class="control"><label>Temperature <span id="temperatureVal">0</span></label><input type="range" min="-50" max="50" value="0" id="temperature" oninput="adjust()"></div>
-<div class="control"><label>Exposure <span id="exposureVal">0</span></label><input type="range" min="-50" max="50" value="0" id="exposure" oninput="adjust()"></div>
-<div class="control"><label>Vignette <span id="vignetteVal">0</span></label><input type="range" min="0" max="100" value="0" id="vignette" oninput="adjust()"></div>
-<div class="control"><label>Matte / Fade <span id="fadeVal">0</span></label><input type="range" min="0" max="30" value="0" id="fade" oninput="adjust()"></div>
-<div class="control"><label>Gobo shadows <span id="goboVal">0</span></label><input type="range" min="0" max="100" value="0" id="gobo" oninput="adjust()"></div>
-<div class="control"><label>Warmth / Tint <span id="tintVal">0</span></label><input type="range" min="-50" max="50" value="0" id="tint" oninput="adjust()"></div>
-<button class="btn wine" style="width:100%" onclick="savePhoto()">Save edit</button><button class="btn light" style="width:100%;margin-top:8px" onclick="resetEditor()">Reset</button></div></div></section>
+<div class="panel mc-editor-panels" id="mcEditorPanels">
+<div class="mc-tool-panel" data-panel="presets">
+<div class="section-head"><h3>Choose your look</h3></div>
+<div class="mc-smart-apply-row"><span><strong>Smart Apply</strong><small id="smartApplyStatus">Adapts the look to your photo</small></span><button type="button" class="mc-smart-toggle active" id="smartApplyToggle" onclick="toggleSmartApply()">ON</button></div>
+</div>
+<div class="mc-tool-panel hidden" data-panel="light"><h3>Light</h3></div>
+<div class="mc-tool-panel hidden" data-panel="color"><h3>Color</h3></div>
+<div class="mc-tool-panel hidden" data-panel="effects"><h3>Effects</h3></div>
+</div></div></section>
 <section id="social" class="page hidden"><div class="eyebrow">ONE CREATIVE SPACE · EVERY PLATFORM</div><h2>Social Studio</h2><p class="sub">Choose where you want to create. One aesthetic, different ways to express it.</p>
 <div class="social-cards"><button class="social-card active" onclick="selectPlatform('telegram',this)"><div class="symbol">➤</div><strong>Telegram</strong><p>Channel & posts</p></button><button class="social-card" onclick="selectPlatform('instagram',this)"><div class="symbol">◎</div><strong>Instagram</strong><p>Feed & stories</p></button><button class="social-card" onclick="selectPlatform('pinterest',this)"><div class="symbol">P</div><strong>Pinterest</strong><p>Pins & moodboards</p></button></div>
 <div class="panel" id="socialContent"><div class="eyebrow" id="socialEyebrow">TELEGRAM CREATIVE SPACE</div><h3 id="socialHeading">Make your channel feel like you.</h3><p class="sub" id="socialDescription">Create a consistent visual identity for your Telegram channel.</p>
@@ -1014,5 +1055,26 @@ const oldNotify=window.notify;window.notify=function(msg){const d=lang==="ru"?en
 function renderPresetCardPalettes(){const cards=document.querySelectorAll('#styleCards .aesthetic');cards.forEach(card=>{if(card.querySelector('.mc-card-palette'))return;const m=card.getAttribute('onclick')?.match(/selectStyle\('([^']+)'\)/);if(!m)return;const profile=window.moodcutStyleProfiles?.[m[1]]||moodcutStyleProfiles[m[1]];if(!profile||!profile.colors)return;const strip=document.createElement('div');strip.className='mc-card-palette';profile.colors.slice(0,4).forEach(hex=>{const dot=document.createElement('span');dot.className='mc-card-swatch';dot.setAttribute('role','button');dot.setAttribute('tabindex','0');dot.style.background=hex;dot.title='Copy '+hex;dot.setAttribute('aria-label','Copy '+hex);const copyHex=e=>{e.stopPropagation();if(navigator.clipboard?.writeText){navigator.clipboard.writeText(hex).then(()=>notify(hex+' copied')).catch(()=>notify(hex));}else{const t=document.createElement('textarea');t.value=hex;document.body.appendChild(t);t.select();try{document.execCommand('copy');notify(hex+' copied')}catch(_){notify(hex)}t.remove()}};dot.addEventListener('click',copyHex);dot.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();copyHex(e)}});strip.appendChild(dot)});card.appendChild(strip)})}
 document.addEventListener('DOMContentLoaded',()=>{renderPresetCardPalettes();setTimeout(renderPresetCardPalettes,250)});
 </script>
+
+<script>
+function switchEditorTool(name,button){
+ document.querySelectorAll('#mcEditorTools .mc-tool').forEach(b=>b.classList.toggle('active',b===button));
+ document.querySelectorAll('#mcEditorPanels .mc-tool-panel').forEach(p=>p.classList.toggle('hidden',p.dataset.panel!==name));
+}
+(function setupEditorToolGroups(){
+ const setup=()=>{
+  const root=document.getElementById('mcEditorPanels');if(!root||root.dataset.ready)return;root.dataset.ready='1';
+  const presets=document.getElementById('editorPresets');if(presets)root.querySelector('[data-panel="presets"]').appendChild(presets);
+  const light=root.querySelector('[data-panel="light"]'),color=root.querySelector('[data-panel="color"]'),effects=root.querySelector('[data-panel="effects"]');
+  const ids={light:['brightness','contrast','exposure'],color:['saturation','warmth','temperature','tint'],effects:['intensity','grain','vignette','fade','gobo']};
+  Object.entries(ids).forEach(([key,list])=>list.forEach(id=>{const el=document.getElementById(id);if(el){const control=el.closest('.control');if(control)root.querySelector('[data-panel="'+key+'"]').appendChild(control)}}));
+  const save=document.querySelector('#editor .mc-editor-panels .btn');if(save)effects.appendChild(save);
+  const reset=document.querySelector('#editor .mc-editor-panels button[onclick="resetEditor()"]');if(reset)effects.appendChild(reset);
+  const smart=document.getElementById('smartApplyToggle');if(smart&&smart.parentElement)presets?.parentElement?.insertBefore(smart.parentElement, presets);
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+})();
+</script>
+
 </body>
 </html>
