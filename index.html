@@ -808,6 +808,13 @@ body:has(#editor:not(.hidden))>.app>header,body:has(#editor:not(.hidden)) .mc-bo
 #editor .mc-editor-panels .control label{color:#ded2c8!important}#editor .mc-editor-panels .control label span{color:#d5ad91!important}#editor .mc-editor-panels input[type=range]{width:100%!important;accent-color:#c49b80!important}
 #editor #editorStylePicker,#editor .mc-batch-upload,#editor #batchWorkspace{display:none!important}
 }
+
+/* Integrated Photo Studio: full-screen mobile workspace, existing home/profile remain untouched */
+body.mc-studio-open .app>header,body.mc-studio-open aside,body.mc-studio-open footer{display:none!important}
+body.mc-studio-open .layout{display:block!important;min-height:100dvh!important}
+body.mc-studio-open main{padding:0!important;margin:0!important;width:100%!important;min-height:100dvh!important}
+body.mc-studio-open #photoStudioPage{display:block!important;padding:0!important;margin:0!important;width:100%!important;height:100dvh!important;overflow:hidden!important}
+#photoStudioFrame{display:block;width:100%;height:100dvh;border:0;background:#171714}
 </style>
 </head>
 <body>
@@ -917,6 +924,7 @@ body:has(#editor:not(.hidden))>.app>header,body:has(#editor:not(.hidden)) .mc-bo
  <button id="savePaletteButton" class="btn wine hidden" onclick="saveGeneratedPalette()">Save to Saved styles</button>
 </div>
 </section>
+<section id="photoStudioPage" class="page hidden" aria-label="MOODCUT Photo Studio"><iframe id="photoStudioFrame" src="photo-studio.html" title="MOODCUT Photo Studio" allow="camera; clipboard-read; clipboard-write"></iframe></section>
 <section id="profile" class="page hidden">
 <div class="eyebrow">YOUR PERSONAL SPACE</div><h2>Profile</h2><p class="sub">Your MOODCUT account and creative space.</p>
 <div class="panel mc-profile-card">
@@ -930,7 +938,7 @@ body:has(#editor:not(.hidden))>.app>header,body:has(#editor:not(.hidden)) .mc-bo
 </div>
 <div class="section-head"><h2>Your space</h2></div>
 <div class="mc-profile-links">
- <button class="mc-profile-link" onclick="showPage(&quot;editor&quot;)"><span><strong>Photo Studio</strong><small>Edit photos · Camera, light, colour and film</small></span><b>↗</b></button>
+ <button class="mc-profile-link" onclick="showPage(&quot;photoStudioPage&quot;)"><span><strong>Photo Studio</strong><small>Edit photos · Looks, light, colour and film</small></span><b>↗</b></button>
  <button class="mc-profile-link" id="adminProfileLink" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
 </div>
 <p class="sub mc-profile-note">MOODCUT · Your aesthetic. Your rules.</p>
@@ -939,7 +947,8 @@ body:has(#editor:not(.hidden))>.app>header,body:has(#editor:not(.hidden)) .mc-bo
 <script>
 let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
 let smartApplyEnabled=false,moodcutBaseValues=null,generatedPalettePreviewImage='',generatedPaletteProfile=null;
-function showPage(id,btn,keepStyleMode){if(id==='editor'&&!keepStyleMode)setEditorStyleMode(false);document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick').includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
+function showPage(id,btn,keepStyleMode){if(id==='editor'&&!keepStyleMode)setEditorStyleMode(false);document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const target=document.getElementById(id);if(!target)return;target.classList.remove('hidden');document.body.classList.toggle('mc-studio-open',id==='photoStudioPage');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick')?.includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
+window.addEventListener('message',event=>{if(event.data?.type==='moodcut:close-studio')showPage('profile')});
 function notify(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function selectPlatform(name,btn){currentPlatform=name;document.querySelectorAll('.social-card').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const data={telegram:['TELEGRAM CREATIVE SPACE','Make your channel feel like you.','Create a consistent visual identity for your Telegram channel.',['Channel aesthetic','Post design','Post cover','Quote cards'],['Cover, colours and identity','Beautiful visual publications','Editorial covers and images','Typography and composition']],instagram:['INSTAGRAM CREATIVE SPACE','Build a feed worth looking at.','Create a cohesive Instagram visual world.',['Feed preview','Post design','Story templates','Highlights covers'],['Plan your 3×3 grid','Edit and design posts','Create story layouts','Design highlight covers']],pinterest:['PINTEREST CREATIVE SPACE','Collect your visual inspiration.','Create moodboards, pins and visual collections.',['Moodboard','Pin design','Collage','Colour palette'],['Collect references','Create beautiful pins','Mix images and textures','Find your signature colours']]}[name];document.getElementById('socialEyebrow').textContent=data[0];document.getElementById('socialHeading').textContent=data[1];document.getElementById('socialDescription').textContent=data[2];document.getElementById('formatGrid').innerHTML=data[3].map((x,i)=>`<button class="format" onclick="openFormat('${name}-${i}')"><strong>${x}</strong><p>${data[4][i]}</p></button>`).join('');backSocial()}
 function openFormat(format){document.getElementById('socialContent').classList.add('hidden');document.getElementById('socialWorkspace').classList.remove('hidden');document.getElementById('workspaceTitle').textContent=format.replaceAll('-',' ').replace(/\b\w/g,x=>x.toUpperCase())}
