@@ -203,6 +203,24 @@ Deno.serve(async (req) => {
 
     if (!isAdmin) return json({ error: "admin_only" }, 403);
 
+    if (action === "configure_payment_webhook") {
+      const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "";
+      if (!webhookSecret) return json({ error: "telegram_webhook_secret_missing" }, 500);
+      const webhookUrl = `${supabaseUrl}/functions/v1/quick-worker`;
+      await telegramApi("setWebhook", {
+        url: webhookUrl,
+        secret_token: webhookSecret,
+        allowed_updates: ["message", "pre_checkout_query"],
+        drop_pending_updates: false,
+      });
+      const info = await telegramApi("getWebhookInfo", {});
+      return json({
+        configured: info.url === webhookUrl,
+        pending_update_count: info.pending_update_count || 0,
+        last_error_message: info.last_error_message || null,
+      });
+    }
+
     if (action === "admin_list") {
       const [{ data: users, error: usersError }, { data: invites, error: invitesError }] = await Promise.all([
         db.from("moodcut_profiles").select("telegram_id,username,first_name,last_name,role,free_access,created_at,last_seen_at").order("created_at", { ascending: false }),
