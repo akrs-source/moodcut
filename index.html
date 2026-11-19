@@ -751,6 +751,11 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 }
 
 </style>
+<style id="mc-hide-retired-collections">
+/* Retired Collections and Saved areas — held out of navigation during rebuild */
+#discover,#style{display:none!important}
+#editor #editorSelectedStyle{display:none!important}
+</style>
 </head>
 <body>
 <div class="app">
@@ -758,8 +763,6 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <div class="layout">
 <aside class="mc-bottom-nav">
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>Home</button>
-<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></span>Collections</button>
-<button class="nav" onclick="showPage('style',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5A2.5 2.5 0 0 1 10.3 2.8L12 4.5l1.7-1.7A2.5 2.5 0 0 1 18 4.5c0 4-6 9-6 9S6 8.5 6 4.5Z"/><path d="M12 13.5V22"/></svg></span>Saved</button>
 <button class="nav" onclick="openMoodcutProfile(this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Profile</button>
 </aside>
 <main>
@@ -781,21 +784,13 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
         <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85" alt="Fashion portrait with sunglasses">
         <span class="mc-action-copy"><strong>Edit Photos</strong><small>Filters, effects, perfection</small></span><i>→</i>
       </button>
-      <button class="mc-action" onclick="showPage('discover')">
-        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85" alt="Laptop and creative workspace">
-        <span class="mc-action-copy"><strong>Create Moodboards</strong><small>Collect your inspiration</small></span><i>→</i>
-      </button>
       <button class="mc-action" onclick="showPage('social')">
         <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85" alt="Paris street and Eiffel Tower">
         <span class="mc-action-copy"><strong>Design for Socials</strong><small>Posts, covers, ideas</small></span><i>→</i>
       </button>
-      <button class="mc-action" onclick="showPage('discover')">
-        <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=900&q=85" alt="Burgundy silk fabric">
-        <span class="mc-action-copy"><strong>Find Your Aesthetic</strong><small>Explore styles &amp; palettes</small></span><i>→</i>
-      </button>
     </div>
   </section>
-  <div class="mc-note"><span class="mc-spark">✦</span><p>Your personal space for creativity,<br>inspiration and self-expression.</p><button onclick="showPage('style')">About MOODCUT <b>→</b></button></div>
+  <div class="mc-note"><span class="mc-spark">✦</span><p>Your personal space for creativity,<br>inspiration and self-expression.</p></div>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
@@ -820,7 +815,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <div class="preview mc-editor-photo-stage" role="button" tabindex="0" aria-label="Add or change photo" onclick="if(event.target.closest('button'))return;document.getElementById('editorPhotoInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('editorPhotoInput').click()}"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>＋</span><strong>ADD YOUR PHOTO</strong><small>Tap anywhere to choose from gallery</small></div><img id="photo"><div class="preview-label">MOODCUT · STUDIO</div><div class="mc-editor-actions" id="editorActions"><button type="button" class="mc-action-compare" onclick="event.stopPropagation();toggleBefore()">BEFORE / AFTER</button><button type="button" class="mc-action-save" id="editorSaveAction" onclick="event.stopPropagation();savePhoto()">SAVE PHOTO <span>↗</span></button></div><div class="mc-zoom-controls" onclick="event.stopPropagation()"><span>ZOOM</span><button type="button" aria-label="Zoom out" onclick="setEditorZoomBy(-0.25)">−</button><input id="editorZoom" type="range" min="1" max="2.5" step="0.05" value="1" aria-label="Photo zoom" oninput="setEditorZoom(this.value)"><button type="button" aria-label="Zoom in" onclick="setEditorZoomBy(0.25)">＋</button><button type="button" class="mc-zoom-reset" onclick="setEditorZoom(1)">RESET</button></div><input id="editorPhotoInput" class="mc-editor-photo-input" type="file" accept="image/*" onchange="loadPhoto(event)" aria-label="Choose photo"></div>
 <label class="upload mc-batch-upload"><input id="batchPhotoInput" type="file" accept="image/*" multiple onchange="loadBatchPhotos(event)"><span>＋ ADD 3–9 PHOTOS</span></label>
 <div id="batchWorkspace" class="mc-batch-workspace hidden"><div class="section-head"><h3>Batch preview</h3><span id="batchCount" class="eyebrow">0 PHOTOS</span></div><div id="batchGrid" class="mc-batch-grid"></div><button class="btn wine" onclick="saveBatchPhotos()">Save all photos</button></div>
-<div id="editorSelectedStyle" class="mc-editor-selected hidden"><div><span class="eyebrow">SELECTED STYLE</span><strong id="editorSelectedStyleName">Quiet Luxury</strong></div><button class="small-link" onclick="showPage('discover')">CHANGE STYLE ↗</button></div><div id="editorStylePicker"><div class="section-head"><h3>Camera profiles</h3></div><div class="presets mc-preset-gallery" id="editorPresets"><button class="preset mc-preset-card active" type="button" onclick="preset('Original',this)"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=80" alt="Original" loading="lazy"><span>Original</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Portra 400',this)"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=500&q=85" alt="Portra 400" loading="lazy"><span>Portra 400</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Digital Flash',this)"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=85" alt="Digital Flash" loading="lazy"><span>Digital Flash</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Classic Chrome',this)"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=500&q=85" alt="Classic Chrome" loading="lazy"><span>Classic Chrome</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Cinema 800',this)"><img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=500&q=85" alt="Cinema 800" loading="lazy"><span>Cinema 800</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Soft Optic',this)"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=500&q=85" alt="Soft Optic" loading="lazy"><span>Soft Optic</span><i>CAMERA PROFILE</i></button></div></div></div></div>
+<div id="editorStylePicker"><div class="section-head"><h3>Camera profiles</h3></div><div class="presets mc-preset-gallery" id="editorPresets"><button class="preset mc-preset-card active" type="button" onclick="preset('Original',this)"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=80" alt="Original" loading="lazy"><span>Original</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Portra 400',this)"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=500&q=85" alt="Portra 400" loading="lazy"><span>Portra 400</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Digital Flash',this)"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=85" alt="Digital Flash" loading="lazy"><span>Digital Flash</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Classic Chrome',this)"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=500&q=85" alt="Classic Chrome" loading="lazy"><span>Classic Chrome</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Cinema 800',this)"><img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=500&q=85" alt="Cinema 800" loading="lazy"><span>Cinema 800</span><i>CAMERA PROFILE</i></button><button class="preset mc-preset-card" type="button" onclick="preset('Soft Optic',this)"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=500&q=85" alt="Soft Optic" loading="lazy"><span>Soft Optic</span><i>CAMERA PROFILE</i></button></div></div></div></div>
 <div class="panel mc-editor-panels" id="mcEditorPanels">
 <div class="mc-tool-panel" data-panel="presets">
 <div class="section-head"><h3>01 · Choose your look</h3></div><p class="mc-editor-hint">Tap any preset to apply it. Swipe the cards sideways to see more looks.</p>
@@ -877,8 +872,6 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 </div>
 <div class="section-head"><h2>Your space</h2></div>
 <div class="mc-profile-links">
- <button class="mc-profile-link" onclick="showPage('style')"><span><strong>My Style</strong><small>Your signature look and saved styles</small></span><b>→</b></button>
- <button class="mc-profile-link" onclick="showPage('discover')"><span><strong>Collections</strong><small>Explore visual inspiration</small></span><b>→</b></button>
  <button class="mc-profile-link" onclick="showPage('editor')"><span><strong>Photo editor</strong><small>Continue creating</small></span><b>→</b></button>
  <button class="mc-profile-link" id="adminProfileLink" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
 </div>
