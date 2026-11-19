@@ -953,7 +953,7 @@ body.mc-studio-open #photoStudioPage{display:block!important;padding:0!important
 </div>
 <p class="sub mc-profile-note">MOODCUT · Your aesthetic. Your rules.</p>
 </section>
-<section id="admin" class="page hidden"><div class="eyebrow">MOODCUT CONTROL</div><h2>Admin panel</h2><p class="sub" id="adminWelcome">Manage users and free access.</p><div class="panel"><h3>Платежи MOODCUT PRO</h3><p class="sub">Подключение подтверждения оплат Telegram Stars.</p><button class="btn wine" onclick="configureMoodcutPayments()">Подключить обработчик оплаты</button><div id="paymentWebhookStatus" class="sub" style="margin-top:10px"></div></div><div class="panel"><h3>Create invitation</h3><div class="control"><label>Number of uses</label><input id="inviteUses" type="number" min="1" max="100" value="1" style="width:100%;padding:12px;border:1px solid var(--line)"></div><div class="control"><label>Expires in days (0 = no expiration)</label><input id="inviteDays" type="number" min="0" value="7" style="width:100%;padding:12px;border:1px solid var(--line)"></div><button class="btn wine" onclick="createMoodcutInvite()">Create invite link</button><div id="inviteResult" class="sub" style="margin-top:14px;overflow-wrap:anywhere"></div></div><div class="section-head"><h2>Users</h2><button class="small-link" onclick="loadAdminData()">REFRESH ↻</button></div><div id="adminUsers" class="panel"><p class="sub">Loading users…</p></div><div class="section-head"><h2>Invitations</h2></div><div id="adminInvites" class="panel"><p class="sub">Loading invitations…</p></div></section><footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
+<section id="admin" class="page hidden"><div class="eyebrow">MOODCUT CONTROL</div><h2>Admin panel</h2><p class="sub" id="adminWelcome">Manage users and free access.</p><div class="panel"><h3>История оплат</h3><p class="sub">Все успешные платежи MOODCUT PRO через Telegram Stars.</p><div id="adminPayments"><p class="sub">Загрузка платежей…</p></div></div><div class="panel"><h3>Обработчик Telegram</h3><p class="sub">Техническая настройка подтверждения платежей.</p><button class="btn light" onclick="configureMoodcutPayments()">Проверить подключение</button><div id="paymentWebhookStatus" class="sub" style="margin-top:10px"></div></div><div class="panel"><h3>Create invitation</h3><div class="control"><label>Number of uses</label><input id="inviteUses" type="number" min="1" max="100" value="1" style="width:100%;padding:12px;border:1px solid var(--line)"></div><div class="control"><label>Expires in days (0 = no expiration)</label><input id="inviteDays" type="number" min="0" value="7" style="width:100%;padding:12px;border:1px solid var(--line)"></div><button class="btn wine" onclick="createMoodcutInvite()">Create invite link</button><div id="inviteResult" class="sub" style="margin-top:14px;overflow-wrap:anywhere"></div></div><div class="section-head"><h2>Users</h2><button class="small-link" onclick="loadAdminData()">REFRESH ↻</button></div><div id="adminUsers" class="panel"><p class="sub">Loading users…</p></div><div class="section-head"><h2>Invitations</h2></div><div id="adminInvites" class="panel"><p class="sub">Loading invitations…</p></div></section><footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
 <script>
 let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
 let smartApplyEnabled=false,moodcutBaseValues=null,generatedPalettePreviewImage='',generatedPaletteProfile=null;
@@ -1095,7 +1095,7 @@ async function initMoodcutAccount(){
  tg.ready();tg.expand();
  try{
   const result=await moodcutApi("me");moodcutProfile=result.profile;
-  if(result.isAdmin){document.getElementById("adminAccess").style.display="grid";document.getElementById("adminWelcome").textContent="Администратор · Telegram ID "+moodcutProfile.telegram_id;await loadAdminData();}
+  if(result.isAdmin){document.getElementById("adminAccess").style.display="grid";document.getElementById("adminProfileLink").style.display="flex";document.getElementById("adminWelcome").textContent="Администратор · Telegram ID "+moodcutProfile.telegram_id;await loadAdminData();}
   const startParam=tg.initDataUnsafe&&tg.initDataUnsafe.start_param;
   if(startParam){const redeemed=await moodcutApi("redeem_invite",{inviteToken:startParam});moodcutProfile=redeemed.profile||moodcutProfile;notify("Бесплатный доступ активирован.");}
  }catch(e){notify(e.message||"Не удалось войти.");}
@@ -1112,7 +1112,7 @@ async function configureMoodcutPayments(){
  }
 async function loadAdminData(){
  try{
-  const d=await moodcutApi("admin_list");const users=d.users||[];const invites=d.invites||[];
+  const d=await moodcutApi("admin_list");const users=d.users||[];const invites=d.invites||[];const payments=d.payments||[];const subscriptions=d.subscriptions||[];
   document.getElementById("adminUsers").innerHTML=users.length?users.map(function(u){
    const label=[u.first_name,u.last_name].filter(Boolean).join(" ")||(u.username?"@"+u.username:"Пользователь");
    return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(label)+'</strong><div class="sub">ID: '+moodcutEscape(u.telegram_id)+' · '+(u.free_access?"Бесплатный доступ":"Обычный доступ")+'</div><button class="small-link" onclick="setMoodcutAccess(\''+moodcutEscape(u.telegram_id)+'\','+(!u.free_access)+')">'+(u.free_access?"ОТКЛЮЧИТЬ БЕСПЛАТНЫЙ ДОСТУП":"ДАТЬ БЕСПЛАТНЫЙ ДОСТУП")+'</button></div>';
@@ -1120,6 +1120,14 @@ async function loadAdminData(){
   document.getElementById("adminInvites").innerHTML=invites.length?invites.map(function(i){
    return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(i.uses_count)+' / '+moodcutEscape(i.max_uses)+' использований</strong><div class="sub">'+(i.revoked_at?"Отозвана":(i.expires_at?"Истекает: "+moodcutEscape(new Date(i.expires_at).toLocaleString()):"Без срока действия"))+'</div>'+(i.revoked_at?"":'<button class="small-link" onclick="revokeMoodcutInvite(\''+moodcutEscape(i.id)+'\')">ОТОЗВАТЬ ССЫЛКУ</button>')+'</div>';
   }).join(""):'<p class="sub">Приглашений пока нет.</p>';
+  const paymentBox=document.getElementById("adminPayments");
+  paymentBox.innerHTML=payments.length?payments.map(function(p){
+   const user=users.find(function(u){return String(u.telegram_id)===String(p.telegram_id)})||{};
+   const label=[user.first_name,user.last_name].filter(Boolean).join(" ")||(user.username?"@"+user.username:"Пользователь");
+   const sub=subscriptions.find(function(x){return String(x.telegram_id)===String(p.telegram_id)});
+   const expiry=sub&&sub.current_period_end?new Date(sub.current_period_end).toLocaleString("ru-RU"):"—";
+   return '<div style="padding:13px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(label)+' · '+moodcutEscape(p.total_amount)+' ⭐</strong><div class="sub">Telegram ID: '+moodcutEscape(p.telegram_id)+'</div><div class="sub">Оплата: '+moodcutEscape(new Date(p.created_at).toLocaleString("ru-RU"))+' · Подписка до: '+moodcutEscape(expiry)+'</div><div class="sub">Статус: '+(sub&&sub.status==="active"&&new Date(sub.current_period_end).getTime()>Date.now()?"Активна":"Не активна")+'</div></div>';
+  }).join(""):'<p class="sub">Оплат пока нет.</p>';
  }catch(e){document.getElementById("adminUsers").textContent=e.message;}
 }
 async function copyMoodcutInvite(url){
