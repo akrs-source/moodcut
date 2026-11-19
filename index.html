@@ -613,12 +613,13 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
  }
  #editor .preview .empty{font-size:12px;color:#aaa}
  #editor .preview-label{top:9px!important;left:9px!important;padding:6px 8px!important;font-size:7px!important;background:rgba(20,18,17,.65)!important;color:#eee!important}
- #editor .upload{
-  position:absolute!important;z-index:5!important;top:9px!important;left:9px!important;margin:0!important;
-  display:block!important
+ #editor .mc-photo-upload{
+  position:absolute!important;z-index:8!important;top:auto!important;left:12px!important;bottom:12px!important;
+  display:block!important;margin:0!important;pointer-events:auto!important
  }
- #editor .upload span{padding:7px 9px!important;border:1px solid rgba(255,255,255,.4)!important;
-  border-radius:4px!important;background:rgba(20,18,17,.65)!important;color:#fff!important;font-size:7px!important}
+ #editor .mc-photo-upload input{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;z-index:9!important;cursor:pointer!important}
+ #editor .mc-photo-upload span{display:block!important;padding:11px 14px!important;border:1px solid rgba(255,255,255,.55)!important;
+  border-radius:5px!important;background:rgba(20,18,17,.82)!important;color:#fff!important;font-size:9px!important;letter-spacing:1.2px!important;pointer-events:none!important}
  #editor .mc-batch-upload,#editor #batchWorkspace{display:none!important}
  #editor .editor-grid>.btn.light{
   position:absolute!important;z-index:5!important;top:9px!important;right:9px!important;margin:0!important;
@@ -739,8 +740,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <button class="mc-tool" type="button" data-tool="film" onclick="switchEditorTool('film',this)"><span>▧</span><small>Film</small></button>
 <button class="mc-tool" type="button" data-tool="lens" onclick="switchEditorTool('lens',this)"><span>◎</span><small>Lens</small></button>
 </div>
-<div class="preview"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><div class="preview-label">MOODCUT EDITOR</div></div>
-<label class="upload"><input type="file" accept="image/*" onchange="loadPhoto(event)"><span>＋ UPLOAD PHOTO</span></label>
+<div class="preview"><div class="mc-grain-overlay" id="editorGrain"></div><div class="mc-vignette-overlay" id="editorVignette"></div><div class="mc-matte-overlay" id="editorMatte"></div><div class="mc-gobo-overlay" id="editorGobo"></div><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><label class="upload mc-photo-upload"><input type="file" accept="image/*" onchange="loadPhoto(event)"><span>＋ ADD PHOTO</span></label><div class="preview-label">MOODCUT EDITOR</div></div>
 <label class="upload mc-batch-upload"><input id="batchPhotoInput" type="file" accept="image/*" multiple onchange="loadBatchPhotos(event)"><span>＋ ADD 3–9 PHOTOS</span></label>
 <div id="batchWorkspace" class="mc-batch-workspace hidden"><div class="section-head"><h3>Batch preview</h3><span id="batchCount" class="eyebrow">0 PHOTOS</span></div><div id="batchGrid" class="mc-batch-grid"></div><button class="btn wine" onclick="saveBatchPhotos()">Save all photos</button></div>
 <button class="btn light" onclick="toggleBefore()">BEFORE / AFTER</button><div id="editorSelectedStyle" class="mc-editor-selected hidden"><div><span class="eyebrow">SELECTED STYLE</span><strong id="editorSelectedStyleName">Quiet Luxury</strong></div><button class="small-link" onclick="showPage('discover')">CHANGE STYLE ↗</button></div><div id="editorStylePicker"><div class="section-head"><h3>Presets</h3></div>
