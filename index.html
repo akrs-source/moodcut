@@ -26,6 +26,54 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 .upload{display:inline-block;margin-top:14px}.upload input{display:none}.upload span{display:inline-block;padding:13px 16px;border:1px solid var(--ink);font-size:9px;letter-spacing:1px;cursor:pointer}.control{margin:17px 0}.control label{display:flex;justify-content:space-between;font-size:10px;margin-bottom:9px}.control input[type=range]{width:100%;accent-color:var(--wine)}.presets{display:flex;gap:8px;flex-wrap:wrap}.preset{background:#eee6dc;border:1px solid transparent;padding:10px 13px;font-size:10px}.preset.active{border-color:var(--wine);color:var(--wine)}
 .feed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.feed-grid img{width:100%;aspect-ratio:1;object-fit:cover}.empty-cell{aspect-ratio:1;background:#e9e1d7;display:grid;place-items:center;color:#988c82;font-size:10px}.channel-preview{max-width:500px;margin:auto;background:#e8e2da;padding:20px}.channel-top{font-family:'Playfair Display',serif;font-size:25px;text-align:center;padding:20px;background:#f7f2eb;margin-bottom:14px}.post{background:white;margin:12px 0;padding:14px}.post img{width:100%;max-height:240px;object-fit:cover}.post p{font-size:11px;line-height:1.7;margin:10px 0 0}.moodboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.moodboard img{width:100%;aspect-ratio:1;object-fit:cover}.swatches{display:flex;gap:10px;margin:18px 0}.swatch{width:42px;height:42px;border-radius:50%}.style-card{background:var(--paper);padding:25px;margin-top:20px}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;font-size:11px;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1}footer{padding:30px;text-align:center;color:var(--muted);font-size:9px;letter-spacing:3px}
 @media(max-width:700px){header{height:62px;padding:0 18px}.logo{font-size:23px}.layout{display:block;padding-bottom:65px}aside{position:fixed;z-index:10;bottom:0;left:0;right:0;height:62px;background:var(--bg);border-top:1px solid var(--line);border-right:0;padding:4px 3px;display:flex;justify-content:space-around}.nav-label{display:none}.nav{display:flex;flex-direction:column;gap:2px;padding:6px 2px;margin:0;width:20%;font-size:9px;text-align:center;justify-content:center}.nav-icon{font-size:16px}main{padding:26px 17px}.hero{grid-template-columns:1fr;gap:17px;margin-bottom:35px}.hero-image{height:280px;grid-row:1}.hero-copy{padding:0}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.aesthetic img{height:145px}.aesthetic div{padding:10px}.editor-grid{grid-template-columns:1fr}.preview{min-height:290px}.social-cards{gap:8px}.social-card{padding:18px 7px}.social-card strong{font-size:15px}.panel{padding:16px}h2{font-size:30px}}
+
+/* Editorial home refresh */
+.home-editorial{--home-bg:#171513;--home-cream:#eee6dc;background:var(--home-bg);color:var(--home-cream);margin:-38px -5% 0;padding:0 5% 42px;overflow:hidden}
+.home-editorial h1,.home-editorial h2,.home-editorial h3{color:var(--home-cream)}
+.home-hero{min-height:440px;display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;padding:38px 0 54px}
+.home-hero-copy{padding:20px 0;position:relative;z-index:1}.home-brandline{font-family:'Playfair Display',serif;font-size:17px;letter-spacing:3px;margin-bottom:46px;color:#c9b9ac}
+.home-editorial .eyebrow,.home-kicker{color:#b58a91;font-size:9px;letter-spacing:2.5px}
+.home-editorial h1{font-size:clamp(42px,5.4vw,69px);line-height:1.04;margin:18px 0 20px;letter-spacing:-1.5px}
+.home-lead{font-size:13px;line-height:1.85;color:#bdb2a9;max-width:390px;margin:0 0 28px}
+.home-cta{background:#e9ded2;color:#211e1c;border:0;padding:17px 23px;min-width:205px;display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:1.7px}
+.home-cta span{font-size:18px}.home-hero-photo{height:390px;position:relative;overflow:hidden;background:#54483f}
+.home-hero-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.38),transparent 35%)}
+.home-hero-photo img{width:100%;height:100%;object-fit:cover;filter:sepia(.16) brightness(.78)}
+.photo-caption{position:absolute;z-index:1;bottom:18px;left:20px;font-size:8px;letter-spacing:2px;color:#f3eae0}
+.home-intro-row,.home-inspiration-head{display:flex;justify-content:space-between;align-items:end;margin:10px 0 22px}
+.home-editorial h2{font-size:31px;margin:9px 0 0}.home-index{font-size:9px;letter-spacing:2px;color:#82766e}
+.home-actions{display:grid;grid-template-columns:1.15fr 1fr 1fr;grid-template-rows:210px 210px;gap:12px}
+.home-action{position:relative;overflow:hidden;border:0;padding:0;text-align:left;background:#302a26;color:#fff;min-width:0}
+.home-action:first-child{grid-row:span 2}.home-action img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.68) saturate(.72);transition:transform .5s}
+.home-action:hover img,.inspiration-card:hover img{transform:scale(1.04)}
+.home-action:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,11,10,.78),transparent 70%)}
+.home-action span{position:absolute;z-index:1}.action-no{top:16px;left:17px;font-size:8px;letter-spacing:2px;color:#e4d8cd}
+.action-title{left:18px;bottom:43px;font:22px 'Playfair Display',serif}.action-sub{left:18px;bottom:20px;font-size:10px;color:#d1c5bb}.action-arrow{right:17px;bottom:19px;font-size:19px}
+.home-inspiration-head{margin-top:62px}.home-inspiration-head p{font-size:11px;color:#a99e95;margin:9px 0 0}
+.home-text-link,.home-bottom-note button{border:0;background:none;color:#d7b8b7;font-size:8px;letter-spacing:1.5px;padding:10px 0}
+.inspiration-grid{columns:3;column-gap:12px}
+.inspiration-card{position:relative;display:block;width:100%;padding:0;margin:0 0 12px;border:0;overflow:hidden;background:#302a26;break-inside:avoid;text-align:left}
+.inspiration-card img{display:block;width:100%;height:auto;min-height:150px;object-fit:cover;transition:transform .5s;filter:saturate(.78)}
+.inspiration-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.5))}
+.inspiration-card span{position:absolute;z-index:1;bottom:13px;left:13px;color:#fff;font-size:8px;letter-spacing:1.6px}
+.insp-1 img{height:310px}.insp-2 img{height:210px}.insp-3 img{height:270px}.insp-4 img{height:230px}.insp-5 img{height:190px}.insp-6 img{height:260px}
+.home-bottom-note{display:flex;align-items:center;gap:16px;border-top:1px solid #39332e;border-bottom:1px solid #39332e;margin-top:38px;padding:17px 0}
+.home-bottom-note>span{font-size:24px;color:#b58a91}.home-bottom-note p{font:16px 'Playfair Display',serif;color:#d6cbc1;margin:0;flex:1}.home-bottom-note button{white-space:nowrap}
+@media(max-width:700px){
+.home-editorial{margin:-26px -17px 0;padding:0 17px 32px}
+.home-hero{grid-template-columns:1fr;gap:18px;padding:22px 0 40px;min-height:0}
+.home-brandline{margin-bottom:30px;font-size:15px}.home-hero-copy{padding:0}
+.home-editorial h1{font-size:46px;margin:13px 0 15px}.home-lead{font-size:12px;max-width:320px}
+.home-hero-photo{height:310px;grid-row:1}.home-intro-row{margin-top:5px}.home-editorial h2{font-size:27px}
+.home-actions{grid-template-columns:1fr 1fr;grid-template-rows:220px 170px;gap:9px}
+.home-action:first-child{grid-row:auto;grid-column:span 2;height:245px}
+.action-title{font-size:19px;left:13px;bottom:40px}.action-sub{left:13px;bottom:18px;font-size:9px}.action-no{left:13px;top:13px}
+.home-inspiration-head{margin-top:43px;gap:10px}.home-inspiration-head h2{font-size:27px}.home-inspiration-head p{max-width:220px;line-height:1.6}
+.inspiration-grid{columns:2;column-gap:9px}.inspiration-card{margin-bottom:9px}
+.insp-1 img{height:230px}.insp-2 img{height:170px}.insp-3 img{height:205px}.insp-4 img{height:190px}.insp-5 img{height:150px}.insp-6 img{height:210px}
+.home-bottom-note{gap:10px}.home-bottom-note p{font-size:14px;line-height:1.4}.home-bottom-note button{font-size:7px}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -40,18 +88,38 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 <button class="nav" onclick="showPage('social',this)"><span class="nav-icon">▤</span>Social Studio</button>
 <div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
 <main>
-<section id="home" class="page">
-<div class="hero"><div class="hero-copy"><div class="eyebrow">YOUR PERSONAL AESTHETIC EDITOR</div><h1>Your aesthetic.<br>Your rules.</h1><p class="sub">Create a visual world that feels like you. Edit photos, build beautiful feeds and find your signature style.</p><button class="btn" onclick="showPage('editor')">Create new edit ↗</button></div>
-<div class="hero-image"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900"><div class="hero-tag">The art of being you.</div></div></div>
-<div class="section-head"><h2>Explore aesthetics</h2><button class="small-link" onclick="showPage('discover')">VIEW ALL ↗</button></div>
-<div class="cards">
-<button class="aesthetic" onclick="selectStyle('Old Money')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500"><div><strong>Old Money</strong><p>Quiet elegance</p></div></button>
-<button class="aesthetic" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=500"><div><strong>Vintage Film</strong><p>Memories in frames</p></div></button>
-<button class="aesthetic" onclick="selectStyle('Dark Romance')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500"><div><strong>Dark Romance</strong><p>Soft and mysterious</p></div></button></div>
-<div class="section-head"><h2>Creative space</h2></div><div class="cards">
-<button class="panel" onclick="showPage('editor')">✳<h3>Photo Editor</h3><p class="sub">Make every image yours.</p></button>
-<button class="panel" onclick="showPage('social')">▤<h3>Social Studio</h3><p class="sub">Create for every platform.</p></button>
-<button class="panel" onclick="showPage('style')">♡<h3>My Style</h3><p class="sub">Collect your visual identity.</p></button></div></section>
+<section id="home" class="page home-editorial">
+<div class="home-hero">
+  <div class="home-hero-copy">
+    <div class="home-brandline">MOODCUT · YOUR VISUAL WORLD</div>
+    <div class="eyebrow">CREATE · CURATE · EXPRESS</div>
+    <h1>Your visual identity<br>starts here.</h1>
+    <p class="home-lead">A space to shape your aesthetic. Edit photos, collect inspiration and create a visual style that feels like you.</p>
+    <button class="home-cta" onclick="showPage('editor')">START CREATING <span>↗</span></button>
+  </div>
+  <div class="home-hero-photo">
+    <img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=1000" alt="Classical art and sculpture">
+    <span class="photo-caption">01 / THE ART OF SEEING</span>
+  </div>
+</div>
+<div class="home-intro-row"><div><div class="home-kicker">YOUR CREATIVE SPACE</div><h2>What inspires you today?</h2></div><span class="home-index">01 — 04</span></div>
+<div class="home-actions">
+  <button class="home-action action-tall" onclick="showPage('editor')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800" alt=""><span class="action-no">01</span><span class="action-title">Edit your photos</span><span class="action-sub">Find your signature look</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('discover')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=800" alt=""><span class="action-no">02</span><span class="action-title">Explore aesthetics</span><span class="action-sub">Discover moods & colours</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('social')"><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800" alt=""><span class="action-no">03</span><span class="action-title">Create for socials</span><span class="action-sub">Make every detail count</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('style')"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800" alt=""><span class="action-no">04</span><span class="action-title">Build your style</span><span class="action-sub">Collect what feels like you</span><span class="action-arrow">↗</span></button>
+</div>
+<div class="home-inspiration-head"><div><div class="home-kicker">A LITTLE VISUAL INSPIRATION</div><h2>Collected moments.</h2><p>Ideas, textures and places to start somewhere beautiful.</p></div><button class="home-text-link" onclick="showPage('discover')">EXPLORE ALL ↗</button></div>
+<div class="inspiration-grid">
+  <button class="inspiration-card insp-1" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800" alt="Fashion editorial"><span>FASHION / 01</span></button>
+  <button class="inspiration-card insp-2" onclick="selectStyle('Slow Living')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800" alt="Flowers"><span>STILL LIFE / 02</span></button>
+  <button class="inspiration-card insp-3" onclick="selectStyle('Warm Minimalism')"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800" alt="Interior"><span>SPACES / 03</span></button>
+  <button class="inspiration-card insp-4" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800" alt="Landscape"><span>PLACES / 04</span></button>
+  <button class="inspiration-card insp-5" onclick="selectStyle('Artful Details')"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800" alt="Artwork"><span>ART / 05</span></button>
+  <button class="inspiration-card insp-6" onclick="selectStyle('Soft Romance')"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800" alt="Flowers and details"><span>DETAILS / 06</span></button>
+</div>
+<div class="home-bottom-note"><span>✳</span><p>Not just editing. A place to discover what feels like you.</p><button onclick="showPage('style')">YOUR STYLE ↗</button></div>
+</section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
 <div class="cards" id="styleCards">
@@ -170,7 +238,7 @@ window.addEventListener("load",initMoodcutAccount);
 <script>
 (function(){
 const enToRu={
-"MENU":"МЕНЮ","PERSONAL":"ЛИЧНОЕ","Home":"Главная","Discover":"Обзор","Editor":"Редактор","Social Studio":"Социальная студия","My Style":"Мой стиль",
+"MENU":"МЕНЮ","YOUR VISUAL WORLD":"ТВОЙ ВИЗУАЛЬНЫЙ МИР","CREATE · CURATE · EXPRESS":"СОЗДАВАЙ · СОБИРАЙ · ВЫРАЖАЙ","Your visual identity":"Твоя визуальная идентичность","starts here.":"начинается здесь.","A space to shape your aesthetic. Edit photos, collect inspiration and create a visual style that feels like you.":"Пространство для создания своей эстетики. Редактируй фото, собирай вдохновение и создавай визуальный стиль, который отражает тебя.","START CREATING":"НАЧАТЬ СОЗДАВАТЬ","THE ART OF SEEING":"ИСКУССТВО ВИДЕТЬ","YOUR CREATIVE SPACE":"ТВОЁ ТВОРЧЕСКОЕ ПРОСТРАНСТВО","What inspires you today?":"Что вдохновляет тебя сегодня?","Edit your photos":"Обрабатывай фото","Find your signature look":"Найди свой фирменный стиль","Explore aesthetics":"Исследуй эстетику","Discover moods & colours":"Открывай настроения и цвета","Create for socials":"Создавай для соцсетей","Make every detail count":"Важна каждая деталь","Build your style":"Создавай свой стиль","Collect what feels like you":"Собирай то, что отражает тебя","A LITTLE VISUAL INSPIRATION":"НЕМНОГО ВИЗУАЛЬНОГО ВДОХНОВЕНИЯ","Collected moments.":"Собранные моменты.","Ideas, textures and places to start somewhere beautiful.":"Идеи, текстуры и места, с которых начинается что-то красивое.","EXPLORE ALL ↗":"СМОТРЕТЬ ВСЁ ↗","Not just editing. A place to discover what feels like you.":"Не просто редактор. Место, где можно найти то, что отражает тебя.","YOUR STYLE ↗":"ТВОЙ СТИЛЬ ↗","PERSONAL":"ЛИЧНОЕ","Home":"Главная","Discover":"Обзор","Editor":"Редактор","Social Studio":"Социальная студия","My Style":"Мой стиль",
 "YOUR PERSONAL AESTHETIC EDITOR":"ТВОЙ ПЕРСОНАЛЬНЫЙ РЕДАКТОР ЭСТЕТИКИ","Your aesthetic.":"Твоя эстетика.","Your rules.":"Твои правила.",
 "Create a visual world that feels like you. Edit photos, build beautiful feeds and find your signature style.":"Создавай визуальный мир, который отражает тебя. Редактируй фото, оформляй ленты и находи свой стиль.",
 "Create new edit ↗":"Создать новый образ ↗","The art of being you.":"Искусство быть собой.","Explore aesthetics":"Исследуй эстетику","VIEW ALL ↗":"СМОТРЕТЬ ВСЁ ↗",
