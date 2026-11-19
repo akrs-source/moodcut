@@ -142,11 +142,24 @@ async function loadAdminData(){
   }).join(""):'<p class="sub">Приглашений пока нет.</p>';
  }catch(e){document.getElementById("adminUsers").textContent=e.message;}
 }
+async function copyMoodcutInvite(url){
+ let copied=false;
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);copied=true;}}catch(e){}
+ if(!copied){
+  const field=document.createElement("textarea");field.value=url;field.setAttribute("readonly","");field.style.position="fixed";field.style.opacity="0";document.body.appendChild(field);field.select();
+  try{copied=document.execCommand("copy");}catch(e){}
+  field.remove();
+ }
+ notify(copied?"Ссылка скопирована.":"Не удалось скопировать. Нажми и удерживай ссылку, чтобы скопировать её вручную.");
+}
 async function createMoodcutInvite(){
  try{
   const maxUses=Number(document.getElementById("inviteUses").value||1);const expiresInDays=Number(document.getElementById("inviteDays").value||0);
   const d=await moodcutApi("create_invite",{maxUses:maxUses,expiresInDays:expiresInDays});
-  document.getElementById("inviteResult").textContent="Ссылка создана: "+d.inviteUrl;
+  const result=document.getElementById("inviteResult");result.innerHTML="";
+  const link=document.createElement("div");link.textContent=d.inviteUrl;link.style="overflow-wrap:anywhere;margin-bottom:10px";
+  const copy=document.createElement("button");copy.type="button";copy.className="btn wine";copy.textContent="COPY LINK";copy.addEventListener("click",()=>copyMoodcutInvite(d.inviteUrl));
+  result.append(link,copy);
   await loadAdminData();
  }catch(e){notify(e.message);}
 }
