@@ -495,6 +495,39 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 .mc-gobo-overlay{background:repeating-linear-gradient(112deg,transparent 0 16px,rgba(12,10,9,.28) 18px 24px,transparent 27px 43px);mix-blend-mode:multiply}
 .preview .mc-matte-overlay,.preview .mc-gobo-overlay{z-index:3}
 #photo{position:relative;z-index:1}
+
+/* Editor usability: persistent live preview + visual preset browser */
+@media(max-width:700px){
+ #editor .editor-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+ #editor .editor-grid>div:first-child{display:contents}
+ #editor .editor-grid>.panel{grid-column:1;grid-row:auto;margin-top:2px}
+ #editor .preview{position:sticky;top:68px;z-index:30;align-self:start;min-height:0;height:clamp(190px,34vh,285px);margin:0 -2px 4px;border-radius:14px!important;background:#101010!important;box-shadow:0 10px 28px rgba(0,0,0,.42)}
+ #editor .preview img{width:100%;height:100%;max-height:none;object-fit:contain}
+ #editor .preview .empty{font-size:11px}
+ #editor .upload,#editor .mc-batch-upload,#editor #batchWorkspace,#editor .editor-grid>.btn,#editor #editorSelectedStyle,#editor #editorStylePicker{grid-column:1}
+ #editor #editorStylePicker{margin-top:6px}
+ #editor .mc-smart-apply-row{margin:10px 0 13px}
+ #editor .mc-preset-gallery{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding:2px 2px 12px;margin:0 -2px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+ #editor .mc-preset-card{position:relative;flex:0 0 118px;width:118px;height:150px;padding:0!important;overflow:hidden;border-radius:12px!important;scroll-snap-align:start;background:#171717!important;border:1px solid rgba(255,255,255,.12)!important;text-align:left}
+ #editor .mc-preset-card img{width:100%;height:100%;object-fit:cover;display:block;opacity:.78;transition:opacity .2s}
+ #editor .mc-preset-card:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.88));pointer-events:none}
+ #editor .mc-preset-card span{position:absolute;z-index:1;left:9px;right:7px;bottom:25px;color:#fff!important;font:500 14px/1.1 'Cormorant Garamond',serif;letter-spacing:0}
+ #editor .mc-preset-card i{position:absolute;z-index:1;left:9px;bottom:9px;color:rgba(255,255,255,.72);font:8px 'DM Mono',monospace;font-style:normal;letter-spacing:.08em}
+ #editor .mc-preset-card.active{outline:2px solid #e7d8cc;outline-offset:-2px}
+ #editor .mc-preset-card.active img{opacity:1}
+ #editor .panel{padding:17px!important}
+ #editor .control{margin:20px 0}
+}
+@media(min-width:701px){
+ #editor .mc-preset-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+ #editor .mc-preset-card{position:relative;height:128px;overflow:hidden;padding:0!important;border-radius:10px!important;text-align:left}
+ #editor .mc-preset-card img{width:100%;height:100%;object-fit:cover;display:block;opacity:.78}
+ #editor .mc-preset-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+ #editor .mc-preset-card span{position:absolute;z-index:1;left:11px;bottom:11px;color:#fff!important;font:500 16px 'Cormorant Garamond',serif}
+ #editor .mc-preset-card i{display:none}
+ #editor .mc-preset-card.active{outline:2px solid #e7d8cc;outline-offset:-2px}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -562,7 +595,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <label class="upload mc-batch-upload"><input id="batchPhotoInput" type="file" accept="image/*" multiple onchange="loadBatchPhotos(event)"><span>＋ ADD 3–9 PHOTOS</span></label>
 <div id="batchWorkspace" class="mc-batch-workspace hidden"><div class="section-head"><h3>Batch preview</h3><span id="batchCount" class="eyebrow">0 PHOTOS</span></div><div id="batchGrid" class="mc-batch-grid"></div><button class="btn wine" onclick="saveBatchPhotos()">Save all photos</button></div>
 <button class="btn light" onclick="toggleBefore()">BEFORE / AFTER</button><div id="editorSelectedStyle" class="mc-editor-selected hidden"><div><span class="eyebrow">SELECTED STYLE</span><strong id="editorSelectedStyleName">Quiet Luxury</strong></div><button class="small-link" onclick="showPage('discover')">CHANGE STYLE ↗</button></div><div id="editorStylePicker"><div class="section-head"><h3>Presets</h3></div>
-<div class="mc-smart-apply-row"><span><strong>Smart Apply</strong><small id="smartApplyStatus">Adapts the look to your photo</small></span><button type="button" class="mc-smart-toggle active" id="smartApplyToggle" onclick="toggleSmartApply()">ON</button></div><div class="presets" id="editorPresets"><button class="preset active" onclick="preset('Original',this)">Original</button><button class="preset" onclick="preset('Quiet Luxury',this)">Quiet Luxury</button><button class="preset" onclick="preset('Editorial Minimal',this)">Editorial Minimal</button><button class="preset" onclick="preset('Raw 35mm',this)">Raw 35mm</button><button class="preset" onclick="preset('Neo-Noir',this)">Neo-Noir</button><button class="preset" onclick="preset('Dark Romance',this)">Dark Romance</button><button class="preset" onclick="preset('Coquette',this)">Coquette</button><button class="preset" onclick="preset('Italian Summer',this)">Italian Summer</button><button class="preset" onclick="preset('Nordic Minimalism',this)">Nordic Minimalism</button><button class="preset" onclick="preset('Clean Girl',this)">Clean Girl</button></div></div></div>
+<div class="mc-smart-apply-row"><span><strong>Smart Apply</strong><small id="smartApplyStatus">Adapts the look to your photo</small></span><button type="button" class="mc-smart-toggle active" id="smartApplyToggle" onclick="toggleSmartApply()">ON</button></div><div class="presets mc-preset-gallery" id="editorPresets"><button class="preset mc-preset-card active" onclick="preset('Original',this)"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=80" alt="Original" loading="lazy"><span>Original</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Quiet Luxury',this)"><img src="https://www.iluminedecor.com/cdn/shop/files/lumina12ria-de-mesa-abajur-led-integrado-sem-fio_800x.webp?v=1765315250" alt="Quiet Luxury" loading="lazy"><span>Quiet Luxury</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Editorial Minimal',this)"><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=500&q=80" alt="Editorial Minimal" loading="lazy"><span>Editorial Minimal</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Raw 35mm',this)"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=500&q=80" alt="Raw 35mm" loading="lazy"><span>Raw 35mm</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Neo-Noir',this)"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80" alt="Neo-Noir" loading="lazy"><span>Neo-Noir</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Dark Romance',this)"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=500&q=80" alt="Dark Romance" loading="lazy"><span>Dark Romance</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Coquette',this)"><img src="https://i.postimg.cc/4ndzKn4G/IMG-5992.jpg" alt="Coquette" loading="lazy"><span>Coquette</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Italian Summer',this)"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=500&q=80" alt="Italian Summer" loading="lazy"><span>Italian Summer</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Nordic Minimalism',this)"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=500&q=80" alt="Nordic Minimalism" loading="lazy"><span>Nordic Minimalism</span><i>PREVIEW ↗</i></button><button class="preset mc-preset-card" onclick="preset('Clean Girl',this)"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80" alt="Clean Girl" loading="lazy"><span>Clean Girl</span><i>PREVIEW ↗</i></button></div></div></div>
 <div class="panel"><h3>Adjustments</h3><div class="eyebrow">LIGHT</div>
 <div class="control"><label>Brightness <span id="brightnessVal">100</span></label><input type="range" min="50" max="150" value="100" id="brightness" oninput="adjust()"></div>
 <div class="control"><label>Contrast <span id="contrastVal">100</span></label><input type="range" min="50" max="160" value="100" id="contrast" oninput="adjust()"></div>
