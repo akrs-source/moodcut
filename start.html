@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOODCUT — Your Aesthetic. Your Rules.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f2ec;--paper:#fffdf9;--ink:#211e1c;--wine:#713344;--muted:#958b82;--line:#e8e0d7;--soft:#eee6dc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1250px;margin:auto;min-height:100vh}header{height:78px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.logo{font-family:'Playfair Display',serif;font-size:29px;letter-spacing:3px}.logo span{color:var(--wine)}.header-right{display:flex;align-items:center;gap:18px}.lang{border:0;background:none;font-size:11px;letter-spacing:1px}.avatar{width:34px;height:34px;border-radius:50%;background:var(--wine);color:white;display:grid;place-items:center}
+.layout{display:grid;grid-template-columns:205px 1fr;min-height:calc(100vh - 78px)}aside{padding:30px 18px;border-right:1px solid var(--line)}.nav-label{font-size:9px;letter-spacing:2px;color:var(--muted);margin:22px 10px 12px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;padding:13px 12px;text-align:left;color:#756d66;font-size:12px;border-radius:5px;margin:3px 0}.nav.active,.nav:hover{background:#eae1d8;color:var(--wine)}.nav-icon{width:20px;text-align:center;font-size:17px}
+main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;color:var(--wine);text-transform:uppercase}h1,h2,h3{font-family:'Playfair Display',serif;font-weight:400}h1{font-size:clamp(37px,5vw,60px);line-height:1.1;margin:14px 0}h2{font-size:35px;margin:12px 0 20px}h3{font-size:22px;margin:0 0 12px}
+.sub{font-size:12px;line-height:1.8;color:var(--muted);max-width:480px}.btn{border:1px solid var(--ink);background:var(--ink);color:white;padding:14px 21px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase}.btn:hover{background:var(--wine);border-color:var(--wine)}.btn.light{background:transparent;color:var(--ink)}.btn.wine{background:var(--wine);border-color:var(--wine)}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;margin-bottom:52px}.hero-copy{padding:25px 0}.hero-image{height:390px;position:relative;overflow:hidden;background:#b5a18d}.hero-image img{width:100%;height:100%;object-fit:cover}.hero-tag{position:absolute;bottom:20px;left:20px;background:var(--paper);padding:12px 16px;font-family:'Playfair Display',serif;font-size:16px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:35px 0 18px}.section-head h2{font-size:27px;margin:0}.small-link{font-size:9px;letter-spacing:1px;color:var(--wine);border:0;background:none}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.aesthetic{border:0;background:var(--paper);padding:0;text-align:left;color:var(--ink)}.aesthetic img{width:100%;height:185px;object-fit:cover;display:block}.aesthetic div{padding:14px}.aesthetic strong{font-family:'Playfair Display',serif;font-size:18px;font-weight:400}.aesthetic p{font-size:10px;color:var(--muted);margin:7px 0 0}
+.panel{background:var(--paper);padding:23px;border:1px solid var(--line);margin-bottom:18px}.hidden{display:none!important}.platforms{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.platform{padding:11px 15px;border:1px solid var(--line);background:transparent;font-size:10px}.platform.active{background:var(--wine);color:white;border-color:var(--wine)}
+.social-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}.social-card{border:1px solid var(--line);background:var(--paper);padding:22px 12px;text-align:center;color:var(--ink);transition:.2s}.social-card:hover,.social-card.active{border-color:var(--wine);background:#f0e8e2}.social-card .symbol{font-size:27px;color:var(--wine);margin-bottom:12px}.social-card strong{font-family:'Playfair Display',serif;font-size:17px;font-weight:400}.social-card p{font-size:10px;color:var(--muted);margin:7px 0 0}
+.format-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.format{background:var(--bg);border:1px solid var(--line);padding:17px;text-align:left}.format strong{font-family:'Playfair Display',serif;font-size:17px;font-weight:400}.format p{font-size:10px;color:var(--muted);margin:5px 0 0}
+.editor-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,1fr);gap:20px}.preview{min-height:370px;background:#e8e0d7;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.preview img{max-width:100%;max-height:550px;object-fit:contain;display:none}.preview .empty{text-align:center;padding:25px;color:#8f8379;font-size:12px}.preview .empty span{font-size:38px;display:block;margin-bottom:12px}.preview-label{position:absolute;top:15px;left:15px;background:white;padding:8px 10px;font-size:9px;letter-spacing:1px}
+.upload{display:inline-block;margin-top:14px}.upload input{display:none}.upload span{display:inline-block;padding:13px 16px;border:1px solid var(--ink);font-size:9px;letter-spacing:1px;cursor:pointer}.control{margin:17px 0}.control label{display:flex;justify-content:space-between;font-size:10px;margin-bottom:9px}.control input[type=range]{width:100%;accent-color:var(--wine)}.presets{display:flex;gap:8px;flex-wrap:wrap}.preset{background:#eee6dc;border:1px solid transparent;padding:10px 13px;font-size:10px}.preset.active{border-color:var(--wine);color:var(--wine)}
+.feed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.feed-grid img{width:100%;aspect-ratio:1;object-fit:cover}.empty-cell{aspect-ratio:1;background:#e9e1d7;display:grid;place-items:center;color:#988c82;font-size:10px}.channel-preview{max-width:500px;margin:auto;background:#e8e2da;padding:20px}.channel-top{font-family:'Playfair Display',serif;font-size:25px;text-align:center;padding:20px;background:#f7f2eb;margin-bottom:14px}.post{background:white;margin:12px 0;padding:14px}.post img{width:100%;max-height:240px;object-fit:cover}.post p{font-size:11px;line-height:1.7;margin:10px 0 0}.moodboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.moodboard img{width:100%;aspect-ratio:1;object-fit:cover}.swatches{display:flex;gap:10px;margin:18px 0}.swatch{width:42px;height:42px;border-radius:50%}.style-card{background:var(--paper);padding:25px;margin-top:20px}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;font-size:11px;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1}footer{padding:30px;text-align:center;color:var(--muted);font-size:9px;letter-spacing:3px}
+@media(max-width:700px){header{height:62px;padding:0 18px}.logo{font-size:23px}.layout{display:block;padding-bottom:65px}aside{position:fixed;z-index:10;bottom:0;left:0;right:0;height:62px;background:var(--bg);border-top:1px solid var(--line);border-right:0;padding:4px 3px;display:flex;justify-content:space-around}.nav-label{display:none}.nav{display:flex;flex-direction:column;gap:2px;padding:6px 2px;margin:0;width:20%;font-size:9px;text-align:center;justify-content:center}.nav-icon{font-size:16px}main{padding:26px 17px}.hero{grid-template-columns:1fr;gap:17px;margin-bottom:35px}.hero-image{height:280px;grid-row:1}.hero-copy{padding:0}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.aesthetic img{height:145px}.aesthetic div{padding:10px}.editor-grid{grid-template-columns:1fr}.preview{min-height:290px}.social-cards{gap:8px}.social-card{padding:18px 7px}.social-card strong{font-size:15px}.panel{padding:16px}h2{font-size:30px}}
+
+/* Editorial home refresh */
+.home-editorial{--home-bg:#171513;--home-cream:#eee6dc;background:var(--home-bg);color:var(--home-cream);margin:-38px -5% 0;padding:0 5% 42px;overflow:hidden}
+.home-editorial h1,.home-editorial h2,.home-editorial h3{color:var(--home-cream)}
+.home-hero{min-height:440px;display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;padding:38px 0 54px}
+.home-hero-copy{padding:20px 0;position:relative;z-index:1}.home-brandline{font-family:'Playfair Display',serif;font-size:17px;letter-spacing:3px;margin-bottom:46px;color:#c9b9ac}
+.home-editorial .eyebrow,.home-kicker{color:#b58a91;font-size:9px;letter-spacing:2.5px}
+.home-editorial h1{font-size:clamp(42px,5.4vw,69px);line-height:1.04;margin:18px 0 20px;letter-spacing:-1.5px}
+.home-lead{font-size:13px;line-height:1.85;color:#bdb2a9;max-width:390px;margin:0 0 28px}
+.home-cta{background:#e9ded2;color:#211e1c;border:0;padding:17px 23px;min-width:205px;display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:1.7px}
+.home-cta span{font-size:18px}.home-hero-photo{height:390px;position:relative;overflow:hidden;background:#54483f}
+.home-hero-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.38),transparent 35%)}
+.home-hero-photo img{width:100%;height:100%;object-fit:cover;filter:sepia(.16) brightness(.78)}
+.photo-caption{position:absolute;z-index:1;bottom:18px;left:20px;font-size:8px;letter-spacing:2px;color:#f3eae0}
+.home-intro-row,.home-inspiration-head{display:flex;justify-content:space-between;align-items:end;margin:10px 0 22px}
+.home-editorial h2{font-size:31px;margin:9px 0 0}.home-index{font-size:9px;letter-spacing:2px;color:#82766e}
+.home-actions{display:grid;grid-template-columns:1.15fr 1fr 1fr;grid-template-rows:210px 210px;gap:12px}
+.home-action{position:relative;overflow:hidden;border:0;padding:0;text-align:left;background:#302a26;color:#fff;min-width:0}
+.home-action:first-child{grid-row:span 2}.home-action img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.68) saturate(.72);transition:transform .5s}
+.home-action:hover img,.inspiration-card:hover img{transform:scale(1.04)}
+.home-action:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,11,10,.78),transparent 70%)}
+.home-action span{position:absolute;z-index:1}.action-no{top:16px;left:17px;font-size:8px;letter-spacing:2px;color:#e4d8cd}
+.action-title{left:18px;bottom:43px;font:22px 'Playfair Display',serif}.action-sub{left:18px;bottom:20px;font-size:10px;color:#d1c5bb}.action-arrow{right:17px;bottom:19px;font-size:19px}
+.home-inspiration-head{margin-top:62px}.home-inspiration-head p{font-size:11px;color:#a99e95;margin:9px 0 0}
+.home-text-link,.home-bottom-note button{border:0;background:none;color:#d7b8b7;font-size:8px;letter-spacing:1.5px;padding:10px 0}
+.inspiration-grid{columns:3;column-gap:12px}
+.inspiration-card{position:relative;display:block;width:100%;padding:0;margin:0 0 12px;border:0;overflow:hidden;background:#302a26;break-inside:avoid;text-align:left}
+.inspiration-card img{display:block;width:100%;height:auto;min-height:150px;object-fit:cover;transition:transform .5s;filter:saturate(.78)}
+.inspiration-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.5))}
+.inspiration-card span{position:absolute;z-index:1;bottom:13px;left:13px;color:#fff;font-size:8px;letter-spacing:1.6px}
+.insp-1 img{height:310px}.insp-2 img{height:210px}.insp-3 img{height:270px}.insp-4 img{height:230px}.insp-5 img{height:190px}.insp-6 img{height:260px}
+.home-bottom-note{display:flex;align-items:center;gap:16px;border-top:1px solid #39332e;border-bottom:1px solid #39332e;margin-top:38px;padding:17px 0}
+.home-bottom-note>span{font-size:24px;color:#b58a91}.home-bottom-note p{font:16px 'Playfair Display',serif;color:#d6cbc1;margin:0;flex:1}.home-bottom-note button{white-space:nowrap}
+@media(max-width:700px){
+.home-editorial{margin:-26px -17px 0;padding:0 17px 32px}
+.home-hero{grid-template-columns:1fr;gap:18px;padding:22px 0 40px;min-height:0}
+.home-brandline{margin-bottom:30px;font-size:15px}.home-hero-copy{padding:0}
+.home-editorial h1{font-size:46px;margin:13px 0 15px}.home-lead{font-size:12px;max-width:320px}
+.home-hero-photo{height:310px;grid-row:1}.home-intro-row{margin-top:5px}.home-editorial h2{font-size:27px}
+.home-actions{grid-template-columns:1fr 1fr;grid-template-rows:220px 170px;gap:9px}
+.home-action:first-child{grid-row:auto;grid-column:span 2;height:245px}
+.action-title{font-size:19px;left:13px;bottom:40px}.action-sub{left:13px;bottom:18px;font-size:9px}.action-no{left:13px;top:13px}
+.home-inspiration-head{margin-top:43px;gap:10px}.home-inspiration-head h2{font-size:27px}.home-inspiration-head p{max-width:220px;line-height:1.6}
+.inspiration-grid{columns:2;column-gap:9px}.inspiration-card{margin-bottom:9px}
+.insp-1 img{height:230px}.insp-2 img{height:170px}.insp-3 img{height:205px}.insp-4 img{height:190px}.insp-5 img{height:150px}.insp-6 img{height:210px}
+.home-bottom-note{gap:10px}.home-bottom-note p{font-size:14px;line-height:1.4}.home-bottom-note button{font-size:7px}
+}
+
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" id="languageToggle" onclick="toggleMoodcutLanguage()">EN / RU</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
+<div class="layout">
+<aside><div class="nav-label">MENU</div>
+<button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
+<button class="nav" onclick="showPage('discover',this)"><span class="nav-icon">◈</span>Discover</button>
+<button class="nav" onclick="showPage('editor',this)"><span class="nav-icon">✳</span>Editor</button>
+<button class="nav" onclick="showPage('social',this)"><span class="nav-icon">▤</span>Social Studio</button>
+<div class="nav-label">PERSONAL</div><button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♡</span>My Style</button></aside>
+<main>
+<section id="home" class="page home-editorial">
+<div class="home-hero">
+  <div class="home-hero-copy">
+    <div class="home-brandline">MOODCUT · YOUR VISUAL WORLD</div>
+    <div class="eyebrow">CREATE · CURATE · EXPRESS</div>
+    <h1>Your visual identity<br>starts here.</h1>
+    <p class="home-lead">A space to shape your aesthetic. Edit photos, collect inspiration and create a visual style that feels like you.</p>
+    <button class="home-cta" onclick="showPage('editor')">START CREATING <span>↗</span></button>
+  </div>
+  <div class="home-hero-photo">
+    <img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=1000" alt="Classical art and sculpture">
+    <span class="photo-caption">01 / THE ART OF SEEING</span>
+  </div>
+</div>
+<div class="home-intro-row"><div><div class="home-kicker">YOUR CREATIVE SPACE</div><h2>What inspires you today?</h2></div><span class="home-index">01 — 04</span></div>
+<div class="home-actions">
+  <button class="home-action action-tall" onclick="showPage('editor')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800" alt=""><span class="action-no">01</span><span class="action-title">Edit your photos</span><span class="action-sub">Find your signature look</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('discover')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=800" alt=""><span class="action-no">02</span><span class="action-title">Explore aesthetics</span><span class="action-sub">Discover moods & colours</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('social')"><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800" alt=""><span class="action-no">03</span><span class="action-title">Create for socials</span><span class="action-sub">Make every detail count</span><span class="action-arrow">↗</span></button>
+  <button class="home-action" onclick="showPage('style')"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800" alt=""><span class="action-no">04</span><span class="action-title">Build your style</span><span class="action-sub">Collect what feels like you</span><span class="action-arrow">↗</span></button>
+</div>
+<div class="home-inspiration-head"><div><div class="home-kicker">A LITTLE VISUAL INSPIRATION</div><h2>Collected moments.</h2><p>Ideas, textures and places to start somewhere beautiful.</p></div><button class="home-text-link" onclick="showPage('discover')">EXPLORE ALL ↗</button></div>
+<div class="inspiration-grid">
+  <button class="inspiration-card insp-1" onclick="selectStyle('Quiet Luxury')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800" alt="Fashion editorial"><span>FASHION / 01</span></button>
+  <button class="inspiration-card insp-2" onclick="selectStyle('Slow Living')"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800" alt="Flowers"><span>STILL LIFE / 02</span></button>
+  <button class="inspiration-card insp-3" onclick="selectStyle('Warm Minimalism')"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800" alt="Interior"><span>SPACES / 03</span></button>
+  <button class="inspiration-card insp-4" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800" alt="Landscape"><span>PLACES / 04</span></button>
+  <button class="inspiration-card insp-5" onclick="selectStyle('Artful Details')"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800" alt="Artwork"><span>ART / 05</span></button>
+  <button class="inspiration-card insp-6" onclick="selectStyle('Soft Romance')"><img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800" alt="Flowers and details"><span>DETAILS / 06</span></button>
+</div>
+<div class="home-bottom-note"><span>✳</span><p>Not just editing. A place to discover what feels like you.</p><button onclick="showPage('style')">YOUR STYLE ↗</button></div>
+</section>
+<section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
+<div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
+<div class="cards" id="styleCards">
+<button class="aesthetic" data-cat="Classic" onclick="selectStyle('Old Money')"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500"><div><strong>Old Money</strong><p>Classic · Refined · Timeless</p></div></button>
+<button class="aesthetic" data-cat="Classic" onclick="selectStyle('Soft Luxury')"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500"><div><strong>Soft Luxury</strong><p>Subtle elegance</p></div></button>
+<button class="aesthetic" data-cat="Film" onclick="selectStyle('Vintage Film')"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=500"><div><strong>Vintage Film</strong><p>Warm analog memories</p></div></button>
+<button class="aesthetic" data-cat="Film" onclick="selectStyle('90s Flash')"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=500"><div><strong>90s Flash</strong><p>Raw nostalgic energy</p></div></button>
+<button class="aesthetic" data-cat="Romantic" onclick="selectStyle('Dark Romance')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500"><div><strong>Dark Romance</strong><p>Moody and poetic</p></div></button>
+<button class="aesthetic" data-cat="Romantic" onclick="selectStyle('Coquette')"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=500"><div><strong>Coquette</strong><p>Soft romantic details</p></div></button>
+<button class="aesthetic" data-cat="Travel" onclick="selectStyle('Italian Summer')"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=500"><div><strong>Italian Summer</strong><p>Sun, sea and slow days</p></div></button>
+<button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Nordic Minimalism')"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=500"><div><strong>Nordic Minimalism</strong><p>Clean and natural</p></div></button>
+<button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Clean Girl')"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500"><div><strong>Clean Girl</strong><p>Fresh everyday aesthetic</p></div></button></div></section>
+<section id="editor" class="page hidden"><div class="eyebrow">MAKE IT YOURS</div><h2>Photo editor</h2><p class="sub">Upload a photo, explore presets and create your signature look.</p>
+<div class="editor-grid"><div><div class="preview"><div class="empty" id="empty"><span>✳</span>Upload a photo to begin</div><img id="photo"><div class="preview-label">MOODCUT EDITOR</div></div>
+<label class="upload"><input type="file" accept="image/*" onchange="loadPhoto(event)"><span>＋ UPLOAD PHOTO</span></label><button class="btn light" onclick="toggleBefore()">BEFORE / AFTER</button><div class="section-head"><h3>Presets</h3></div>
+<div class="presets"><button class="preset active" onclick="preset('Original',this)">Original</button><button class="preset" onclick="preset('Warm Film',this)">Warm Film</button><button class="preset" onclick="preset('Moody',this)">Moody</button><button class="preset" onclick="preset('Soft',this)">Soft</button><button class="preset" onclick="preset('Vintage',this)">Vintage</button></div></div>
+<div class="panel"><h3>Adjustments</h3><div class="eyebrow">LIGHT</div>
+<div class="control"><label>Brightness <span id="brightnessVal">100</span></label><input type="range" min="50" max="150" value="100" id="brightness" oninput="adjust()"></div>
+<div class="control"><label>Contrast <span id="contrastVal">100</span></label><input type="range" min="50" max="160" value="100" id="contrast" oninput="adjust()"></div>
+<div class="control"><label>Saturation <span id="saturationVal">100</span></label><input type="range" min="0" max="180" value="100" id="saturation" oninput="adjust()"></div>
+<div class="eyebrow">COLOR</div><div class="control"><label>Warmth <span id="warmthVal">0</span></label><input type="range" min="-30" max="30" value="0" id="warmth" oninput="adjust()"></div>
+<div class="eyebrow">EFFECTS</div><div class="control"><label>Fade <span id="fadeVal">0</span></label><input type="range" min="0" max="30" value="0" id="fade" oninput="adjust()"></div>
+<button class="btn wine" style="width:100%" onclick="savePhoto()">Save edit</button><button class="btn light" style="width:100%;margin-top:8px" onclick="resetEditor()">Reset</button></div></div></section>
+<section id="social" class="page hidden"><div class="eyebrow">ONE CREATIVE SPACE · EVERY PLATFORM</div><h2>Social Studio</h2><p class="sub">Choose where you want to create. One aesthetic, different ways to express it.</p>
+<div class="social-cards"><button class="social-card active" onclick="selectPlatform('telegram',this)"><div class="symbol">➤</div><strong>Telegram</strong><p>Channel & posts</p></button><button class="social-card" onclick="selectPlatform('instagram',this)"><div class="symbol">◎</div><strong>Instagram</strong><p>Feed & stories</p></button><button class="social-card" onclick="selectPlatform('pinterest',this)"><div class="symbol">P</div><strong>Pinterest</strong><p>Pins & moodboards</p></button></div>
+<div class="panel" id="socialContent"><div class="eyebrow" id="socialEyebrow">TELEGRAM CREATIVE SPACE</div><h3 id="socialHeading">Make your channel feel like you.</h3><p class="sub" id="socialDescription">Create a consistent visual identity for your Telegram channel.</p>
+<div class="format-grid" id="formatGrid"><button class="format" onclick="openFormat('channel')"><strong>Channel aesthetic</strong><p>Cover, colours and identity</p></button><button class="format" onclick="openFormat('post')"><strong>Post design</strong><p>Beautiful visual publications</p></button><button class="format" onclick="openFormat('cover')"><strong>Post cover</strong><p>Editorial covers and images</p></button><button class="format" onclick="openFormat('quotes')"><strong>Quote cards</strong><p>Typography and composition</p></button></div></div>
+<div id="socialWorkspace" class="panel hidden"><div class="section-head"><h3 id="workspaceTitle">Your design</h3><button class="small-link" onclick="backSocial()">← BACK</button></div>
+<div class="channel-preview"><div class="channel-top" id="channelTitle">The Daily Edit<br><small style="font:10px 'DM Sans';letter-spacing:2px">A JOURNAL OF AESTHETICS</small></div><div class="post"><img id="channelImage" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700"><p id="channelText">Little moments, beautiful details. A collection of things that inspire me.</p></div></div>
+<div class="control"><label>Title</label><input id="designTitle" value="The Daily Edit" style="width:100%;padding:12px;border:1px solid var(--line)" oninput="updateDesign()"></div>
+<div class="control"><label>Description</label><input id="designDescription" value="A journal of aesthetics" style="width:100%;padding:12px;border:1px solid var(--line)" oninput="updateDesign()"></div>
+<label class="upload"><input type="file" accept="image/*" onchange="channelCover(event)"><span>＋ CHANGE IMAGE</span></label><button class="btn wine" onclick="saveDesign()">Save concept</button></div></section>
+<section id="style" class="page hidden"><div class="eyebrow">YOUR SIGNATURE LOOK</div><h2>My Style</h2><p class="sub">Your personal visual identity, collected in one place.</p>
+<div class="style-card"><div class="eyebrow">CURRENT MOOD</div><h2 id="selectedStyle">Warm Memories</h2><p class="sub">Warm tones, soft contrast, muted colours and a touch of film grain.</p><div class="swatches"><div class="swatch" style="background:#713344"></div><div class="swatch" style="background:#c5a68e"></div><div class="swatch" style="background:#e9e1d7"></div><div class="swatch" style="background:#82766d"></div></div><button class="btn" onclick="showPage('editor')">Create with this style</button></div>
+<div class="section-head"><h2>Saved styles</h2></div><div class="panel"><h3 id="savedStyle">Warm Memories</h3><p class="sub">Your collection will grow as you explore.</p></div></section>
+<section id="admin" class="page hidden"><div class="eyebrow">MOODCUT CONTROL</div><h2>Admin panel</h2><p class="sub" id="adminWelcome">Manage users and free access.</p><div class="panel"><h3>Create invitation</h3><div class="control"><label>Number of uses</label><input id="inviteUses" type="number" min="1" max="100" value="1" style="width:100%;padding:12px;border:1px solid var(--line)"></div><div class="control"><label>Expires in days (0 = no expiration)</label><input id="inviteDays" type="number" min="0" value="7" style="width:100%;padding:12px;border:1px solid var(--line)"></div><button class="btn wine" onclick="createMoodcutInvite()">Create invite link</button><div id="inviteResult" class="sub" style="margin-top:14px;overflow-wrap:anywhere"></div></div><div class="section-head"><h2>Users</h2><button class="small-link" onclick="loadAdminData()">REFRESH ↻</button></div><div id="adminUsers" class="panel"><p class="sub">Loading users…</p></div><div class="section-head"><h2>Invitations</h2></div><div id="adminInvites" class="panel"><p class="sub">Loading invitations…</p></div></section><footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
+<script>
+let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick').includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
+function notify(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function selectPlatform(name,btn){currentPlatform=name;document.querySelectorAll('.social-card').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const data={telegram:['TELEGRAM CREATIVE SPACE','Make your channel feel like you.','Create a consistent visual identity for your Telegram channel.',['Channel aesthetic','Post design','Post cover','Quote cards'],['Cover, colours and identity','Beautiful visual publications','Editorial covers and images','Typography and composition']],instagram:['INSTAGRAM CREATIVE SPACE','Build a feed worth looking at.','Create a cohesive Instagram visual world.',['Feed preview','Post design','Story templates','Highlights covers'],['Plan your 3×3 grid','Edit and design posts','Create story layouts','Design highlight covers']],pinterest:['PINTEREST CREATIVE SPACE','Collect your visual inspiration.','Create moodboards, pins and visual collections.',['Moodboard','Pin design','Collage','Colour palette'],['Collect references','Create beautiful pins','Mix images and textures','Find your signature colours']]}[name];document.getElementById('socialEyebrow').textContent=data[0];document.getElementById('socialHeading').textContent=data[1];document.getElementById('socialDescription').textContent=data[2];document.getElementById('formatGrid').innerHTML=data[3].map((x,i)=>`<button class="format" onclick="openFormat('${name}-${i}')"><strong>${x}</strong><p>${data[4][i]}</p></button>`).join('');backSocial()}
+function openFormat(format){document.getElementById('socialContent').classList.add('hidden');document.getElementById('socialWorkspace').classList.remove('hidden');document.getElementById('workspaceTitle').textContent=format.replaceAll('-',' ').replace(/\b\w/g,x=>x.toUpperCase())}
+function backSocial(){document.getElementById('socialContent').classList.remove('hidden');document.getElementById('socialWorkspace').classList.add('hidden')}
+function updateDesign(){document.getElementById('channelTitle').firstChild.textContent=document.getElementById('designTitle').value;document.getElementById('channelText').textContent=document.getElementById('designDescription').value}
+function saveDesign(){notify('Design concept saved in this session')}
+function loadPhoto(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{originalPhoto=x.target.result;let img=document.getElementById('photo');img.src=originalPhoto;img.style.display='block';document.getElementById('empty').style.display='none';resetEditor()};r.readAsDataURL(f)}
+function adjust(){['brightness','contrast','saturation','warmth','fade'].forEach(id=>document.getElementById(id+'Val').textContent=document.getElementById(id).value);let b=+brightness.value,c=+contrast.value,s=+saturation.value,w=+warmth.value,f=+fade.value;document.getElementById('photo').style.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${Math.max(0,w)/100})`;document.getElementById('photo').style.opacity=1-f/100}
+function preset(name,btn){document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'));btn.classList.add('active');let v={'Original':[100,100,100,0,0],'Warm Film':[103,92,85,22,10],'Moody':[90,120,75,-5,8],'Soft':[108,88,85,8,12],'Vintage':[98,90,72,16,22]}[name];['brightness','contrast','saturation','warmth','fade'].forEach((id,i)=>document.getElementById(id).value=v[i]);adjust();notify(name+' preset applied')}
+function resetEditor(){['brightness','contrast','saturation','warmth','fade'].forEach((id,i)=>document.getElementById(id).value=[100,100,100,0,0][i]);adjust()}
+function toggleBefore(){if(!originalPhoto){notify('Upload a photo first');return}showingBefore=!showingBefore;document.getElementById('photo').style.filter=showingBefore?'none':'';if(!showingBefore)adjust();notify(showingBefore?'Original photo':'Edited photo')}
+function savePhoto(){if(!originalPhoto){notify('Upload a photo first');return}let img=new Image();img.onload=()=>{let c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.filter=document.getElementById('photo').style.filter||'none';ctx.globalAlpha=1-(+fade.value/100);ctx.drawImage(img,0,0);let a=document.createElement('a');a.download='moodcut-edit.jpg';a.href=c.toDataURL('image/jpeg',.92);a.click();notify('Your edit is ready')};img.src=originalPhoto}
+function selectStyle(name){document.getElementById('selectedStyle').textContent=name;document.getElementById('savedStyle').textContent=name;showPage('style');notify(name+' selected')}
+function filterStyles(cat,btn){document.querySelectorAll('#discover .platform').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#styleCards .aesthetic').forEach(x=>x.style.display=cat==='All'||x.dataset.cat===cat?'block':'none')}
+function channelCover(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>document.getElementById('channelImage').src=x.target.result;r.readAsDataURL(f)}
+</script>
+
+<script>
+const MOODCUT_SUPABASE_URL = "https://tidrkegmipucdcoqdxvd.supabase.co";
+const MOODCUT_PUBLIC_KEY = "sb_publishable_j5lH2msrU2kpLBLk0mg4OA_9hXr-l_t";
+let moodcutProfile = null;
+function moodcutEscape(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+async function moodcutApi(action,extra){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg||!tg.initData)throw new Error("Открой MOODCUT через Telegram.");
+ const res=await fetch(MOODCUT_SUPABASE_URL+"/functions/v1/quick-worker",{method:"POST",headers:{"Content-Type":"application/json","apikey":MOODCUT_PUBLIC_KEY},body:JSON.stringify(Object.assign({initData:tg.initData,action:action},extra||{}))});
+ const data=await res.json();if(!res.ok)throw new Error(data.error||"Ошибка сервера");return data;
+}
+async function initMoodcutAccount(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg||!tg.initData){notify("Открой MOODCUT из Telegram, чтобы войти.");return;}
+ tg.ready();tg.expand();
+ try{
+  const result=await moodcutApi("me");moodcutProfile=result.profile;
+  if(result.isAdmin){document.getElementById("adminAccess").style.display="grid";document.getElementById("adminWelcome").textContent="Администратор · Telegram ID "+moodcutProfile.telegram_id;await loadAdminData();}
+  const startParam=tg.initDataUnsafe&&tg.initDataUnsafe.start_param;
+  if(startParam){const redeemed=await moodcutApi("redeem_invite",{inviteToken:startParam});moodcutProfile=redeemed.profile||moodcutProfile;notify("Бесплатный доступ активирован.");}
+ }catch(e){notify(e.message||"Не удалось войти.");}
+}
+async function loadAdminData(){
+ try{
+  const d=await moodcutApi("admin_list");const users=d.users||[];const invites=d.invites||[];
+  document.getElementById("adminUsers").innerHTML=users.length?users.map(function(u){
+   const label=[u.first_name,u.last_name].filter(Boolean).join(" ")||(u.username?"@"+u.username:"Пользователь");
+   return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(label)+'</strong><div class="sub">ID: '+moodcutEscape(u.telegram_id)+' · '+(u.free_access?"Бесплатный доступ":"Обычный доступ")+'</div><button class="small-link" onclick="setMoodcutAccess(\''+moodcutEscape(u.telegram_id)+'\','+(!u.free_access)+')">'+(u.free_access?"ОТКЛЮЧИТЬ БЕСПЛАТНЫЙ ДОСТУП":"ДАТЬ БЕСПЛАТНЫЙ ДОСТУП")+'</button></div>';
+  }).join(""):'<p class="sub">Пока нет пользователей.</p>';
+  document.getElementById("adminInvites").innerHTML=invites.length?invites.map(function(i){
+   return '<div style="padding:12px 0;border-bottom:1px solid var(--line)"><strong>'+moodcutEscape(i.uses_count)+' / '+moodcutEscape(i.max_uses)+' использований</strong><div class="sub">'+(i.revoked_at?"Отозвана":(i.expires_at?"Истекает: "+moodcutEscape(new Date(i.expires_at).toLocaleString()):"Без срока действия"))+'</div>'+(i.revoked_at?"":'<button class="small-link" onclick="revokeMoodcutInvite(\''+moodcutEscape(i.id)+'\')">ОТОЗВАТЬ ССЫЛКУ</button>')+'</div>';
+  }).join(""):'<p class="sub">Приглашений пока нет.</p>';
+ }catch(e){document.getElementById("adminUsers").textContent=e.message;}
+}
+async function copyMoodcutInvite(url){
+ let copied=false;
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(url);copied=true;}}catch(e){}
+ if(!copied){
+  const field=document.createElement("textarea");field.value=url;field.setAttribute("readonly","");field.style.position="fixed";field.style.opacity="0";document.body.appendChild(field);field.select();
+  try{copied=document.execCommand("copy");}catch(e){}
+  field.remove();
+ }
+ notify(copied?"Ссылка скопирована.":"Не удалось скопировать. Нажми и удерживай ссылку, чтобы скопировать её вручную.");
+}
+async function createMoodcutInvite(){
+ try{
+  const maxUses=Number(document.getElementById("inviteUses").value||1);const expiresInDays=Number(document.getElementById("inviteDays").value||0);
+  const d=await moodcutApi("create_invite",{maxUses:maxUses,expiresInDays:expiresInDays});
+  const result=document.getElementById("inviteResult");result.innerHTML="";
+  const link=document.createElement("div");link.textContent=d.inviteUrl;link.style="overflow-wrap:anywhere;margin-bottom:10px";
+  const copy=document.createElement("button");copy.type="button";copy.className="btn wine";copy.textContent="COPY LINK";copy.addEventListener("click",()=>copyMoodcutInvite(d.inviteUrl));
+  result.append(link,copy);
+  await loadAdminData();
+ }catch(e){notify(e.message);}
+}
+async function setMoodcutAccess(id,enabled){try{await moodcutApi("set_free_access",{telegramId:id,enabled:enabled});await loadAdminData();notify("Доступ обновлён.");}catch(e){notify(e.message);}}
+async function revokeMoodcutInvite(id){try{await moodcutApi("revoke_invite",{inviteId:id});await loadAdminData();notify("Приглашение отозвано.");}catch(e){notify(e.message);}}
+window.addEventListener("load",initMoodcutAccount);
+</script>
+<script>
+(function(){
+const enToRu={
+"MENU":"МЕНЮ","YOUR VISUAL WORLD":"ТВОЙ ВИЗУАЛЬНЫЙ МИР","CREATE · CURATE · EXPRESS":"СОЗДАВАЙ · СОБИРАЙ · ВЫРАЖАЙ","Your visual identity":"Твоя визуальная идентичность","starts here.":"начинается здесь.","A space to shape your aesthetic. Edit photos, collect inspiration and create a visual style that feels like you.":"Пространство для создания своей эстетики. Редактируй фото, собирай вдохновение и создавай визуальный стиль, который отражает тебя.","START CREATING":"НАЧАТЬ СОЗДАВАТЬ","THE ART OF SEEING":"ИСКУССТВО ВИДЕТЬ","YOUR CREATIVE SPACE":"ТВОЁ ТВОРЧЕСКОЕ ПРОСТРАНСТВО","What inspires you today?":"Что вдохновляет тебя сегодня?","Edit your photos":"Обрабатывай фото","Find your signature look":"Найди свой фирменный стиль","Explore aesthetics":"Исследуй эстетику","Discover moods & colours":"Открывай настроения и цвета","Create for socials":"Создавай для соцсетей","Make every detail count":"Важна каждая деталь","Build your style":"Создавай свой стиль","Collect what feels like you":"Собирай то, что отражает тебя","A LITTLE VISUAL INSPIRATION":"НЕМНОГО ВИЗУАЛЬНОГО ВДОХНОВЕНИЯ","Collected moments.":"Собранные моменты.","Ideas, textures and places to start somewhere beautiful.":"Идеи, текстуры и места, с которых начинается что-то красивое.","EXPLORE ALL ↗":"СМОТРЕТЬ ВСЁ ↗","Not just editing. A place to discover what feels like you.":"Не просто редактор. Место, где можно найти то, что отражает тебя.","YOUR STYLE ↗":"ТВОЙ СТИЛЬ ↗","PERSONAL":"ЛИЧНОЕ","Home":"Главная","Discover":"Обзор","Editor":"Редактор","Social Studio":"Социальная студия","My Style":"Мой стиль",
+"YOUR PERSONAL AESTHETIC EDITOR":"ТВОЙ ПЕРСОНАЛЬНЫЙ РЕДАКТОР ЭСТЕТИКИ","Your aesthetic.":"Твоя эстетика.","Your rules.":"Твои правила.",
+"Create a visual world that feels like you. Edit photos, build beautiful feeds and find your signature style.":"Создавай визуальный мир, который отражает тебя. Редактируй фото, оформляй ленты и находи свой стиль.",
+"Create new edit ↗":"Создать новый образ ↗","The art of being you.":"Искусство быть собой.","Explore aesthetics":"Исследуй эстетику","VIEW ALL ↗":"СМОТРЕТЬ ВСЁ ↗",
+"Quiet elegance":"Тихая элегантность","Memories in frames":"Воспоминания в кадрах","Soft and mysterious":"Нежность и загадочность","Creative space":"Творческое пространство",
+"Photo Editor":"Фоторедактор","Make every image yours.":"Сделай каждое фото своим.","Create for every platform.":"Создавай контент для каждой платформы.","Collect your visual identity.":"Собирай свою визуальную идентичность.",
+"FIND YOUR VISUAL LANGUAGE":"НАЙДИ СВОЙ ВИЗУАЛЬНЫЙ ЯЗЫК","Discover aesthetics":"Открой эстетику","Explore moods, colours and visual directions. Choose a style to make it your own.":"Исследуй настроения, цвета и визуальные направления. Выбери стиль и адаптируй его под себя.",
+"All":"Все","Classic":"Классика","Film":"Плёнка","Romantic":"Романтика","Travel":"Путешествия","Minimal":"Минимализм",
+"Classic · Refined · Timeless":"Классика · Изысканность · Вне времени","Subtle elegance":"Ненавязчивая элегантность","Warm analog memories":"Тёплые аналоговые воспоминания","Raw nostalgic energy":"Чистая ностальгия","Moody and poetic":"Атмосферно и поэтично","Soft romantic details":"Нежные романтичные детали","Sun, sea and slow days":"Солнце, море и неторопливые дни","Clean and natural":"Чистота и естественность","Fresh everyday aesthetic":"Свежая эстетика на каждый день",
+"MAKE IT YOURS":"СДЕЛАЙ ЭТО СВОИМ","Photo editor":"Фоторедактор","Upload a photo, explore presets and create your signature look.":"Загрузи фото, попробуй фильтры и создай свой фирменный стиль.",
+"Upload a photo to begin":"Загрузи фото, чтобы начать","MOODCUT EDITOR":"РЕДАКТОР MOODCUT","＋ UPLOAD PHOTO":"＋ ЗАГРУЗИТЬ ФОТО","BEFORE / AFTER":"ДО / ПОСЛЕ","Presets":"Фильтры","Original":"Оригинал","Warm Film":"Тёплая плёнка","Moody":"Атмосферный","Soft":"Мягкий","Vintage":"Винтаж",
+"Adjustments":"Настройки","LIGHT":"СВЕТ","Brightness":"Яркость","Contrast":"Контраст","Saturation":"Насыщенность","COLOR":"ЦВЕТ","Warmth":"Теплота","EFFECTS":"ЭФФЕКТЫ","Fade":"Выцветание","Save edit":"Сохранить обработку","Reset":"Сбросить",
+"ONE CREATIVE SPACE · EVERY PLATFORM":"ОДНО ТВОРЧЕСКОЕ ПРОСТРАНСТВО · ВСЕ ПЛАТФОРМЫ","Choose where you want to create. One aesthetic, different ways to express it.":"Выбери платформу для творчества. Одна эстетика — разные способы её выразить.",
+"Channel & posts":"Канал и публикации","Feed & stories":"Лента и истории","Pins & moodboards":"Пины и мудборды","TELEGRAM CREATIVE SPACE":"ТВОРЧЕСТВО В TELEGRAM","Make your channel feel like you.":"Пусть канал отражает тебя.","Create a consistent visual identity for your Telegram channel.":"Создай целостный визуальный стиль своего Telegram-канала.",
+"Channel aesthetic":"Эстетика канала","Post design":"Дизайн публикаций","Post cover":"Обложка поста","Quote cards":"Карточки с цитатами","Cover, colours and identity":"Обложка, цвета и стиль","Beautiful visual publications":"Красивые визуальные публикации","Editorial covers and images":"Редакционные обложки и изображения","Typography and composition":"Типографика и композиция",
+"Your design":"Твой дизайн","← BACK":"← НАЗАД","A JOURNAL OF AESTHETICS":"ЖУРНАЛ ЭСТЕТИКИ","Little moments, beautiful details. A collection of things that inspire me.":"Маленькие моменты, красивые детали. Коллекция того, что меня вдохновляет.",
+"Title":"Название","Description":"Описание","＋ CHANGE IMAGE":"＋ ИЗМЕНИТЬ ИЗОБРАЖЕНИЕ","Save concept":"Сохранить концепцию",
+"YOUR SIGNATURE LOOK":"ТВОЙ ФИРМЕННЫЙ СТИЛЬ","Your personal visual identity, collected in one place.":"Твоя визуальная идентичность — в одном месте.","CURRENT MOOD":"ТЕКУЩЕЕ НАСТРОЕНИЕ","Warm tones, soft contrast, muted colours and a touch of film grain.":"Тёплые оттенки, мягкий контраст, приглушённые цвета и лёгкое зерно плёнки.",
+"Create with this style":"Создать в этом стиле","Saved styles":"Сохранённые стили","Your collection will grow as you explore.":"Твоя коллекция будет расти вместе с тобой.",
+"MOODCUT CONTROL":"УПРАВЛЕНИЕ MOODCUT","Admin panel":"Панель администратора","Manage users and free access.":"Управляй пользователями и бесплатным доступом.","Create invitation":"Создать приглашение","Number of uses":"Количество использований","Expires in days (0 = no expiration)":"Срок действия в днях (0 = без срока)","Create invite link":"Создать ссылку","Users":"Пользователи","REFRESH ↻":"ОБНОВИТЬ ↻","Invitations":"Приглашения","Loading users…":"Загрузка пользователей…","Loading invitations…":"Загрузка приглашений…",
+"Build a feed worth looking at.":"Создай ленту, на которую хочется смотреть.","Create a cohesive Instagram visual world.":"Создай целостный визуальный мир Instagram.","Collect your visual inspiration.":"Собирай визуальное вдохновение.","Create moodboards, pins and visual collections.":"Создавай мудборды, пины и визуальные коллекции.",
+"Feed preview":"Предпросмотр ленты","Story templates":"Шаблоны историй","Highlights covers":"Обложки актуального","Plan your 3×3 grid":"Планируй сетку 3×3","Edit and design posts":"Редактируй и оформляй публикации","Create story layouts":"Создавай макеты историй","Design highlight covers":"Оформляй обложки актуального",
+"Moodboard":"Мудборд","Pin design":"Дизайн пина","Collage":"Коллаж","Colour palette":"Цветовая палитра","Collect references":"Собирай референсы","Create beautiful pins":"Создавай красивые пины","Mix images and textures":"Сочетай изображения и текстуры","Find your signature colours":"Найди свои фирменные цвета",
+"Design concept saved in this session":"Концепция дизайна сохранена в этой сессии","Upload a photo first":"Сначала загрузи фото","Original photo":"Оригинальное фото","Edited photo":"Обработанное фото","Your edit is ready":"Твоя обработка готова",
+"INSTAGRAM CREATIVE SPACE":"ТВОРЧЕСТВО В INSTAGRAM","PINTEREST CREATIVE SPACE":"ТВОРЧЕСТВО В PINTEREST","The Daily Edit":"Ежедневный дайджест","A journal of aesthetics":"Журнал эстетики","Channel & posts":"Канал и публикации","Feed & stories":"Лента и истории","Pins & moodboards":"Пины и мудборды","Make your channel feel like you.":"Пусть канал отражает тебя.","Create a cohesive Instagram visual world.":"Создай целостный визуальный мир Instagram.","Create moodboards, pins and visual collections.":"Создавай мудборды, пины и визуальные коллекции.","Build a feed worth looking at.":"Создай ленту, на которую хочется смотреть.","Collect your visual inspiration.":"Собирай визуальное вдохновение.","Channel":"Канал","Post":"Публикация","Cover":"Обложка","Quotes":"Цитаты","Your design":"Твой дизайн","Your collection will grow as you explore.":"Твоя коллекция будет расти вместе с тобой.","Aesthetic":"Эстетика","Upload":"Загрузить","Create":"Создать","Save":"Сохранить","Close":"Закрыть","Back":"Назад" 
+};
+const ruToEn=Object.fromEntries(Object.entries(enToRu).map(([a,b])=>[b,a]));
+let lang=localStorage.getItem("moodcut-language")||"en";
+const originalText=new WeakMap();
+function translateNode(node){
+ const dict=lang==="ru"?enToRu:ruToEn;
+ if(node.nodeType===Node.TEXT_NODE){
+  if(!originalText.has(node))originalText.set(node,node.nodeValue);
+  const source=originalText.get(node);
+  const trimmed=source.trim();
+  if(!trimmed)return;
+  let translated=dict[trimmed];
+  if(!translated){
+   translated=source;
+   Object.keys(dict).sort((a,b)=>b.length-a.length).forEach(key=>{
+    if(key.length>2)translated=translated.split(key).join(dict[key]);
+   });
+  }
+  node.nodeValue=source.replace(trimmed,translated);
+ } else if(node.nodeType===Node.ELEMENT_NODE){
+  ["placeholder","title","aria-label"].forEach(attr=>{
+   const val=node.getAttribute(attr);
+   if(val&&!node.hasAttribute("data-moodcut-original-"+attr)){
+    node.setAttribute("data-moodcut-original-"+attr,val);
+   }
+   const original=node.getAttribute("data-moodcut-original-"+attr);
+   if(original)node.setAttribute(attr,dict[original]||original);
+  });
+  node.childNodes.forEach(translateNode);
+ }
+}
+window.applyMoodcutLanguage=function(){document.documentElement.lang=lang;document.getElementById("languageToggle").textContent=lang==="ru"?"RU / EN":"EN / RU";document.querySelectorAll("body > .app, body > .toast").forEach(translateNode);};
+window.toggleMoodcutLanguage=function(){lang=lang==="en"?"ru":"en";localStorage.setItem("moodcut-language",lang);window.applyMoodcutLanguage();};
+const observer=new MutationObserver(rs=>rs.forEach(r=>{if(r.type==="childList")r.addedNodes.forEach(translateNode);else translateNode(r.target);}));
+window.addEventListener("DOMContentLoaded",()=>{window.applyMoodcutLanguage();observer.observe(document.body,{childList:true,subtree:true,characterData:true});});
+const oldNotify=window.notify;window.notify=function(msg){const d=lang==="ru"?enToRu:ruToEn;oldNotify(d[msg]||msg);};
+})();
+</script>
+</body>
+</html>
