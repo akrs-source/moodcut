@@ -359,6 +359,24 @@ main{padding:26px 26px calc(105px + env(safe-area-inset-bottom));min-width:0}
  .page:not(.moodcut-reference-home) .aesthetic{border-radius:15px!important}
 }
 
+
+/* Profile page */
+.mc-profile-card{padding:22px!important}
+.mc-profile-top{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.mc-profile-avatar{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#8b6557,#4b302b);color:#f3e4da;font:400 27px 'Playfair Display',serif;overflow:hidden}
+.mc-profile-top h3{margin:0 0 5px!important}
+.mc-profile-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:17px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:20px}
+.mc-profile-info>div{display:flex;flex-direction:column;gap:7px;min-width:0}
+.mc-profile-info strong{font-size:14px;font-weight:500;overflow-wrap:anywhere;color:#eee3db}
+.mc-profile-links{display:flex;flex-direction:column;gap:10px}
+.mc-profile-link{display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;padding:17px 18px;border-radius:15px;border:1px solid var(--line);background:linear-gradient(145deg,#28211d,#201b18);color:#eee3db}
+.mc-profile-link span{display:flex;flex-direction:column;gap:5px}
+.mc-profile-link strong{font:400 20px 'Playfair Display',serif}
+.mc-profile-link small{font-size:12px;color:#b5a79e}
+.mc-profile-link b{font-size:23px;font-weight:300;color:#d8c5b9}
+.mc-profile-note{text-align:center;margin-top:28px}
+@media(max-width:520px){.mc-profile-info{grid-template-columns:1fr}}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -370,7 +388,7 @@ main{padding:26px 26px calc(105px + env(safe-area-inset-bottom));min-width:0}
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon">⌂</span>Home</button>
 <button class="nav" onclick="showPage('discover',this)"><span class="nav-icon">▦</span>Collections</button>
 <button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♧</span>Saved</button>
-<button class="nav" onclick="showPage('style',this)"><span class="nav-icon">♙</span>Profile</button>
+<button class="nav" onclick="openMoodcutProfile(this)"><span class="nav-icon">♙</span>Profile</button>
 </aside>
 <main>
 <section id="home" class="page moodcut-reference-home">
@@ -442,6 +460,25 @@ main{padding:26px 26px calc(105px + env(safe-area-inset-bottom));min-width:0}
 <section id="style" class="page hidden"><div class="eyebrow">YOUR SIGNATURE LOOK</div><h2>My Style</h2><p class="sub">Your personal visual identity, collected in one place.</p>
 <div class="style-card"><div class="eyebrow">CURRENT MOOD</div><h2 id="selectedStyle">Warm Memories</h2><p class="sub">Warm tones, soft contrast, muted colours and a touch of film grain.</p><div class="swatches"><div class="swatch" style="background:#713344"></div><div class="swatch" style="background:#c5a68e"></div><div class="swatch" style="background:#e9e1d7"></div><div class="swatch" style="background:#82766d"></div></div><button class="btn" onclick="showPage('editor')">Create with this style</button></div>
 <div class="section-head"><h2>Saved styles</h2></div><div class="panel"><h3 id="savedStyle">Warm Memories</h3><p class="sub">Your collection will grow as you explore.</p></div></section>
+<section id="profile" class="page hidden">
+<div class="eyebrow">YOUR PERSONAL SPACE</div><h2>Profile</h2><p class="sub">Your MOODCUT account and creative space.</p>
+<div class="panel mc-profile-card">
+ <div class="mc-profile-top"><div class="mc-profile-avatar" id="mcProfileAvatar">M</div><div><h3 id="mcProfileName">Your profile</h3><p class="sub" id="mcProfileUsername">Connect your Telegram account</p></div></div>
+ <div class="mc-profile-info">
+  <div><span class="eyebrow">TELEGRAM ID</span><strong id="mcProfileId">—</strong></div>
+  <div><span class="eyebrow">ACCOUNT STATUS</span><strong id="mcProfileStatus">Checking account…</strong></div>
+ </div>
+ <button class="btn" onclick="refreshMoodcutProfile()">Refresh account</button>
+</div>
+<div class="section-head"><h2>Your space</h2></div>
+<div class="mc-profile-links">
+ <button class="mc-profile-link" onclick="showPage('style')"><span><strong>My Style</strong><small>Your signature look and saved styles</small></span><b>→</b></button>
+ <button class="mc-profile-link" onclick="showPage('discover')"><span><strong>Collections</strong><small>Explore visual inspiration</small></span><b>→</b></button>
+ <button class="mc-profile-link" onclick="showPage('editor')"><span><strong>Photo editor</strong><small>Continue creating</small></span><b>→</b></button>
+ <button class="mc-profile-link" id="adminAccess" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
+</div>
+<p class="sub mc-profile-note">MOODCUT · Your aesthetic. Your rules.</p>
+</section>
 <section id="admin" class="page hidden"><div class="eyebrow">MOODCUT CONTROL</div><h2>Admin panel</h2><p class="sub" id="adminWelcome">Manage users and free access.</p><div class="panel"><h3>Create invitation</h3><div class="control"><label>Number of uses</label><input id="inviteUses" type="number" min="1" max="100" value="1" style="width:100%;padding:12px;border:1px solid var(--line)"></div><div class="control"><label>Expires in days (0 = no expiration)</label><input id="inviteDays" type="number" min="0" value="7" style="width:100%;padding:12px;border:1px solid var(--line)"></div><button class="btn wine" onclick="createMoodcutInvite()">Create invite link</button><div id="inviteResult" class="sub" style="margin-top:14px;overflow-wrap:anywhere"></div></div><div class="section-head"><h2>Users</h2><button class="small-link" onclick="loadAdminData()">REFRESH ↻</button></div><div id="adminUsers" class="panel"><p class="sub">Loading users…</p></div><div class="section-head"><h2>Invitations</h2></div><div id="adminInvites" class="panel"><p class="sub">Loading invitations…</p></div></section><footer>MOODCUT · YOUR AESTHETIC. YOUR RULES.</footer></main></div></div><div class="toast" id="toast"></div>
 <script>
 let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
@@ -474,6 +511,33 @@ async function moodcutApi(action,extra){
  const res=await fetch(MOODCUT_SUPABASE_URL+"/functions/v1/quick-worker",{method:"POST",headers:{"Content-Type":"application/json","apikey":MOODCUT_PUBLIC_KEY},body:JSON.stringify(Object.assign({initData:tg.initData,action:action},extra||{}))});
  const data=await res.json();if(!res.ok)throw new Error(data.error||"Ошибка сервера");return data;
 }
+
+function openMoodcutProfile(btn){
+ showPage('profile',btn);
+ renderMoodcutProfile();
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(tg&&tg.initData&&!moodcutProfile)refreshMoodcutProfile();
+}
+function renderMoodcutProfile(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ const user=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user||{};
+ const p=moodcutProfile||{};
+ const name=[p.first_name||user.first_name,p.last_name||user.last_name].filter(Boolean).join(' ')||'MOODCUT user';
+ const username=p.username||user.username;
+ document.getElementById('mcProfileName').textContent=name;
+ document.getElementById('mcProfileUsername').textContent=username?'@'+username:'Telegram account';
+ document.getElementById('mcProfileId').textContent=p.telegram_id||user.id||'—';
+ document.getElementById('mcProfileStatus').textContent=p.is_admin||p.role==='admin'?'Administrator':(p.free_access?'Free access':'Active account');
+ document.getElementById('mcProfileAvatar').textContent=(name.trim()[0]||'M').toUpperCase();
+ const admin=document.getElementById('adminAccess');
+ if(admin&&((p.is_admin)||(p.role==='admin')||(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&String(tg.initDataUnsafe.user.id)==='7738464404')))admin.style.display='flex';
+}
+async function refreshMoodcutProfile(){
+ const status=document.getElementById('mcProfileStatus');if(status)status.textContent='Updating…';
+ try{await initMoodcutAccount();renderMoodcutProfile();if(status)status.textContent='Account updated';}
+ catch(e){if(status)status.textContent='Could not refresh';notify(e.message||'Could not refresh account.');}
+}
+
 async function initMoodcutAccount(){
  const tg=window.Telegram&&window.Telegram.WebApp;
  if(!tg||!tg.initData){notify("Открой MOODCUT из Telegram, чтобы войти.");return;}
