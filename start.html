@@ -76,8 +76,35 @@ main{padding:38px 5%;min-width:0}.eyebrow{font-size:9px;letter-spacing:2.5px;col
 
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style id="mcLaunchScreenStyles">
+#mcLaunchScreen{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#171412;color:#eee3db;font-family:'DM Sans',sans-serif}
+#mcLaunchScreen:before{content:"";position:absolute;width:min(88vw,620px);height:min(88vw,620px);border:1px solid rgba(217,184,173,.16);border-radius:50%;left:50%;top:43%;transform:translate(-50%,-50%);box-shadow:0 0 0 34px rgba(217,184,173,.025),0 0 0 82px rgba(217,184,173,.018)}
+#mcLaunchScreen:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(113,70,61,.28),transparent 55%),linear-gradient(145deg,transparent 35%,rgba(0,0,0,.28));pointer-events:none}
+.mc-launch-inner{position:relative;z-index:1;width:min(100% - 48px,440px);text-align:center;padding:40px 0}
+.mc-launch-mark{font:400 clamp(62px,17vw,92px)/.95 'Playfair Display',serif;letter-spacing:.12em;color:#eadbd2;margin-left:.12em}
+.mc-launch-rule{width:34px;height:1px;background:#d9b8ad;margin:28px auto}
+.mc-launch-kicker{font:600 9px 'DM Sans',sans-serif;letter-spacing:.34em;color:#d9b8ad}
+.mc-launch-title{font:400 clamp(25px,7vw,34px)/1.2 'Playfair Display',serif;letter-spacing:.01em;margin:17px 0 12px}
+.mc-launch-copy{max-width:270px;margin:0 auto;color:#a99a90;font:400 11px/1.8 'DM Sans',sans-serif;letter-spacing:.025em}
+.mc-launch-button{margin-top:36px;width:min(100%,260px);height:54px;border:0;border-radius:2px;background:#d9b8ad;color:#211b18;font:700 9px 'DM Sans',sans-serif;letter-spacing:.2em;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:22px}
+.mc-launch-button span{font-size:17px;font-weight:400}
+.mc-launch-foot{margin-top:48px;color:#776b64;font:600 8px 'DM Sans',sans-serif;letter-spacing:.28em}
+#mcLaunchScreen.mc-launch-hide{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease,visibility .35s ease}
+</style>
 </head>
 <body>
+
+<div id="mcLaunchScreen" role="dialog" aria-label="MOODCUT welcome screen">
+ <div class="mc-launch-inner">
+  <div class="mc-launch-mark">m.</div><div class="mc-launch-rule"></div>
+  <div class="mc-launch-kicker">YOUR PHOTO. YOUR SIGNATURE.</div>
+  <div class="mc-launch-title">A different point of view.</div>
+  <p class="mc-launch-copy">Create your own visual language. Find the mood, shape the light, make it yours.</p>
+  <button class="mc-launch-button" type="button" onclick="(function(){var s=document.getElementById('mcLaunchScreen');s.classList.add('mc-launch-hide');showPage('home');setTimeout(function(){s.remove()},400)})()">OPEN MOODCUT <span>↗</span></button>
+  <div class="mc-launch-foot">MOODCUT&nbsp; · &nbsp;PHOTO STUDIO</div>
+ </div>
+</div>
 <div class="app">
 <header><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="lang" id="languageToggle" onclick="toggleMoodcutLanguage()">EN / RU</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
