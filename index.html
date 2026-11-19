@@ -756,8 +756,59 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 #discover,#style{display:none!important}
 #editor #editorSelectedStyle{display:none!important}
 </style>
-<style id="mc-retire-photo-editor">#editor{display:none!important}</style>
 
+
+<style id="mc-photo-studio-rebuild">
+@media(max-width:700px){
+body:has(#editor:not(.hidden)){overflow:hidden!important;background:#11100f!important}
+body:has(#editor:not(.hidden))>.app>header,body:has(#editor:not(.hidden)) .mc-bottom-nav{display:none!important}
+#editor.page:not(.hidden){position:fixed!important;z-index:100!important;inset:0!important;width:100%!important;height:100dvh!important;margin:0!important;padding:0 0 env(safe-area-inset-bottom)!important;overflow:hidden!important;background:#11100f!important;color:#f4eee8!important;display:flex!important;flex-direction:column!important;gap:0!important}
+#editor>.eyebrow,#editor>h2,#editor>.sub{display:none!important}
+#editor .mc-studio-topbar{height:58px;min-height:58px;padding:env(safe-area-inset-top) 17px 0;display:flex;align-items:center;justify-content:space-between;background:#11100f;border-bottom:1px solid #302a25}
+#editor .mc-studio-topbar button{border:0;background:transparent;color:#e8d9cd;font:600 9px sans-serif;letter-spacing:1px;padding:12px 0}
+#editor .mc-studio-topbar>div{font:500 14px Georgia,serif;letter-spacing:2px}#editor .mc-studio-topbar i{font:500 8px sans-serif;color:#a99483}
+#editor .editor-grid,#editor .editor-grid>div{display:contents!important}
+#editor .mc-editor-photo-stage{order:1;flex:1 1 auto!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:#171513!important}
+#editor .mc-editor-photo-stage #photo{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important}
+#editor .mc-editor-photo-stage .preview-label{top:13px!important;left:14px!important;background:#171513bb!important;color:#e8d9cd!important;border:1px solid #ffffff22!important;border-radius:4px!important;padding:7px 9px!important;font:8px sans-serif!important;letter-spacing:1.5px!important}
+#editor .mc-editor-actions{position:absolute!important;top:12px!important;right:12px!important;display:flex!important;gap:7px!important;z-index:8!important}
+#editor .mc-editor-actions button{height:34px!important;padding:0 11px!important;border-radius:5px!important;font:600 8px sans-serif!important}
+#editor .mc-action-compare{background:#12100fbb!important;color:white!important;border:1px solid #ffffff66!important}#editor .mc-action-save{background:#dfc6b2!important;color:#211a16!important;border:1px solid #dfc6b2!important}
+#editor .mc-zoom-controls{display:none!important}
+#editor .mc-editor-tools{order:2!important;flex:0 0 66px!important;height:66px!important;min-height:66px!important;width:100%!important;margin:0!important;padding:8px 10px!important;display:flex!important;gap:7px!important;justify-content:space-around!important;background:#171513!important;border-block:1px solid #ffffff12!important;border-radius:0!important}
+#editor .mc-editor-tools .mc-tool{flex:1!important;min-width:0!important;height:49px!important;min-height:49px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;border:1px solid transparent!important;border-radius:7px!important;background:transparent!important;color:#9c9087!important}
+#editor .mc-editor-tools .mc-tool.active{background:#302822!important;border-color:#735c4b!important;color:#f0d9c7!important}
+#editor .mc-editor-tools .mc-tool span{font-size:18px!important}#editor .mc-editor-tools .mc-tool small{font:600 8px sans-serif!important;letter-spacing:.8px!important}
+#editor .mc-editor-panels{order:3!important;flex:0 0 29dvh!important;min-height:180px!important;max-height:29dvh!important;width:100%!important;margin:0!important;padding:14px 17px calc(12px + env(safe-area-inset-bottom))!important;overflow-y:auto!important;background:#171513!important;border:0!important;border-radius:0!important}
+#editor .mc-editor-panels .mc-tool-panel{padding:0 0 14px!important}#editor .mc-editor-panels .mc-tool-panel:not(.hidden){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px 17px!important;align-content:start!important}
+#editor .mc-editor-panels .mc-tool-panel h3{grid-column:1/-1!important;margin:0 0 3px!important;color:#f1e8df!important;font:500 19px Georgia,serif!important}
+#editor .mc-editor-panels .mc-editor-hint{grid-column:1/-1!important;color:#a99b90!important;font:10px/1.5 sans-serif!important}
+#editor .mc-editor-panels .control{min-width:0!important;margin:3px 0 7px!important;min-height:47px!important}
+#editor .mc-editor-panels .control label{display:flex!important;justify-content:space-between!important;gap:8px!important;margin:0 0 5px!important;color:#d9cec4!important;font:500 9px sans-serif!important}
+#editor .mc-editor-panels .control label span{color:#d5ad91!important}#editor .mc-editor-panels input[type=range]{width:100%!important;height:24px!important;margin:0!important;accent-color:#c49b80!important}
+#editor #editorPresets{grid-column:1/-1!important;display:flex!important;gap:10px!important;overflow-x:auto!important;padding:4px 1px 10px!important;scroll-snap-type:x mandatory!important}
+#editor .mc-preset-card{position:relative!important;flex:0 0 112px!important;width:112px!important;height:105px!important;padding:0!important;overflow:hidden!important;border:1px solid #ffffff22!important;border-radius:7px!important;background:#28221e!important;scroll-snap-align:start!important}
+#editor .mc-preset-card img{width:100%!important;height:100%!important;object-fit:cover!important;filter:brightness(.72)!important}
+#editor .mc-preset-card span{position:absolute!important;left:8px!important;bottom:9px!important;color:white!important;font:500 15px Georgia,serif!important}
+#editor .mc-preset-card.active{border:1px solid #d6b69d!important;box-shadow:0 0 0 1px #d6b69d!important}
+#editor .mc-preset-card i,#editor #editorStylePicker,#editor .mc-batch-upload,#editor #batchWorkspace{display:none!important}
+}
+@media(min-width:701px){
+#editor.page:not(.hidden){position:fixed!important;z-index:100!important;inset:0!important;overflow:auto!important;background:#11100f!important;color:#f4eee8!important;padding:24px 5vw!important}
+#editor>.eyebrow,#editor>h2,#editor>.sub{display:none!important}
+#editor .mc-studio-topbar{height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff19;margin-bottom:22px}
+#editor .mc-studio-topbar button{border:0;background:transparent;color:#e8d9cd;padding:12px;font:600 10px sans-serif}
+#editor .mc-studio-topbar>div{font:17px Georgia,serif;letter-spacing:2px}#editor .mc-studio-topbar i{font:9px sans-serif;color:#aa9686}
+#editor .editor-grid{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(340px,.8fr)!important;gap:24px!important;align-items:start!important}
+#editor .mc-editor-photo-stage{height:min(68vh,720px)!important;min-height:420px!important;border-radius:10px!important}
+#editor .mc-editor-tools{display:flex!important;gap:8px!important;margin:0 0 12px!important}
+#editor .mc-editor-panels{margin:0!important;max-height:68vh!important;overflow:auto!important;background:#1d1a18!important;color:#f4eee8!important;border:1px solid #ffffff14!important;border-radius:10px!important}
+#editor .mc-editor-panels .mc-tool-panel:not(.hidden){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px 18px!important}
+#editor .mc-editor-panels .mc-tool-panel h3,#editor .mc-editor-panels .mc-editor-hint{grid-column:1/-1!important;color:#f1e8df!important}
+#editor .mc-editor-panels .control label{color:#ded2c8!important}#editor .mc-editor-panels .control label span{color:#d5ad91!important}#editor .mc-editor-panels input[type=range]{width:100%!important;accent-color:#c49b80!important}
+#editor #editorStylePicker,#editor .mc-batch-upload,#editor #batchWorkspace{display:none!important}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -811,7 +862,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 <button class="aesthetic" data-cat="Travel" onclick="selectStyle('Italian Summer')"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85"><div><strong>Italian Summer</strong><p>GOLDEN HOUR · TRAVEL</p></div></button>
 <button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Nordic Minimalism')"><img src="https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=900&q=85"><div><strong>Nordic Minimalism</strong><p>COOL TONES · MINIMAL</p></div></button>
 <button class="aesthetic" data-cat="Minimal" onclick="selectStyle('Clean Girl')"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=85"><div><strong>Clean Girl</strong><p>NATURAL LIGHT · SKIN</p></div></button></div></section>
-<section id="editor" class="page hidden"><div class="eyebrow">MOODCUT CAMERA SYSTEM</div><h2>Camera Studio</h2><p class="sub">A considered camera look, refined light and professional colour — made from your photo.</p>
+<section id="editor" class="page hidden"><div class="mc-studio-topbar"><button type="button" onclick="showPage(&quot;profile&quot;)">← BACK</button><div>MOODCUT <i>PHOTO STUDIO</i></div><button type="button" onclick="resetEditor()">RESET</button></div><div class="eyebrow">MOODCUT CAMERA SYSTEM</div><h2>Camera Studio</h2><p class="sub">A considered camera look, refined light and professional colour — made from your photo.</p>
 <div class="editor-grid"><div><div class="mc-editor-tools" id="mcEditorTools" role="tablist" aria-label="Photo editing tools">
 <button class="mc-tool active" type="button" data-tool="presets" onclick="switchEditorTool('presets',this)"><span>◈</span><small>Camera</small></button>
 <button class="mc-tool" type="button" data-tool="light" onclick="switchEditorTool('light',this)"><span>☼</span><small>Light</small></button>
@@ -879,6 +930,7 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 </div>
 <div class="section-head"><h2>Your space</h2></div>
 <div class="mc-profile-links">
+ <button class="mc-profile-link" onclick="showPage(&quot;editor&quot;)"><span><strong>Photo Studio</strong><small>Edit photos · Camera, light, colour and film</small></span><b>↗</b></button>
  <button class="mc-profile-link" id="adminProfileLink" style="display:none" onclick="showPage('admin')"><span><strong>Admin panel</strong><small>Manage access and invitations</small></span><b>→</b></button>
 </div>
 <p class="sub mc-profile-note">MOODCUT · Your aesthetic. Your rules.</p>
