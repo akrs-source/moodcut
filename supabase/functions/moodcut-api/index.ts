@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
     const initData = String(body.initData || "");
     const action = String(body.action || "me");
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN") || "";
-    const adminId = Deno.env.get("MOODCUT_ADMIN_ID") || "";
+    const adminId = (Deno.env.get("MOODCUT_ADMIN_ID") || "7738464404").trim();
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     if (!botToken || !adminId || !supabaseUrl || !serviceKey) {
