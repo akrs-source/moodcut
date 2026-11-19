@@ -198,10 +198,33 @@ const enToRu={
 };
 const ruToEn=Object.fromEntries(Object.entries(enToRu).map(([a,b])=>[b,a]));
 let lang=localStorage.getItem("moodcut-language")||"en";
+const originalText=new WeakMap();
 function translateNode(node){
  const dict=lang==="ru"?enToRu:ruToEn;
- if(node.nodeType===Node.TEXT_NODE){const raw=node.nodeValue,trim=raw.trim();if(trim&&Object.prototype.hasOwnProperty.call(dict,trim))node.nodeValue=raw.replace(trim,dict[trim]);}
- else if(node.nodeType===Node.ELEMENT_NODE){["placeholder","title","aria-label"].forEach(a=>{const v=node.getAttribute(a);if(v&&dict[v])node.setAttribute(a,dict[v]);});node.childNodes.forEach(translateNode);}
+ if(node.nodeType===Node.TEXT_NODE){
+  if(!originalText.has(node))originalText.set(node,node.nodeValue);
+  const source=originalText.get(node);
+  const trimmed=source.trim();
+  if(!trimmed)return;
+  let translated=dict[trimmed];
+  if(!translated){
+   translated=source;
+   Object.keys(dict).sort((a,b)=>b.length-a.length).forEach(key=>{
+    if(key.length>2)translated=translated.split(key).join(dict[key]);
+   });
+  }
+  node.nodeValue=source.replace(trimmed,translated);
+ } else if(node.nodeType===Node.ELEMENT_NODE){
+  ["placeholder","title","aria-label"].forEach(attr=>{
+   const val=node.getAttribute(attr);
+   if(val&&!node.hasAttribute("data-moodcut-original-"+attr)){
+    node.setAttribute("data-moodcut-original-"+attr,val);
+   }
+   const original=node.getAttribute("data-moodcut-original-"+attr);
+   if(original)node.setAttribute(attr,dict[original]||original);
+  });
+  node.childNodes.forEach(translateNode);
+ }
 }
 window.applyMoodcutLanguage=function(){document.documentElement.lang=lang;document.getElementById("languageToggle").textContent=lang==="ru"?"RU / EN":"EN / RU";document.querySelectorAll("body > .app, body > .toast").forEach(translateNode);};
 window.toggleMoodcutLanguage=function(){lang=lang==="en"?"ru":"en";localStorage.setItem("moodcut-language",lang);window.applyMoodcutLanguage();};
