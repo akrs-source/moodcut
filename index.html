@@ -705,6 +705,25 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
  #home .mh-look-copy h3{font-size:16px!important}
 }
 
+
+/* Homepage photo sizing — full-bleed images, no intrinsic-size corner rendering */
+#home .mh-ba-after,#home .mh-ba-before{position:absolute;inset:0;overflow:hidden}
+#home .mh-ba-after img,#home .mh-ba-before img{
+  position:absolute!important;inset:0!important;display:block!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center 38%!important;
+}
+#home .mh-ba-after img{filter:saturate(.88) contrast(1.04) brightness(.96)}
+#home .mh-ba-before img{filter:none}
+#home .mh-look-image{position:relative;overflow:hidden}
+#home .mh-look-image img{
+  position:absolute!important;inset:0!important;display:block!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center 38%!important;
+}
+#home .mh-look-image:after{z-index:1;pointer-events:none}
+#home .mh-look-image span{z-index:2}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
