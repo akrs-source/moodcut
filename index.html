@@ -1046,7 +1046,70 @@ html,body,.app,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:var(--m
 .mc-bottom-nav{border-color:var(--mh-line)!important}
 .mc-bottom-nav .nav{color:var(--mh-muted)!important}
 .mc-bottom-nav .nav.active{color:var(--mh-accent)!important;background:color-mix(in srgb,var(--mh-accent) 10%,transparent)!important}
-</style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}</style></head>
+</style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}
+/* APP SHELL — use the exact Photo Studio identity on every section */
+:root{--bg:#171412!important;--paper:#211c19!important;--ink:#eee3db!important;--muted:#a99a90!important;--line:rgba(238,224,214,.13)!important;--soft:#302722!important;--gold:#d9b8ad!important}
+html,body,.app,.layout,main{background:#171412!important;color:#eee3db!important}
+body>.app>header.mh-global-header,
+.mh-global-header{
+ height:62px!important;min-height:62px!important;
+ padding:env(safe-area-inset-top,0px) 17px 0!important;
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ background:#171412!important;border-bottom:1px solid rgba(238,224,214,.13)!important;
+ color:#eee3db!important;box-sizing:border-box!important
+}
+.mh-global-header .logo{
+ display:block!important;font:400 21px/1 'Playfair Display',serif!important;
+ letter-spacing:.12em!important;color:#eadbd2!important
+}
+.mh-global-header .logo span{
+ display:block!important;font:600 8px/1.2 'DM Sans',sans-serif!important;
+ letter-spacing:.28em!important;color:#a99a90!important;margin-top:3px!important
+}
+.mh-global-header .mh-language,.mh-global-header .header-right button{
+ border:1px solid rgba(238,224,214,.18)!important;border-radius:30px!important;
+ background:transparent!important;color:#eee3db!important;
+ font:600 9px 'DM Sans',sans-serif!important;letter-spacing:.08em!important;
+ min-height:32px!important;padding:0 12px!important
+}
+aside.mc-bottom-nav{
+ position:fixed!important;z-index:1000!important;left:0!important;right:0!important;bottom:0!important;
+ height:calc(66px + env(safe-area-inset-bottom,0px))!important;
+ padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px))!important;
+ display:flex!important;justify-content:space-around!important;align-items:center!important;
+ background:#171412!important;border-top:1px solid rgba(238,224,214,.13)!important;
+ backdrop-filter:blur(18px)!important;box-sizing:border-box!important
+}
+.mc-bottom-nav .nav{
+ height:52px!important;min-height:52px!important;width:33.333%!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:3px!important;padding:3px!important;margin:0!important;border:0!important;border-radius:10px!important;
+ background:transparent!important;color:#a99a90!important;
+ font:500 10px 'DM Sans',sans-serif!important;letter-spacing:.04em!important
+}
+.mc-bottom-nav .nav.active,.mc-bottom-nav .nav:hover{
+ color:#d9b8ad!important;background:rgba(217,184,173,.08)!important
+}
+.mc-bottom-nav .nav-icon{width:23px!important;height:23px!important;display:grid!important;place-items:center!important;font-size:22px!important;line-height:1!important}
+.mc-bottom-nav .nav-icon svg{width:21px!important;height:21px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.6!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.page:not(.moodcut-reference-home){background:#171412!important;color:#eee3db!important}
+.page:not(.moodcut-reference-home) .panel,
+.page:not(.moodcut-reference-home) .style-card,
+.page:not(.moodcut-reference-home) .preview{background:#211c19!important;border-color:rgba(238,224,214,.13)!important}
+.page:not(.moodcut-reference-home)>h2,
+.page:not(.moodcut-reference-home) .section-head h2,
+.page:not(.moodcut-reference-home) h3{color:#eee3db!important}
+.page:not(.moodcut-reference-home) .btn,
+.page:not(.moodcut-reference-home) .upload{background:#d9b8ad!important;color:#211c19!important}
+body.mc-studio-open .mh-global-header{display:none!important}
+body.mc-studio-open aside.mc-bottom-nav{background:#171412!important;border-color:rgba(238,224,214,.13)!important}
+@media(max-width:700px){
+ body>.app>header.mh-global-header,.mh-global-header{height:62px!important;min-height:62px!important;padding-left:17px!important;padding-right:17px!important}
+ .mh-global-header .logo{font-size:21px!important}
+ .page:not(.moodcut-reference-home){padding:16px 0 28px!important}
+}
+
+</style></head>
 <body>
 <div class="app">
 <header class="mh-global-header"><div class="logo">MOODCUT<span>PHOTO STUDIO</span></div><div class="header-right"><button class="mh-language" id="mhLanguage" onclick="toggleMoodLanguage()">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
