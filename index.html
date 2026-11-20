@@ -831,55 +831,56 @@ body.mc-studio-open #photoStudioPage{display:block!important;padding:0!important
 <button class="nav" onclick="openMoodcutProfile(this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Profile</button>
 </aside>
 <main>
-<section id="home" class="page moodcut-editorial-home mc-luxe">
-  <header class="lx-masthead">
-    <span class="lx-wordmark">moodcut<span>®</span></span>
-    <span class="lx-edition">THE IMAGE STUDIO&nbsp; — &nbsp;EST. 2026</span>
-    <button class="lx-menu-cta" onclick="showPage('photoStudioPage')">OPEN STUDIO <b>↗</b></button>
+<section id="home" class="page moodcut-editorial-home mc-red-editorial">
+  <header class="red-masthead">
+    <span class="red-wordmark">MOODCUT</span>
+    <nav><span class="active">HOME</span><span>THE EDIT</span><span>PRESETS</span><span>ABOUT</span></nav>
+    <button onclick="showPage('photoStudioPage')">OPEN STUDIO <b>↗</b></button>
   </header>
-  <div class="lx-hero">
-    <div class="lx-hero-image-wrap">
-      <img class="lx-hero-image" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1800&q=92" alt="Editorial portrait">
-      <span class="lx-image-index">CAMPAIGN 001&nbsp; / &nbsp;PORTRAIT STUDY</span>
+  <section class="red-hero">
+    <img class="red-hero-photo" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1800&q=92" alt="Fashion editorial portrait">
+    <div class="red-hero-copy">
+      <span class="red-kicker">A NEW WAY TO SEE YOUR EVERYDAY</span>
+      <h1>MOOD<br><i>CUT.</i></h1>
+      <div class="red-hero-actions">
+        <button class="red-button" onclick="showPage('photoStudioPage')">ENTER THE STUDIO</button>
+        <button class="red-outline" onclick="document.getElementById('red-collection').scrollIntoView({behavior:'smooth'})">EXPLORE THE EDIT</button>
+      </div>
     </div>
-    <div class="lx-hero-copy">
-      <span class="lx-eyebrow">A NEW PERSPECTIVE ON EVERYDAY PHOTOGRAPHY</span>
-      <h1>The art<br>of the <i>everyday.</i></h1>
-      <p>Авторские цветовые решения для фотографий, которые ты снимаешь каждый день. Без сложной техники. Только твой взгляд.</p>
-      <button class="lx-enter" onclick="showPage('photoStudioPage')"><span>Открыть студию</span><b>↗</b></button>
-      <div class="lx-hero-note"><span>01</span><span>MADE TO MAKE THE ORDINARY FEEL EXTRAORDINARY</span></div>
-    </div>
-  </div>
-
-  <section class="lx-collection">
-    <div class="lx-collection-top">
-      <span class="lx-eyebrow">THE MOODCUT EDIT&nbsp; / &nbsp;NO. 001</span>
-      <span class="lx-edition">A STUDY IN LIGHT, COLOUR & FEELING</span>
-    </div>
-    <div class="lx-collection-title"><h2>Every moment,<br><i>reframed.</i></h2><p>От мягкого дневного света до ночной вспышки — визуальные настроения, которые работают с твоими снимками, а не спорят с ними.</p></div>
-    <div class="lx-gallery">
-      <button class="lx-gallery-item lx-gallery-a" onclick="showPage('photoStudioPage')">
-        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=90" alt="Street style portrait">
-        <span class="lx-gallery-meta"><b>01</b><span>THE PORTRAIT<br><small>FORM / SKIN / TONE</small></span><i>↗</i></span>
-      </button>
-      <button class="lx-gallery-item lx-gallery-b" onclick="showPage('photoStudioPage')">
-        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1000&q=90" alt="Night city lights">
-        <span class="lx-gallery-meta"><b>02</b><span>AFTER DARK<br><small>FLASH / MOVEMENT / GRAIN</small></span><i>↗</i></span>
-      </button>
-      <button class="lx-gallery-item lx-gallery-c" onclick="showPage('photoStudioPage')">
-        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=90" alt="Natural light close-up portrait">
-        <span class="lx-gallery-meta"><b>03</b><span>SOFT FOCUS<br><small>DAYLIGHT / DEPTH / DETAIL</small></span><i>↗</i></span>
-      </button>
-    </div>
-    <div class="lx-gallery-bottom"><span>THOUGHTFULLY MADE FOR THE CAMERA IN YOUR HAND.</span><button onclick="showPage('photoStudioPage')">DISCOVER THE STUDIO&nbsp; ↗</button></div>
+    <span class="red-hero-index">IMAGE STUDIO / EST. 2026</span>
   </section>
 
-  <section class="lx-manifesto">
-    <span class="lx-manifesto-label">A NOTE FROM MOODCUT</span>
-    <p>Not another filter.<br><i>A point of view.</i></p>
-    <span class="lx-manifesto-foot">YOUR PHOTO. YOUR TASTE. YOUR MOOD.</span>
+  <section class="red-intro">
+    <div class="red-intro-image">
+      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=90" alt="Fashion portrait">
+      <span>01 / THE PORTRAIT STUDY</span>
+    </div>
+    <div class="red-intro-copy">
+      <h2>COLOUR WITH<br>AN <i>ATTITUDE.</i></h2>
+      <p>Каждый снимок может стать частью твоей визуальной истории. Авторские пресеты MOODCUT созданы не для того, чтобы прятать реальность, а чтобы находить в ней настроение.</p>
+      <button onclick="showPage('photoStudioPage')">DISCOVER THE STUDIO&nbsp; ↗</button>
+    </div>
   </section>
-  <footer class="lx-footer"><span class="lx-wordmark">moodcut<span>®</span></span><span>THE IMAGE STUDIO&nbsp; / &nbsp;2026</span><button onclick="showPage('photoStudioPage')">ENTER STUDIO&nbsp; ↗</button></footer>
+
+  <section class="red-manifesto">
+    <div class="red-manifesto-note">WE DON'T FOLLOW<br>THE FRAME.<br>WE REDEFINE IT.</div>
+    <h2>WHERE<br>MOODS<br>TAKE <i>SHAPE.</i></h2>
+    <div class="red-orbit">
+      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=700&q=90" alt="Editorial portrait">
+    </div>
+    <span class="red-manifesto-index">MOODCUT — VISUAL EXPRESSION, REIMAGINED</span>
+  </section>
+
+  <section class="red-collection" id="red-collection">
+    <div class="red-collection-head"><span>THE MOODCUT EDIT / 001</span><span>THREE DIRECTIONS. INFINITE WAYS TO FEEL.</span></div>
+    <h2>FIND YOUR<br><i>OWN COLOUR.</i></h2>
+    <div class="red-triptych">
+      <button onclick="showPage('photoStudioPage')"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=850&q=90" alt="Portrait look"><span>01&nbsp; / &nbsp;PORTRAIT</span></button>
+      <button onclick="showPage('photoStudioPage')"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=850&q=90" alt="Night look"><span class="triptych-title">AFTER<br>DARK</span><small>02 / FLASH & GRAIN</small></button>
+      <button onclick="showPage('photoStudioPage')"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=850&q=90" alt="Fashion look"><span>03&nbsp; / &nbsp;THE EDIT</span></button>
+    </div>
+  </section>
+  <footer class="red-footer"><span>MOODCUT</span><p>YOUR PHOTO. YOUR VISION. YOUR MOOD.</p><button onclick="showPage('photoStudioPage')">OPEN STUDIO ↗</button></footer>
 </section>
 <section id="discover" class="page hidden"><div class="eyebrow">FIND YOUR VISUAL LANGUAGE</div><h2>Discover aesthetics</h2><p class="sub">Explore moods, colours and visual directions. Choose a style to make it your own.</p>
 <div class="platforms"><button class="platform active" onclick="filterStyles('All',this)">All</button><button class="platform" onclick="filterStyles('Classic',this)">Classic</button><button class="platform" onclick="filterStyles('Film',this)">Film</button><button class="platform" onclick="filterStyles('Romantic',this)">Romantic</button><button class="platform" onclick="filterStyles('Travel',this)">Travel</button><button class="platform" onclick="filterStyles('Minimal',this)">Minimal</button></div>
