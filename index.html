@@ -1692,7 +1692,7 @@ function applyMoodLanguage(lang){moodLanguage=lang==='en'?'en':'ru';document.doc
 function toggleMoodLanguage(){applyMoodLanguage(moodLanguage==='ru'?'en':'ru')}
 const moodPresetData={portrait:{caption:'portraitCaption',filter:'saturate(1.12) contrast(1.04) sepia(.10) brightness(1.03)'},flash:{caption:'flashCaption',filter:'contrast(1.2) saturate(.82) brightness(1.08)'},street:{caption:'streetCaption',filter:'saturate(.72) contrast(1.14) hue-rotate(8deg) brightness(.96)'}};
 function setMoodPreset(name){const d=moodPresetData[name]||moodPresetData.portrait;document.querySelectorAll('.mh-preset-switch').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));const a=document.querySelector('#mhAfter img'),caption=document.getElementById('mhPresetCaption');if(a)a.style.filter=d.filter;if(caption)caption.textContent=moodTranslations[moodLanguage][d.caption]}
-(function(){let lang='ru';try{lang=localStorage.getItem('moodcut-home-language')||'ru'}catch(e){}applyMoodLanguage(lang);const r=document.getElementById('mhRange'),d=document.getElementById('mhDivider'),b=document.getElementById('mhBefore');if(r)r.addEventListener('input',()=>{const v=r.value+'%';if(b)b.style.width=v;if(d)d.style.left=v});setMoodPreset('portrait')})();
+(function(){let lang='ru';try{lang=localStorage.getItem('moodcut-home-language')||'ru'}catch(e){}applyMoodLanguage(lang);const r=document.getElementById('mhRange'),d=document.getElementById('mhDivider'),b=document.getElementById('mhBefore');if(r)r.addEventListener('input',()=>{const v=r.value+'%';if(b)b.style.clipPath='inset(0 '+(100-Number(r.value))+'% 0 0)';if(d)d.style.left=v});setMoodPreset('portrait')})();
 </script><script>
 (function(){
  const tg=window.Telegram&&window.Telegram.WebApp;
@@ -2298,4 +2298,25 @@ body.mc-studio-open .mh-header-default{display:none!important}
 }
 #home .mh-ba-after img{width:100%!important}
 #home .mh-ba-before img{width:200%!important}
+</style>
+
+<style id="mc-before-after-single-coordinate-fix">
+/* Both images use the exact same frame-sized coordinate system.
+   Reveal the original with clip-path instead of resizing its container. */
+#home .mh-ba-frame{container-type:inline-size!important}
+#home .mh-ba-after,#home .mh-ba-before{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ overflow:hidden!important;
+}
+#home .mh-ba-before{
+ right:0!important;bottom:0!important;width:100%!important;height:100%!important;
+ clip-path:inset(0 50% 0 0);
+ border-right:0!important;
+}
+#home .mh-ba-after img,#home .mh-ba-before img{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+ object-fit:cover!important;object-position:center 38%!important;
+ transform:none!important;transition:none!important;
+}
 </style>
