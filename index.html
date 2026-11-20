@@ -6,7 +6,7 @@
 <title>MOODCUT — Your Aesthetic. Your Rules.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f2ec;--paper:#fffdf9;--ink:#211e1c;--wine:#713344;--muted:#958b82;--line:#e8e0d7;--soft:#eee6dc}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}
@@ -967,6 +967,20 @@ body.mc-studio-open #photoStudioPage{display:block!important;padding:0!important
 @media(prefers-color-scheme:light){:root{color-scheme:light;--mh-bg:#f8f4f0;--mh-card:#fffaf6;--mh-text:#241c19;--mh-muted:#756761;--mh-accent:#a86f61;--mh-line:rgba(36,28,25,.16)}.mh-cta{color:white;background:#8f594e}.mh-preset-switch.active{color:#fff}.mh-look-copy button{color:#8f594e;border-color:#8f594e}.mc-bottom-nav .nav.active{color:#8f594e!important;background:#8f594e18!important}}
 @media(min-width:701px){.app{max-width:520px}.moodcut-home{padding-left:24px!important;padding-right:24px!important}.mh-card-rail{margin:0 -24px;padding:0 24px 8px}}
 @media(max-width:360px){.moodcut-home{padding-left:16px!important;padding-right:16px!important}.mh-preset-switch{font-size:10px}}
+/* Align home typography and palette with the photo studio and profile */
+:root{color-scheme:dark;--mh-bg:#171412;--mh-card:#211c19;--mh-text:#eee3db;--mh-muted:#a99a90;--mh-accent:#d9b8ad;--mh-line:rgba(238,224,214,.13)}
+html,body{background:#171412!important;color:#eee3db;font-family:'DM Sans',sans-serif}
+.mh-global-header,.moodcut-home,.mc-bottom-nav{background:#171412!important;color:#eee3db!important}
+.moodcut-home{font-family:'DM Sans',sans-serif!important}
+.moodcut-home h1,.moodcut-home h2,.moodcut-home h3,.mh-look-copy h3,.mh-final h2{font-family:'Playfair Display',serif!important;font-weight:400!important;letter-spacing:normal!important}
+.mh-eyebrow,.mh-lead,.mh-ba-top>span,.mh-count,.mh-preset-switch,.mh-ba-caption,.mh-hint,.mh-look-copy p,.mh-look-copy button,.mh-step,.mh-cta,.mh-language,.mc-bottom-nav .nav{font-family:'DM Sans',sans-serif!important}
+.mh-cta{background:#d9b8ad!important;color:#171412!important}
+.mh-preset-switch.active{background:#d9b8ad!important;border-color:#d9b8ad!important;color:#171412!important}
+.mh-look-card,.mh-final{background:#211c19!important}
+.mh-look-copy button{color:#d9b8ad!important;border-color:#d9b8ad!important}
+.mc-bottom-nav .nav{color:#a99a90!important}
+.mc-bottom-nav .nav.active{color:#d9b8ad!important;background:#d9b8ad14!important}
+@media(prefers-color-scheme:light){:root{color-scheme:dark!important}html,body,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:#171412!important;color:#eee3db!important}}
 </style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}</style></head>
 <body>
 <div class="app">
