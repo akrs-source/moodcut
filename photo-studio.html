@@ -243,6 +243,9 @@ header{
   header{padding:0 17px!important}
   .head-actions{gap:6px!important}
 }
+
+/* Studio uses the single shared header owned by the MOODCUT app shell */
+.app>header{display:none!important}
 </style></head><body><div class="app">
 <header><div class="brand">MOODCUT<span>PHOTO STUDIO</span></div><div class="head-actions"><button class="icon" id="undo" title="Отменить" aria-label="Отменить" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></svg></button><button class="icon" id="redo" title="Повторить" aria-label="Повторить" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h2"/></svg></button><button class="reset-top" id="resetTop" type="button">RESET</button><button class="export" id="exportTop">SAVE PHOTO</button></div></header>
 <main class="workspace"><div class="stage" id="stage"><canvas id="canvas"></canvas><div class="empty" id="empty"><div class="monogram">m.</div><div class="eyebrow">YOUR PHOTO. YOUR SIGNATURE.</div><p>Загрузи фотографию и создай собственный визуальный стиль.</p><label class="open-photo" for="file">ВЫБРАТЬ ФОТО</label></div><div class="hud"><span class="pill" id="lookTag">ORIGINAL</span><div class="hud-right"><label class="change-photo" for="file">＋ PHOTO</label><button class="compare" id="compare">HOLD · BEFORE</button></div></div><span class="zoom-label hidden" id="zoomLabel">100%</span></div><div class="meta"><span id="photoName">NO PHOTO SELECTED</span><strong id="status">READY WHEN YOU ARE</strong></div><input id="file" class="file-picker" type="file" accept="image/*,.heic,.heif" aria-label="Выбрать фотографию"></main>
@@ -505,4 +508,6 @@ stage.addEventListener('pointerdown',e=>{if(!img||e.target.closest('button'))ret
 stage.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,point(e));if(pointers.size===2&&gesture){const pts=[...pointers.values()],d=distance(pts[0],pts[1]);scale=Math.max(1,Math.min(4,gesture.scale*d/Math.max(1,gesture.distance)));tx=0;ty=0;applyTransform()}});
 function endPointer(e){pointers.delete(e.pointerId);gesture=null;if(!pointers.size){tx=0;ty=0;applyTransform()}}stage.addEventListener('pointerup',endPointer);stage.addEventListener('pointercancel',endPointer);stage.addEventListener('lostpointercapture',endPointer);
 })();
+
+window.addEventListener('message',event=>{if(event.data?.type!=='moodcut:studio-action')return;switch(event.data.action){case'undo':$('#undo').click();break;case'redo':$('#redo').click();break;case'reset':reset();break;case'save':exportPhoto();break;}});
 </script></body></html>
