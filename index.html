@@ -980,7 +980,7 @@ html,body{background:#171412!important;color:#eee3db;font-family:'DM Sans',sans-
 .mh-look-copy button{color:#d9b8ad!important;border-color:#d9b8ad!important}
 .mc-bottom-nav .nav{color:#a99a90!important}
 .mc-bottom-nav .nav.active{color:#d9b8ad!important;background:#d9b8ad14!important}
-@media(prefers-color-scheme:light){:root{color-scheme:dark!important}html,body,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:#171412!important;color:#eee3db!important}}
+/* Telegram theme is applied at runtime, matching the studio. */
 /* Restore the original MOODCUT wordmark and tighten the home layout */
 .mh-global-header .logo{font-family:'Unbounded',sans-serif!important;font-size:19px!important;font-weight:700!important;letter-spacing:-1.5px!important}
 .mh-global-header .logo span{font-family:inherit!important;font-weight:inherit!important;color:#d9b8ad!important}
@@ -1008,6 +1008,21 @@ html,body{background:#171412!important;color:#eee3db;font-family:'DM Sans',sans-
  .mh-final{margin-top:5px!important;padding:27px 17px 30px!important;border-radius:19px!important}
  .mh-final h2{font-size:21px!important;line-height:1.22!important;margin-bottom:16px!important}
 }
+/* Keep the landing page on the exact Telegram palette used by Studio */
+:root{--mh-bg:#171412;--mh-card:#211c19;--mh-text:#eee3db;--mh-muted:#a99a90;--mh-accent:#d9b8ad;--mh-line:rgba(238,224,214,.13);--mh-button-text:#171412}
+html,body,.app,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:var(--mh-bg)!important;color:var(--mh-text)!important}
+.mh-global-header{border-color:var(--mh-line)!important}
+.mh-global-header .logo span{color:var(--mh-accent)!important}
+.mh-eyebrow,.mh-ba-caption,.mh-step>span{color:var(--mh-accent)!important}
+.mh-lead,.mh-ba-top>span,.mh-count,.mh-hint,.mh-look-copy p,.mh-step p{color:var(--mh-muted)!important}
+.mh-cta,.mh-preset-switch.active{background:var(--mh-accent)!important;border-color:var(--mh-accent)!important;color:var(--mh-button-text)!important}
+.mh-look-card,.mh-final{background:var(--mh-card)!important;border-color:var(--mh-line)!important}
+.mh-preset-switch,.mh-look-copy button{border-color:var(--mh-line)!important;color:var(--mh-text)!important}
+.mh-look-copy button{border-color:var(--mh-accent)!important;color:var(--mh-accent)!important}
+.mh-collections,.mh-how,.mh-step{border-color:var(--mh-line)!important}
+.mc-bottom-nav{border-color:var(--mh-line)!important}
+.mc-bottom-nav .nav{color:var(--mh-muted)!important}
+.mc-bottom-nav .nav.active{color:var(--mh-accent)!important;background:color-mix(in srgb,var(--mh-accent) 10%,transparent)!important}
 </style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}</style></head>
 <body>
 <div class="app">
@@ -1565,6 +1580,27 @@ function toggleMoodLanguage(){applyMoodLanguage(moodLanguage==='ru'?'en':'ru')}
 const moodPresetData={portrait:{caption:'portraitCaption',before:'linear-gradient(145deg,#8b817a,#625a55 50%,#252322)',after:'linear-gradient(155deg,#d8b4a4,#9c7067 48%,#302c2c)'},flash:{caption:'flashCaption',before:'linear-gradient(135deg,#655e5a,#29282a 52%,#171719)',after:'linear-gradient(135deg,#e1c8b4,#987d72 42%,#242528)'},street:{caption:'streetCaption',before:'linear-gradient(140deg,#77736e,#454b4b 52%,#292a2b)',after:'linear-gradient(140deg,#78817f,#434f52 50%,#272a2b)'}};
 function setMoodPreset(name){const d=moodPresetData[name]||moodPresetData.portrait;document.querySelectorAll('.mh-preset-switch').forEach(b=>b.classList.toggle('active',b.dataset.preset===name));const a=document.getElementById('mhAfter'),before=document.getElementById('mhBefore'),caption=document.getElementById('mhPresetCaption');if(a)a.style.background=d.after;if(before)before.style.background=d.before;if(caption)caption.textContent=moodTranslations[moodLanguage][d.caption]}
 (function(){let lang='ru';try{lang=localStorage.getItem('moodcut-home-language')||'ru'}catch(e){}applyMoodLanguage(lang);const r=document.getElementById('mhRange'),d=document.getElementById('mhDivider'),b=document.getElementById('mhBefore');if(r)r.addEventListener('input',()=>{const v=r.value+'%';if(b)b.style.width=v;if(d)d.style.left=v});setMoodPreset('portrait')})();
+</script><script>
+(function(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ function luma(hex){try{const h=hex.replace('#','');return .2126*parseInt(h.slice(0,2),16)+.7152*parseInt(h.slice(2,4),16)+.0722*parseInt(h.slice(4,6),16)}catch(e){return 30}}
+ function applyMoodcutTheme(){
+  const p=tg&&tg.themeParams||{};
+  const bg=p.bg_color||'#171412',card=p.secondary_bg_color||'#211c19',ink=p.text_color||'#eee3db',light=luma(bg)>145;
+  const root=document.documentElement;
+  root.dataset.theme=light?'light':'dark';
+  root.style.colorScheme=light?'light':'dark';
+  root.style.setProperty('--mh-bg',bg);
+  root.style.setProperty('--mh-card',card);
+  root.style.setProperty('--mh-text',ink);
+  root.style.setProperty('--mh-muted',p.hint_color||(light?'#756761':'#a99a90'));
+  root.style.setProperty('--mh-accent',p.button_color||(light?'#9a7950':'#d9b8ad'));
+  root.style.setProperty('--mh-button-text',p.button_text_color||(light?'#ffffff':'#171412'));
+  root.style.setProperty('--mh-line',light?'rgba(36,28,25,.16)':'rgba(238,224,214,.13)');
+  root.style.setProperty('--mh-panel2',p.section_bg_color||(light?'#eeebe4':'#302722'));
+ }
+ try{tg&&tg.ready&&tg.ready();tg&&tg.expand&&tg.expand();applyMoodcutTheme();tg&&tg.onEvent&&tg.onEvent('themeChanged',applyMoodcutTheme)}catch(e){}
+})();
 </script></body>
 </html>
 <style>
