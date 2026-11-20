@@ -982,8 +982,8 @@ html,body{background:#171412!important;color:#eee3db;font-family:'DM Sans',sans-
 .mc-bottom-nav .nav.active{color:#d9b8ad!important;background:#d9b8ad14!important}
 /* Telegram theme is applied at runtime, matching the studio. */
 /* Restore the original MOODCUT wordmark and tighten the home layout */
-.mh-global-header .logo{font-family:'Unbounded',sans-serif!important;font-size:19px!important;font-weight:700!important;letter-spacing:-1.5px!important}
-.mh-global-header .logo span{font-family:inherit!important;font-weight:inherit!important;color:#d9b8ad!important}
+.mh-global-header .logo{font:400 21px/1 'Playfair Display',serif!important;letter-spacing:.12em!important;color:#eadbd2!important;font-weight:400!important}
+.mh-global-header .logo span{display:block!important;font:600 8px/1.2 'DM Sans',sans-serif!important;letter-spacing:.28em!important;color:var(--mh-muted)!important;margin-top:3px!important}
 @media(max-width:700px){
  .mh-intro{padding:25px 0 20px!important}
  .mh-eyebrow{font-size:10px!important;margin-bottom:10px!important}
@@ -1026,7 +1026,7 @@ html,body,.app,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:var(--m
 </style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}</style></head>
 <body>
 <div class="app">
-<header class="mh-global-header"><div class="logo">MOOD<span>CUT</span></div><div class="header-right"><button class="mh-language" id="mhLanguage" onclick="toggleMoodLanguage()">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
+<header class="mh-global-header"><div class="logo">MOODCUT<span>PHOTO STUDIO</span></div><div class="header-right"><button class="mh-language" id="mhLanguage" onclick="toggleMoodLanguage()">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
 <div class="layout">
 <aside class="mc-bottom-nav">
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span><span data-i18n="navHome">Главная</span></button>
