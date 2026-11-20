@@ -724,6 +724,14 @@ p,.sub,.eyebrow,.control label,.aesthetic p,.platform,.btn,.upload,.nav-item{let
 #home .mh-look-image:after{z-index:1;pointer-events:none}
 #home .mh-look-image span{z-index:2}
 
+
+/* Keep Studio header controls above the embedded editor and fully interactive */
+.app>header.mh-global-header{position:relative!important;z-index:1000!important;isolation:isolate!important;pointer-events:auto!important}
+.app>header.mh-global-header .header-right,
+.app>header.mh-global-header .header-right button{position:relative!important;z-index:1001!important;pointer-events:auto!important;touch-action:manipulation!important}
+body.mc-studio-open #photoStudioPage,
+body.mc-studio-open #photoStudioFrame{position:relative!important;z-index:1!important}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
