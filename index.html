@@ -6,7 +6,7 @@
 <title>MOODCUT — Your Aesthetic. Your Rules.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f2ec;--paper:#fffdf9;--ink:#211e1c;--wine:#713344;--muted:#958b82;--line:#e8e0d7;--soft:#eee6dc}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}
@@ -981,6 +981,33 @@ html,body{background:#171412!important;color:#eee3db;font-family:'DM Sans',sans-
 .mc-bottom-nav .nav{color:#a99a90!important}
 .mc-bottom-nav .nav.active{color:#d9b8ad!important;background:#d9b8ad14!important}
 @media(prefers-color-scheme:light){:root{color-scheme:dark!important}html,body,.mh-global-header,.moodcut-home,.mc-bottom-nav{background:#171412!important;color:#eee3db!important}}
+/* Restore the original MOODCUT wordmark and tighten the home layout */
+.mh-global-header .logo{font-family:'Unbounded',sans-serif!important;font-size:19px!important;font-weight:700!important;letter-spacing:-1.5px!important}
+.mh-global-header .logo span{font-family:inherit!important;font-weight:inherit!important;color:#d9b8ad!important}
+@media(max-width:700px){
+ .mh-intro{padding:25px 0 20px!important}
+ .mh-eyebrow{font-size:10px!important;margin-bottom:10px!important}
+ .mh-intro h1{font-size:27px!important;line-height:1.18!important;letter-spacing:-.7px!important;margin-bottom:11px!important}
+ .mh-lead{font-size:13px!important;line-height:1.5!important;margin-bottom:16px!important}
+ .mh-cta{height:46px!important;min-width:170px!important;font-size:12px!important}
+ .mh-before-after{padding:3px 0 22px!important}
+ .mh-ba-frame{aspect-ratio:1/1!important;max-height:390px!important;border-radius:18px!important}
+ .mh-ba-top h2,.mh-section-heading h2,.mh-how>h2{font-size:17px!important}
+ .mh-preset-switches{gap:6px!important;margin:11px 0 7px!important}
+ .mh-preset-switch{height:38px!important;font-size:10px!important}
+ .mh-ba-caption{font-size:12px!important}
+ .mh-hint{font-size:11px!important}
+ .mh-collections,.mh-how{padding:21px 0 24px!important}
+ .mh-look-card{flex-basis:70%!important;max-width:255px!important;border-radius:18px!important}
+ .mh-look-image{height:185px!important;border-radius:18px!important}
+ .mh-look-copy{padding:12px 13px 14px!important}
+ .mh-look-copy h3{font-size:15px!important}
+ .mh-look-copy p{font-size:12px!important;min-height:36px!important}
+ .mh-look-copy button{height:38px!important;font-size:11px!important}
+ .mh-step{min-height:66px!important;padding:11px 0!important}
+ .mh-final{margin-top:5px!important;padding:27px 17px 30px!important;border-radius:19px!important}
+ .mh-final h2{font-size:21px!important;line-height:1.22!important;margin-bottom:16px!important}
+}
 </style><style>main:has(#home:not(.hidden)){padding:0!important}.mh-global-header{padding-top:env(safe-area-inset-top,0px);height:calc(66px + env(safe-area-inset-top,0px))}</style></head>
 <body>
 <div class="app">
