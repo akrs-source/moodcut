@@ -1704,7 +1704,7 @@ function setMoodPreset(name){const d=moodPresetData[name]||moodPresetData.portra
   root.style.setProperty('--mh-line',light?'rgba(36,28,25,.16)':'rgba(238,224,214,.13)');
   root.style.setProperty('--mh-panel2',p.section_bg_color||(light?'#eeebe4':'#302722'));
  }
- try{tg&&tg.ready&&tg.ready();tg&&tg.expand&&tg.expand();applyMoodcutTheme();tg&&tg.onEvent&&tg.onEvent('themeChanged',applyMoodcutTheme)}catch(e){}
+ try{tg&&tg.ready&&tg.ready();tg&&tg.expand&&tg.expand();if(tg&&typeof tg.disableVerticalSwipes==='function')tg.disableVerticalSwipes();applyMoodcutTheme();tg&&tg.onEvent&&tg.onEvent('themeChanged',applyMoodcutTheme)}catch(e){}
 })();
 </script></body>
 </html>
@@ -2231,4 +2231,9 @@ html,body{margin:0!important;background:#171412!important;color:#eee3db!importan
  #home .mh-look-card{flex-basis:84%!important;width:84%!important;max-width:300px!important}
  #home .mh-final{margin-left:-16px!important;margin-right:-16px!important;padding-left:16px!important;padding-right:16px!important}
 }
+
+/* Keep vertical page scrolling inside MOODCUT instead of triggering Telegram's swipe-to-close gesture */
+html,body{overscroll-behavior-y:contain!important}
+#home.moodcut-home{touch-action:pan-y!important;overscroll-behavior-y:contain!important}
+#home .mh-card-rail{touch-action:pan-x pan-y!important;overscroll-behavior-x:contain!important;overscroll-behavior-y:contain!important}
 </style>
