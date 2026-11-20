@@ -1131,7 +1131,7 @@ body.mc-studio-open aside.mc-bottom-nav{background:#171412!important;border-colo
 </style></head>
 <body>
 <div class="app">
-<header class="mh-global-header"><div class="logo">MOODCUT<span>PHOTO STUDIO</span></div><div class="header-right"><button class="mh-language" id="mhLanguage" onclick="toggleMoodLanguage()">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div></header>
+<header class="mh-global-header"><div class="logo">MOODCUT<span>PHOTO STUDIO</span></div><div class="header-right mh-header-default"><button class="mh-language" id="mhLanguage" onclick="toggleMoodLanguage()">RU / EN</button><button class="avatar" id="adminAccess" style="border:0;display:none" onclick="showPage('admin')">A</button></div><div class="header-right mh-header-studio" aria-label="Инструменты студии"><button class="mh-studio-icon" type="button" aria-label="Отменить" title="Отменить" onclick="moodcutStudioAction('undo')">↶</button><button class="mh-studio-icon" type="button" aria-label="Повторить" title="Повторить" onclick="moodcutStudioAction('redo')">↷</button><button class="mh-studio-text" type="button" onclick="moodcutStudioAction('reset')">RESET</button><button class="mh-studio-save" type="button" onclick="moodcutStudioAction('save')">SAVE</button></div></header>
 <div class="layout">
 <aside class="mc-bottom-nav">
 <button class="nav active" onclick="showPage('home',this)"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span><span data-i18n="navHome">Главная</span></button>
@@ -1231,7 +1231,7 @@ body.mc-studio-open aside.mc-bottom-nav{background:#171412!important;border-colo
  <button id="savePaletteButton" class="btn wine hidden" onclick="saveGeneratedPalette()">Save to Saved styles</button>
 </div>
 </section>
-<section id="photoStudioPage" class="page hidden" aria-label="MOODCUT Photo Studio"><iframe id="photoStudioFrame" src="photo-studio.html?v=20261121-header-system-2" title="MOODCUT Photo Studio" allow="camera; clipboard-read; clipboard-write"></iframe></section>
+<section id="photoStudioPage" class="page hidden" aria-label="MOODCUT Photo Studio"><iframe id="photoStudioFrame" src="photo-studio.html?v=20261121-shared-header-3" title="MOODCUT Photo Studio" allow="camera; clipboard-read; clipboard-write"></iframe></section>
 <section id="profile" class="page hidden">
 <div class="eyebrow">YOUR PERSONAL SPACE</div><h2>Profile</h2><p class="sub">Your MOODCUT account and creative space.</p>
 <div class="panel mc-profile-card">
@@ -1263,8 +1263,8 @@ body.mc-studio-open aside.mc-bottom-nav{background:#171412!important;border-colo
 <script>
 let originalPhoto=null,showingBefore=false,currentPlatform='telegram';
 let smartApplyEnabled=false,moodcutBaseValues=null,generatedPalettePreviewImage='',generatedPaletteProfile=null;
-function showPage(id,btn,keepStyleMode){if(id==='editor'&&!keepStyleMode)setEditorStyleMode(false);document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const target=document.getElementById(id);if(!target)return;target.classList.remove('hidden');const studioOpen=id==='photoStudioPage';document.body.classList.toggle('mc-studio-open',studioOpen);const globalHeader=document.querySelector('.app>header.mh-global-header');if(globalHeader){if(studioOpen){globalHeader.style.setProperty('display','none','important');globalHeader.setAttribute('aria-hidden','true')}else{globalHeader.style.removeProperty('display');globalHeader.removeAttribute('aria-hidden')}}document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick')?.includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
-window.addEventListener('message',event=>{if(event.data?.type==='moodcut:close-studio')showPage('profile')});
+function showPage(id,btn,keepStyleMode){if(id==='editor'&&!keepStyleMode)setEditorStyleMode(false);document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const target=document.getElementById(id);if(!target)return;target.classList.remove('hidden');const studioOpen=id==='photoStudioPage';document.body.classList.toggle('mc-studio-open',studioOpen);const globalHeader=document.querySelector('.app>header.mh-global-header');if(globalHeader){globalHeader.style.removeProperty('display');globalHeader.removeAttribute('aria-hidden')}document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));if(btn)btn.classList.add('active');else{let n=[...document.querySelectorAll('.nav')].find(x=>x.getAttribute('onclick')?.includes("'"+id+"'"));if(n)n.classList.add('active')}window.scrollTo(0,0)}
+function moodcutStudioAction(action){const frame=document.getElementById('photoStudioFrame');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'moodcut:studio-action',action},'*')}window.addEventListener('message',event=>{if(event.data?.type==='moodcut:close-studio')showPage('profile')});
 function notify(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function selectPlatform(name,btn){currentPlatform=name;document.querySelectorAll('.social-card').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const data={telegram:['TELEGRAM CREATIVE SPACE','Make your channel feel like you.','Create a consistent visual identity for your Telegram channel.',['Channel aesthetic','Post design','Post cover','Quote cards'],['Cover, colours and identity','Beautiful visual publications','Editorial covers and images','Typography and composition']],instagram:['INSTAGRAM CREATIVE SPACE','Build a feed worth looking at.','Create a cohesive Instagram visual world.',['Feed preview','Post design','Story templates','Highlights covers'],['Plan your 3×3 grid','Edit and design posts','Create story layouts','Design highlight covers']],pinterest:['PINTEREST CREATIVE SPACE','Collect your visual inspiration.','Create moodboards, pins and visual collections.',['Moodboard','Pin design','Collage','Colour palette'],['Collect references','Create beautiful pins','Mix images and textures','Find your signature colours']]}[name];document.getElementById('socialEyebrow').textContent=data[0];document.getElementById('socialHeading').textContent=data[1];document.getElementById('socialDescription').textContent=data[2];document.getElementById('formatGrid').innerHTML=data[3].map((x,i)=>`<button class="format" onclick="openFormat('${name}-${i}')"><strong>${x}</strong><p>${data[4][i]}</p></button>`).join('');backSocial()}
 function openFormat(format){document.getElementById('socialContent').classList.add('hidden');document.getElementById('socialWorkspace').classList.remove('hidden');document.getElementById('workspaceTitle').textContent=format.replaceAll('-',' ').replace(/\b\w/g,x=>x.toUpperCase())}
@@ -2236,4 +2236,28 @@ html,body{margin:0!important;background:#171412!important;color:#eee3db!importan
 html,body{overscroll-behavior-y:contain!important}
 #home.moodcut-home{touch-action:pan-y!important;overscroll-behavior-y:contain!important}
 #home .mh-card-rail{touch-action:pan-x pan-y!important;overscroll-behavior-x:contain!important;overscroll-behavior-y:contain!important}
+
+/* One shared MOODCUT shell across Home, Profile and Studio */
+:root{--bg:#171412!important;--paper:#211c19!important;--ink:#eee3db!important;--muted:#a99a90!important;--line:rgba(238,224,214,.13)!important;--soft:#302722!important;--wine:#d9b8ad!important}
+html,body,.app{font-family:'DM Sans',sans-serif!important;background:#171412!important;color:#eee3db!important}
+.mh-global-header{display:flex!important;box-sizing:border-box!important;height:62px!important;min-height:62px!important;padding:0 17px!important;align-items:center!important;justify-content:space-between!important;background:#171412!important;color:#eee3db!important;border-bottom:1px solid rgba(238,224,214,.13)!important}
+.mh-global-header .logo{font:400 21px/1 'Playfair Display',serif!important;letter-spacing:.12em!important;color:#eadbd2!important}
+.mh-global-header .logo span{display:block!important;font:600 8px/1.2 'DM Sans',sans-serif!important;letter-spacing:.28em!important;color:#a99a90!important;margin-top:3px!important}
+.mh-global-header .header-right{display:flex;align-items:center;gap:7px}
+.mh-header-studio{display:none!important}
+body.mc-studio-open .mh-header-default{display:none!important}
+body.mc-studio-open .mh-header-studio{display:flex!important}
+.mh-studio-icon{width:32px;height:32px;padding:0;border:1px solid rgba(238,224,214,.16);border-radius:50%;background:transparent;color:#eee3db;font:400 21px/1 'DM Sans',sans-serif}
+.mh-studio-text{height:32px;padding:0 8px;border:1px solid rgba(238,224,214,.16);border-radius:18px;background:transparent;color:#a99a90;font:700 7px 'DM Sans',sans-serif;letter-spacing:.07em}
+.mh-studio-save{height:32px;padding:0 12px;border:0;border-radius:18px;background:#d9b8ad;color:#211b18;font:800 8px 'DM Sans',sans-serif;letter-spacing:.08em}
+body.mc-studio-open #photoStudioPage{height:calc(100dvh - 62px - 76px - env(safe-area-inset-bottom))!important}
+body.mc-studio-open #photoStudioFrame{height:100%!important;min-height:0!important}
+#photoStudioFrame{display:block;width:100%;border:0}
+#home,#profile,.page{font-family:'DM Sans',sans-serif!important}
+#home h1,#home h2,#home h3,#profile h1,#profile h2,#profile h3{font-family:'Playfair Display',serif!important;font-weight:400!important}
+#home button,#profile button,#home p,#profile p,#home small,#profile small,#home label,#profile label{font-family:'DM Sans',sans-serif}
+#profile .panel,#profile .mc-profile-link{background-color:#211c19!important;border-color:rgba(238,224,214,.13)!important;color:#eee3db!important}
+#profile .mc-profile-link strong,#profile h3{font-family:'Playfair Display',serif!important;font-weight:400!important;color:#eee3db!important}
+@media(max-width:430px){.mh-global-header{height:62px!important;min-height:62px!important;padding:0 13px!important}.mh-global-header .logo{font-size:19px!important}.mh-studio-icon{width:30px;height:30px}.mh-studio-text{padding:0 6px;font-size:7px}.mh-studio-save{padding:0 10px}}
+
 </style>
