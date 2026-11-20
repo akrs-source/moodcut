@@ -213,6 +213,36 @@ header{height:48px!important;min-height:48px!important;flex:0 0 48px!important;p
 .actions{display:none!important}
 
  .frame-ratios,.frame-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.frame-action{border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--ink);padding:9px 11px;font:700 9px 'DM Sans';letter-spacing:.04em}.frame-action.active{border-color:var(--gold);color:var(--gold)}.frame-action svg{width:14px;height:14px;vertical-align:middle;margin-right:5px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}#tools .subhint{margin:8px 0 0;font-size:9px;color:var(--muted);line-height:1.45}
+
+/* Shared MOODCUT header system: same frame and wordmark across pages; Studio keeps task-specific actions */
+header{
+  height:62px!important;
+  min-height:62px!important;
+  flex:0 0 62px!important;
+  padding:0 20px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  border-bottom:1px solid var(--line)!important;
+  background:var(--bg)!important;
+}
+.brand{
+  font:400 21px/1 'Playfair Display',serif!important;
+  letter-spacing:.12em!important;
+  color:#eadbd2!important;
+}
+.brand span{
+  display:block!important;
+  font:600 8px/1.2 'DM Sans',sans-serif!important;
+  letter-spacing:.28em!important;
+  color:var(--muted)!important;
+  margin-top:3px!important;
+}
+.head-actions{display:flex!important;align-items:center!important;gap:8px!important}
+@media(max-width:420px){
+  header{padding:0 17px!important}
+  .head-actions{gap:6px!important}
+}
 </style></head><body><div class="app">
 <header><div class="brand">MOODCUT<span>PHOTO STUDIO</span></div><div class="head-actions"><button class="icon" id="undo" title="Отменить" aria-label="Отменить" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></svg></button><button class="icon" id="redo" title="Повторить" aria-label="Повторить" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h2"/></svg></button><button class="reset-top" id="resetTop" type="button">RESET</button><button class="export" id="exportTop">SAVE PHOTO</button></div></header>
 <main class="workspace"><div class="stage" id="stage"><canvas id="canvas"></canvas><div class="empty" id="empty"><div class="monogram">m.</div><div class="eyebrow">YOUR PHOTO. YOUR SIGNATURE.</div><p>Загрузи фотографию и создай собственный визуальный стиль.</p><label class="open-photo" for="file">ВЫБРАТЬ ФОТО</label></div><div class="hud"><span class="pill" id="lookTag">ORIGINAL</span><div class="hud-right"><label class="change-photo" for="file">＋ PHOTO</label><button class="compare" id="compare">HOLD · BEFORE</button></div></div><span class="zoom-label hidden" id="zoomLabel">100%</span></div><div class="meta"><span id="photoName">NO PHOTO SELECTED</span><strong id="status">READY WHEN YOU ARE</strong></div><input id="file" class="file-picker" type="file" accept="image/*,.heic,.heif" aria-label="Выбрать фотографию"></main>
