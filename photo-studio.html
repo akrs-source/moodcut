@@ -50,8 +50,9 @@ input[type=range]{width:100%;height:3px;accent-color:var(--gold)}
 @keyframes mcDevelop{0%{opacity:0;transform:translateX(-120%) skewX(-12deg)}18%{opacity:.85}70%{opacity:.42}100%{opacity:0;transform:translateX(120%) skewX(-12deg)}}
 /* Preset processing is confined to the photo canvas; no stage-wide overlay. */
 .analog-intro{display:flex;justify-content:space-between;align-items:center;margin:3px 0 11px}.analog-intro b{font-size:12px}.analog-intro span{font:700 8px 'DM Sans';letter-spacing:.12em;color:var(--gold)}
-.analog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.analog-look{position:relative;min-height:66px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(135deg,#392a24,#201a17);color:var(--ink);text-align:left;padding:10px 12px;overflow:hidden}
+.analog-grid{display:flex;gap:9px;margin:0 -14px 16px;padding:0 14px 5px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.analog-grid::-webkit-scrollbar{display:none}
+.analog-look{position:relative;flex:0 0 148px;min-width:148px;min-height:66px;scroll-snap-align:start;border:1px solid var(--line);border-radius:10px;background:linear-gradient(135deg,#392a24,#201a17);color:var(--ink);text-align:left;padding:10px 12px;overflow:hidden}
 .analog-look:after{content:"";position:absolute;width:55px;height:55px;border-radius:50%;right:-15px;top:-18px;background:radial-gradient(circle,rgba(227,169,115,.45),transparent 70%)}
 .analog-look b{display:block;font:500 14px 'Playfair Display',serif;position:relative;z-index:1}.analog-look small{display:block;margin-top:5px;color:var(--muted);font:7px 'DM Sans';letter-spacing:.13em;position:relative;z-index:1}
 .analog-look.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px #d9b8ad35}
