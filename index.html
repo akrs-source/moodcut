@@ -1945,4 +1945,51 @@ function setEditorZoom(value){
  .lx-footer>span:nth-child(2){font-size:5px;letter-spacing:.8px}
  .lx-footer button{font-size:6px;letter-spacing:.8px}
 }
+
+/* MOODCUT mobile layout correction */
+@media(max-width:430px){
+ html,body{width:100%;max-width:100%;overflow-x:hidden}
+ .app{width:100%;max-width:100%;min-width:0;overflow-x:clip}
+ .mh-global-header{height:60px;padding:0 16px;min-width:0;gap:10px}
+ .mh-global-header .logo{font-size:19px!important;letter-spacing:.1em!important;line-height:1!important}
+ .mh-global-header .logo span{font-size:7px!important;letter-spacing:.2em!important}
+ .mh-language{height:36px;min-width:66px;padding:0 9px;font-size:10px}
+ .moodcut-home{width:100%;max-width:100%;min-width:0;padding:0 16px 32px!important;overflow:visible!important}
+ .moodcut-home *{min-width:0;max-width:100%}
+ .mh-intro{padding:27px 0 23px}
+ .mh-eyebrow{font-size:9px;letter-spacing:1.2px;line-height:1.5;overflow-wrap:anywhere}
+ .mh-intro h1{font-size:clamp(24px,7.2vw,30px)!important;line-height:1.2!important;letter-spacing:-1.1px!important;overflow-wrap:anywhere;word-break:normal}
+ .mh-lead{font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+ .mh-cta{height:46px;min-width:0;max-width:100%;padding:0 16px;font-size:12px;gap:12px}
+ .mh-ba-top,.mh-section-heading{gap:8px;align-items:flex-start;flex-wrap:wrap}
+ .mh-ba-top h2,.mh-section-heading h2,.mh-how>h2{font-size:16px!important;line-height:1.3!important;letter-spacing:-.35px!important;overflow-wrap:anywhere}
+ .mh-ba-top>span,.mh-count{font-size:10px}
+ .mh-ba-frame{max-height:none;border-radius:18px}
+ .mh-ba-before span,.mh-ba-after-label{top:9px;padding:5px 8px;font-size:10px}
+ .mh-preset-switches{gap:5px}
+ .mh-preset-switch{height:38px;font-size:9px;padding:0 2px;letter-spacing:0}
+ .mh-ba-caption{font-size:12px}
+ .mh-hint{font-size:10px;line-height:1.45}
+ .mh-collections,.mh-how{padding:22px 0 25px}
+ .mh-card-rail{margin:0 -16px;padding:0 16px 8px;gap:9px;max-width:none}
+ .mh-look-card{flex-basis:76%;max-width:270px;border-radius:18px}
+ .mh-look-image{height:180px;border-radius:18px}
+ .mh-look-copy{padding:12px}
+ .mh-look-copy h3{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+ .mh-look-copy p{font-size:12px;line-height:1.45;min-height:0}
+ .mh-look-copy button{height:38px;padding:0 13px;font-size:11px}
+ .mh-step{grid-template-columns:25px minmax(0,1fr) 18px;gap:8px;padding:12px 0}
+ .mh-step h3{font-size:13px;line-height:1.35}
+ .mh-step p{font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+ .mh-final{margin:8px -16px 0;padding:26px 16px 30px;border-radius:18px}
+ .mh-final h2{font-size:21px!important;line-height:1.25!important;letter-spacing:-.7px!important;overflow-wrap:anywhere}
+ .mh-final p{font-size:13px;line-height:1.5}
+}
+@media(max-width:360px){
+ .mh-global-header{padding:0 12px}
+ .moodcut-home{padding-left:13px!important;padding-right:13px!important}
+ .mh-intro h1{font-size:24px!important}
+ .mh-preset-switch{font-size:8px}
+ .mh-look-card{flex-basis:84%}
+}
 </style>
