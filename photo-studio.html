@@ -342,28 +342,12 @@ const looks={original:{},dark_aesthetic:{exposure:-100,brilliance:-53,highlights
   food_daylight:{exposure:7,contrast:4,highlights:-30,shadows:14,whites:-6,blacks:5,temperature:6,tint:2,vibrance:12,saturation:3,clarity:7,sharpen:5,hsl:{h:[0,-2,-8,-12,-6,-7,0,0],s:[0,5,-12,-20,-10,-8,-4,-4],l:[1,5,6,2,2,0,0,0]}}
 };
 function renderPresetThumbnails(){
- const photoByPreset={
-  original:{src:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=640&h=480&q=88',position:'center 34%'},
-  dark_aesthetic:{src:'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=640&h=480&q=88',position:'center 42%'},
-  c9_chromatic:{src:'https://i.postimg.cc/JsPrB742/IMG-5993.jpg',position:'center 45%'},
-  warm_relief:{src:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=640&h=480&q=88',position:'center 55%'}
- };
- document.querySelectorAll('#presets .preset').forEach(card=>{
-  const key=card.dataset.preset,swatch=card.querySelector('.swatch'),look=looks[key]||{},photo=photoByPreset[key]||photoByPreset.original;
-  if(!swatch||swatch.querySelector('img'))return;
-  const im=document.createElement('img');im.crossOrigin='anonymous';im.src=photo.src;im.alt='';im.loading='eager';im.decoding='async';im.referrerPolicy='no-referrer';im.style.cssText='position:absolute;inset:0;z-index:3;display:block;width:100%;height:100%;object-fit:cover;object-position:'+photo.position+';';
-  im.onerror=()=>{im.onerror=null;im.style.display='none';swatch.style.background='linear-gradient(145deg,#514139,#211c19 55%,#b18b78)'};
-  const exposure=Number(look.exposure||0),brightness=Math.max(.35,Math.min(1.65,1+exposure/145+(look.brightness||0)/180));
-  const contrast=Math.max(.35,Math.min(1.8,1+(look.contrast||0)/125));
-  const saturation=Math.max(0,Math.min(2,1+(look.saturation||0)/100+(look.vibrance||0)/180));
-  const warmth=Math.max(-.35,Math.min(.45,(look.temperature||0)/100));
-  const tint=Math.max(-.2,Math.min(.2,(look.tint||0)/100));
-  const sepia=Math.max(0,Math.min(.55,warmth*.72));
-  const hue=(tint*95+(warmth<0?-warmth*22:0));
-  im.style.filter='brightness('+brightness+') contrast('+contrast+') saturate('+saturation+') sepia('+sepia+') hue-rotate('+hue+'deg)'+((look.grain||0)>0?' contrast(1.04)':'');im.style.opacity='1';
-  swatch.replaceChildren(im);
+ document.querySelectorAll('#presets .preset .swatch').forEach(swatch=>{
+  swatch.replaceChildren();
+  swatch.style.background='linear-gradient(145deg,#514139,#211c19 55%,#b18b78)';
  });
 }
+
 let img=null,framedSource=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false;
 function haptic(){try{tg?.HapticFeedback?.impactOccurred('light')}catch(e){}}
 function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1700)}
