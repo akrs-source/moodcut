@@ -348,7 +348,7 @@ function renderPresetThumbnails(){
  });
 }
 
-let img=null,framedSource=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false;
+let img=null,framedSource=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false,renderRevision=0;
 function haptic(){try{tg?.HapticFeedback?.impactOccurred('light')}catch(e){}}
 function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1700)}
 function theme(){const p=tg?.themeParams;if(!p)return;const root=document.documentElement;const bg=p.bg_color||'#171714',surface=p.secondary_bg_color||'#20201c',ink=p.text_color||'#eee3db',light=luma(bg)>145;root.dataset.theme=light?'light':'dark';root.style.setProperty('--bg',bg);root.style.setProperty('--surface',surface);root.style.setProperty('--surface2',p.section_bg_color||(light?'#eeebe4':'#292923'));root.style.setProperty('--ink',ink);root.style.setProperty('--gold',p.button_color||(light?'#9a7950':'#d9c5a1'));root.style.setProperty('--muted',p.hint_color||(light?'#77736b':'#9d9a90'));root.style.colorScheme=light?'light':'dark';}
@@ -393,13 +393,14 @@ async function loadPhoto(f){
  }catch(err){console.error('Photo setup failed',err);$('#status').textContent='UPLOAD ERROR';toast('Не удалось загрузить фотографию')}
 }
 function applyTransform(){canvas.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';$('#zoomLabel').textContent=Math.round(scale*100)+'%';$('#zoomLabel').classList.toggle('hidden',!img)}
-function schedule(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render(true)})}
+function schedule(){if(renderQueued)return;renderQueued=true;const revision=renderRevision;requestAnimationFrame(()=>{renderQueued=false;if(revision===renderRevision)render(true)})}
 function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,l=(mx+mn)/2;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));if(mx===r)h=((g-b)/d+(g<b?6:0))*60;else if(mx===g)h=((b-r)/d+2)*60;else h=((r-g)/d+4)*60}return[h,s,l]}
 function hslToRgb(h,s,l){h=((h%360)+360)%360;s=Math.max(0,Math.min(1,s));l=Math.max(0,Math.min(1,l));const C=(1-Math.abs(2*l-1))*s,X=C*(1-Math.abs((h/60)%2-1)),m=l-C/2;let a=0,b=0,d=0;if(h<60){a=C;b=X}else if(h<120){a=X;b=C}else if(h<180){b=C;d=X}else if(h<240){b=X;d=C}else if(h<300){a=X;d=C}else{a=C;d=X}return[(a+m)*255,(b+m)*255,(d+m)*255]}
 function applyHslAdjust(r,g,b,o){let [h,s,l]=rgbToHsl(r,g,b);const centers=[0,30,60,120,180,240,280,320];let hh=0,ss=0,ll=0,ww=0;for(let j=0;j<8;j++){let d=Math.abs(h-centers[j]);d=Math.min(d,360-d);const w=Math.max(0,1-d/38);if(w){hh+=o.h[j]*w/100*30;ss+=o.s[j]*w;ll+=o.l[j]*w;ww+=w}}if(ww){h+=hh/ww;s=Math.max(0,Math.min(1,s*(1+ss/ww/100)));l=Math.max(0,Math.min(1,l+ll/ww/400))}return hslToRgb(h,s,l)}
 function applyGrade(r,g,b,o){const lum=(.2126*r+.7152*g+.0722*b)/255,m=[Math.max(0,(.62-lum)/.62),Math.max(0,1-Math.abs(lum-.5)*2),Math.max(0,(lum-.38)/.62)],keys=[['shadowsHue','shadowsSat'],['midHue','midSat'],['highHue','highSat']];for(let j=0;j<3;j++){const a=o[keys[j][1]]/100*m[j]*.24;if(a>0){const col=hslToRgb(o[keys[j][0]],1,.5);r+=(col[0]-128)*a;g+=(col[1]-128)*a;b+=(col[2]-128)*a}}return[r,g,b]}
 function render(preview=false){
  if(!img)return;
+ if(!preview)renderRevision++;
  const fullW=canvas.width,fullH=canvas.height;
  const previewScale=preview?Math.min(1,1400/Math.max(fullW,fullH),Math.sqrt(1600000/(fullW*fullH))):1;
  const w=Math.max(1,Math.round(fullW*previewScale)),h=Math.max(1,Math.round(fullH*previewScale));
