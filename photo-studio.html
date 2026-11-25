@@ -407,39 +407,33 @@ function render(){
  const frame=ctx.getImageData(0,0,w,h),p=frame.data,source=new Uint8ClampedArray(p);
  const distortion=(values.distortion||0)/100*.16;if(distortion){for(let y=0;y<h;y++){for(let x=0;x<w;x++){const nx=(x-w/2)/(w/2),ny=(y-h/2)/(h/2),r2=nx*nx+ny*ny,scale=1+distortion*r2,sx=Math.max(0,Math.min(w-1,Math.round(w/2+nx*scale*w/2))),sy=Math.max(0,Math.min(h-1,Math.round(h/2+ny*scale*h/2))),to=(y*w+x)*4,from=(sy*w+sx)*4;p[to]=source[from];p[to+1]=source[from+1];p[to+2]=source[from+2];}}}
  const exposure=Math.pow(2,values.exposure/200),brightness=values.brightness*.8,contrast=Math.max(0,1+values.contrast/100),brilliance=values.brilliance/100,vibrance=values.vibrance/100;
- const saturation=Math.max(0,1+values.saturation/100);
  const dehaze=(values.dehaze||0)/100;
  const temp=values.temperature/100,tint=values.tint/30,filterMix=values.filter/100,glow=values.glow/100,skinTone=(values.skinTone||0)/100;
  const hi=values.highlights/50,sh=values.shadows/50,whites=values.whites/100,blacks=values.blacks/100;
  const fade=values.fade/100,grain=values.grain*.85,vignette=values.vignette/100,denoise=(values.denoise||0)/100;
  const hsl=values.hsl,useHsl=!!hsl&&Object.values(hsl).some(channel=>Array.isArray(channel)&&channel.some(v=>Number(v)!==0));
  const grading=values.grading,useGrading=!!grading&&Object.values(grading).some(v=>Number(v)!==0);
+ const useDenoise=denoise>0,useDehaze=!!dehaze,useTonal=hi!==0||sh!==0||whites!==0||blacks!==0||brilliance!==0,useColorBalance=temp!==0||tint!==0||filterMix!==0||skinTone!==0,useSaturation=values.saturation!==0||vibrance!==0,useClarity=values.clarity!==0,useSharpen=values.sharpen>0||values.resolution>0,useGlow=!!glow,useFade=!!fade,useGrain=!!grain,useVignette=!!vignette,useToneCurve=!!values.toneCurve;
  const cx=w/2,cy=h/2,invX=1/(cx*cx),invY=1/(cy*cy);
  for(let y=0;y<h;y++){
   for(let x=0;x<w;x++){
    const i=(y*w+x)*4;
    let r=p[i]*exposure,g=p[i+1]*exposure,b=p[i+2]*exposure;
-   if(denoise>0&&x>0&&x<w-1&&y>0&&y<h-1){const n=i,avgR=(source[n-4]+source[n+4]+source[n-w*4]+source[n+w*4])/4,avgG=(source[n-3]+source[n+5]+source[n-w*4+1]+source[n+w*4+1])/4,avgB=(source[n-2]+source[n+6]+source[n-w*4+2]+source[n+w*4+2])/4;r=r*(1-denoise*.45)+(avgR*exposure)*(denoise*.45);g=g*(1-denoise*.45)+(avgG*exposure)*(denoise*.45);b=b*(1-denoise*.45)+(avgB*exposure)*(denoise*.45);}
+   if(useDenoise&&x>0&&x<w-1&&y>0&&y<h-1){const n=i,avgR=(source[n-4]+source[n+4]+source[n-w*4]+source[n+w*4])/4,avgG=(source[n-3]+source[n+5]+source[n-w*4+1]+source[n+w*4+1])/4,avgB=(source[n-2]+source[n+6]+source[n-w*4+2]+source[n+w*4+2])/4;r=r*(1-denoise*.45)+(avgR*exposure)*(denoise*.45);g=g*(1-denoise*.45)+(avgG*exposure)*(denoise*.45);b=b*(1-denoise*.45)+(avgB*exposure)*(denoise*.45);}
    r=(r-128)*contrast+128+brightness;g=(g-128)*contrast+128+brightness;b=(b-128)*contrast+128+brightness;
-   if(dehaze){const dh=1+dehaze*.38;r=(r-128)*dh+128;g=(g-128)*dh+128;b=(b-128)*dh+128;}
-   const lum=(.2126*r+.7152*g+.0722*b)/255;
-   const shadow=Math.max(0,(.58-lum)/.58),highlight=Math.max(0,(lum-.42)/.58);
-   const tonal=sh*shadow*34+hi*highlight*34+whites*highlight*22+blacks*(1-lum)*18;
-   r+=tonal;g+=tonal;b+=tonal;
-   const midtone=Math.max(0,1-Math.abs(lum-.5)*2);const brAdjust=brilliance*midtone*22;r+=brAdjust;g+=brAdjust;b+=brAdjust;
-   r+=temp*22+tint*9+filterMix*5;g+=tint*13+filterMix*2;b-=temp*22+tint*9-filterMix*3;const skinMask=Math.max(0,Math.min(1,(r-g+28)/65))*Math.max(0,Math.min(1,(r-b+18)/75));r+=skinTone*skinMask*8;g-=skinTone*skinMask*2;
-   const l=.2126*r+.7152*g+.0722*b;
-   const chroma=Math.max(Math.abs(r-l),Math.abs(g-l),Math.abs(b-l));const satFactor=Math.max(0,1+values.saturation/100+vibrance*(1-chroma/255));
-   r=l+(r-l)*satFactor;g=l+(g-l)*satFactor;b=l+(b-l)*satFactor;
+   if(useDehaze){const dh=1+dehaze*.38;r=(r-128)*dh+128;g=(g-128)*dh+128;b=(b-128)*dh+128;}
+   if(useTonal){const lum=(.2126*r+.7152*g+.0722*b)/255,shadow=Math.max(0,(.58-lum)/.58),highlight=Math.max(0,(lum-.42)/.58),tonal=sh*shadow*34+hi*highlight*34+whites*highlight*22+blacks*(1-lum)*18,midtone=Math.max(0,1-Math.abs(lum-.5)*2),brAdjust=brilliance*midtone*22;r+=tonal+brAdjust;g+=tonal+brAdjust;b+=tonal+brAdjust;}
+   if(useColorBalance){r+=temp*22+tint*9+filterMix*5;g+=tint*13+filterMix*2;b-=temp*22+tint*9-filterMix*3;if(skinTone!==0){const skinMask=Math.max(0,Math.min(1,(r-g+28)/65))*Math.max(0,Math.min(1,(r-b+18)/75));r+=skinTone*skinMask*8;g-=skinTone*skinMask*2;}}
+   if(useSaturation){const l=.2126*r+.7152*g+.0722*b,chroma=Math.max(Math.abs(r-l),Math.abs(g-l),Math.abs(b-l)),satFactor=Math.max(0,1+values.saturation/100+vibrance*(1-chroma/255));r=l+(r-l)*satFactor;g=l+(g-l)*satFactor;b=l+(b-l)*satFactor;}
    if(useHsl){const q=applyHslAdjust(r,g,b,hsl);r=q[0];g=q[1];b=q[2]}
    if(useGrading){const q=applyGrade(r,g,b,grading);r=q[0];g=q[1];b=q[2]}
-   if(values.clarity!==0&&x>0&&x<w-1&&y>0&&y<h-1){const midR=(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,midG=(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,midB=(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=values.clarity/100*.8;r+=(source[i]-midR)*amount;g+=(source[i+1]-midG)*amount;b+=(source[i+2]-midB)*amount;}
-   if((values.sharpen>0||values.resolution>0)&&x>0&&x<w-1&&y>0&&y<h-1){const edgeR=source[i]-(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,edgeG=source[i+1]-(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,edgeB=source[i+2]-(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=(values.sharpen/100*.9)+(values.resolution/100*.45);r+=edgeR*amount;g+=edgeG*amount;b+=edgeB*amount;}
-   if(glow){const bright=Math.max(0,(Math.max(r,g,b)-145)/110)*glow*28;r+=bright;g+=bright*.88;b+=bright*.68;}
-   if(fade){r=r*(1-fade*.16)+255*fade*.10;g=g*(1-fade*.16)+245*fade*.10;b=b*(1-fade*.16)+230*fade*.10;}
-   if(grain){const cell=1+values.grainSize/10,gx=Math.floor(x/cell),gy=Math.floor(y/cell);let a=Math.sin((gx+1)*12.9898+(gy+1)*78.233)*43758.5453;a=a-Math.floor(a);let bNoise=Math.sin((x+1)*4.123+(y+1)*91.731)*24634.6345;bNoise=bNoise-Math.floor(bNoise);const rough=values.grainRoughness/100,n=((a*(1-rough)+bNoise*rough)-.5)*grain;r+=n;g+=n;b+=n;}
-   if(vignette){const dx=(x-cx)*(x-cx)*invX,dy=(y-cy)*(y-cy)*invY,edge=Math.max(0,dx+dy-.20)/1.8;const shade=Math.max(0,1-edge*vignette*1.25);r*=shade;g*=shade;b*=shade;}
-   if(values.toneCurve){r=applyToneCurve(r,values.toneCurve);g=applyToneCurve(g,values.toneCurve);b=applyToneCurve(b,values.toneCurve)}const mix=Math.max(0,Math.min(1,(values.presetIntensity??100)/100))*Math.max(0,Math.min(1,(values.intensity??100)/100));r=source[i]*(1-mix)+r*mix;g=source[i+1]*(1-mix)+g*mix;b=source[i+2]*(1-mix)+b*mix;p[i]=clamp(r);p[i+1]=clamp(g);p[i+2]=clamp(b);
+   if(useClarity&&x>0&&x<w-1&&y>0&&y<h-1){const midR=(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,midG=(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,midB=(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=values.clarity/100*.8;r+=(source[i]-midR)*amount;g+=(source[i+1]-midG)*amount;b+=(source[i+2]-midB)*amount;}
+   if(useSharpen&&x>0&&x<w-1&&y>0&&y<h-1){const edgeR=source[i]-(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,edgeG=source[i+1]-(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,edgeB=source[i+2]-(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=(values.sharpen/100*.9)+(values.resolution/100*.45);r+=edgeR*amount;g+=edgeG*amount;b+=edgeB*amount;}
+   if(useGlow){const bright=Math.max(0,(Math.max(r,g,b)-145)/110)*glow*28;r+=bright;g+=bright*.88;b+=bright*.68;}
+   if(useFade){r=r*(1-fade*.16)+255*fade*.10;g=g*(1-fade*.16)+245*fade*.10;b=b*(1-fade*.16)+230*fade*.10;}
+   if(useGrain){const cell=1+values.grainSize/10,gx=Math.floor(x/cell),gy=Math.floor(y/cell);let a=Math.sin((gx+1)*12.9898+(gy+1)*78.233)*43758.5453;a=a-Math.floor(a);let bNoise=Math.sin((x+1)*4.123+(y+1)*91.731)*24634.6345;bNoise=bNoise-Math.floor(bNoise);const rough=values.grainRoughness/100,n=((a*(1-rough)+bNoise*rough)-.5)*grain;r+=n;g+=n;b+=n;}
+   if(useVignette){const dx=(x-cx)*(x-cx)*invX,dy=(y-cy)*(y-cy)*invY,edge=Math.max(0,dx+dy-.20)/1.8;const shade=Math.max(0,1-edge*vignette*1.25);r*=shade;g*=shade;b*=shade;}
+   if(useToneCurve){r=applyToneCurve(r,values.toneCurve);g=applyToneCurve(g,values.toneCurve);b=applyToneCurve(b,values.toneCurve)}const mix=Math.max(0,Math.min(1,(values.presetIntensity??100)/100))*Math.max(0,Math.min(1,(values.intensity??100)/100));r=source[i]*(1-mix)+r*mix;g=source[i+1]*(1-mix)+g*mix;b=source[i+2]*(1-mix)+b*mix;p[i]=clamp(r);p[i+1]=clamp(g);p[i+2]=clamp(b);
   }
  }
  ctx.putImageData(frame,0,0);
