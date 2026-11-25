@@ -348,7 +348,7 @@ function renderPresetThumbnails(){
  });
 }
 
-let img=null,framedSource=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false,renderRevision=0;
+let img=null,framedSource=null,previewCanvas=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false,renderRevision=0;
 function haptic(){try{tg?.HapticFeedback?.impactOccurred('light')}catch(e){}}
 function toast(s){const el=$('#toast');el.textContent=s;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1700)}
 function theme(){const p=tg?.themeParams;if(!p)return;const root=document.documentElement;const bg=p.bg_color||'#171714',surface=p.secondary_bg_color||'#20201c',ink=p.text_color||'#eee3db',light=luma(bg)>145;root.dataset.theme=light?'light':'dark';root.style.setProperty('--bg',bg);root.style.setProperty('--surface',surface);root.style.setProperty('--surface2',p.section_bg_color||(light?'#eeebe4':'#292923'));root.style.setProperty('--ink',ink);root.style.setProperty('--gold',p.button_color||(light?'#9a7950':'#d9c5a1'));root.style.setProperty('--muted',p.hint_color||(light?'#77736b':'#9d9a90'));root.style.colorScheme=light?'light':'dark';}
@@ -404,7 +404,7 @@ function render(preview=false){
  const fullW=canvas.width,fullH=canvas.height;
  const previewScale=preview?Math.min(1,1400/Math.max(fullW,fullH),Math.sqrt(1600000/(fullW*fullH))):1;
  const w=Math.max(1,Math.round(fullW*previewScale)),h=Math.max(1,Math.round(fullH*previewScale));
- const workCanvas=preview?document.createElement('canvas'):canvas;
+ const workCanvas=preview?(previewCanvas||(previewCanvas=document.createElement('canvas'))):canvas;
  if(preview){workCanvas.width=w;workCanvas.height=h}
  const workCtx=preview?workCanvas.getContext('2d',{willReadFrequently:true}):ctx;
  workCtx.save();workCtx.clearRect(0,0,w,h);
