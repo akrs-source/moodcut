@@ -393,18 +393,24 @@ async function loadPhoto(f){
  }catch(err){console.error('Photo setup failed',err);$('#status').textContent='UPLOAD ERROR';toast('Не удалось загрузить фотографию')}
 }
 function applyTransform(){canvas.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';$('#zoomLabel').textContent=Math.round(scale*100)+'%';$('#zoomLabel').classList.toggle('hidden',!img)}
-function schedule(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render()})}
+function schedule(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render(true)})}
 function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,l=(mx+mn)/2;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));if(mx===r)h=((g-b)/d+(g<b?6:0))*60;else if(mx===g)h=((b-r)/d+2)*60;else h=((r-g)/d+4)*60}return[h,s,l]}
 function hslToRgb(h,s,l){h=((h%360)+360)%360;s=Math.max(0,Math.min(1,s));l=Math.max(0,Math.min(1,l));const C=(1-Math.abs(2*l-1))*s,X=C*(1-Math.abs((h/60)%2-1)),m=l-C/2;let a=0,b=0,d=0;if(h<60){a=C;b=X}else if(h<120){a=X;b=C}else if(h<180){b=C;d=X}else if(h<240){b=X;d=C}else if(h<300){a=X;d=C}else{a=C;d=X}return[(a+m)*255,(b+m)*255,(d+m)*255]}
 function applyHslAdjust(r,g,b,o){let [h,s,l]=rgbToHsl(r,g,b);const centers=[0,30,60,120,180,240,280,320];let hh=0,ss=0,ll=0,ww=0;for(let j=0;j<8;j++){let d=Math.abs(h-centers[j]);d=Math.min(d,360-d);const w=Math.max(0,1-d/38);if(w){hh+=o.h[j]*w/100*30;ss+=o.s[j]*w;ll+=o.l[j]*w;ww+=w}}if(ww){h+=hh/ww;s=Math.max(0,Math.min(1,s*(1+ss/ww/100)));l=Math.max(0,Math.min(1,l+ll/ww/400))}return hslToRgb(h,s,l)}
 function applyGrade(r,g,b,o){const lum=(.2126*r+.7152*g+.0722*b)/255,m=[Math.max(0,(.62-lum)/.62),Math.max(0,1-Math.abs(lum-.5)*2),Math.max(0,(lum-.38)/.62)],keys=[['shadowsHue','shadowsSat'],['midHue','midSat'],['highHue','highSat']];for(let j=0;j<3;j++){const a=o[keys[j][1]]/100*m[j]*.24;if(a>0){const col=hslToRgb(o[keys[j][0]],1,.5);r+=(col[0]-128)*a;g+=(col[1]-128)*a;b+=(col[2]-128)*a}}return[r,g,b]}
-function render(){
+function render(preview=false){
  if(!img)return;
- const w=canvas.width,h=canvas.height;
- ctx.save();ctx.clearRect(0,0,w,h);
- ctx.filter=(values.softness>0||values.blur>0)?'blur('+(values.softness+values.blur/18)+'px)':'none';
- ctx.drawImage(framedSource||img,0,0,w,h);ctx.filter='none';ctx.restore();
- const frame=ctx.getImageData(0,0,w,h),p=frame.data;
+ const fullW=canvas.width,fullH=canvas.height;
+ const previewScale=preview?Math.min(1,1400/Math.max(fullW,fullH),Math.sqrt(1600000/(fullW*fullH))):1;
+ const w=Math.max(1,Math.round(fullW*previewScale)),h=Math.max(1,Math.round(fullH*previewScale));
+ const workCanvas=preview?document.createElement('canvas'):canvas;
+ if(preview){workCanvas.width=w;workCanvas.height=h}
+ const workCtx=preview?workCanvas.getContext('2d',{willReadFrequently:true}):ctx;
+ workCtx.save();workCtx.clearRect(0,0,w,h);
+ workCtx.filter=(values.softness>0||values.blur>0)?'blur('+((values.softness+values.blur/18)*previewScale)+'px)':'none';
+ workCtx.imageSmoothingEnabled=true;workCtx.imageSmoothingQuality='high';
+ workCtx.drawImage(framedSource||img,0,0,w,h);workCtx.filter='none';workCtx.restore();
+ const frame=workCtx.getImageData(0,0,w,h),p=frame.data;
  const mix=Math.max(0,Math.min(1,(values.presetIntensity??100)/100))*Math.max(0,Math.min(1,(values.intensity??100)/100));
  const distortion=(values.distortion||0)/100*.16,needsSource=!!distortion||values.denoise>0||values.clarity!==0||values.sharpen>0||values.resolution>0||mix<1,source=needsSource?new Uint8ClampedArray(p):p;if(distortion){for(let y=0;y<h;y++){for(let x=0;x<w;x++){const nx=(x-w/2)/(w/2),ny=(y-h/2)/(h/2),r2=nx*nx+ny*ny,scale=1+distortion*r2,sx=Math.max(0,Math.min(w-1,Math.round(w/2+nx*scale*w/2))),sy=Math.max(0,Math.min(h-1,Math.round(h/2+ny*scale*h/2))),to=(y*w+x)*4,from=(sy*w+sx)*4;p[to]=source[from];p[to+1]=source[from+1];p[to+2]=source[from+2];}}}
  const exposure=Math.pow(2,values.exposure/200),brightness=values.brightness*.8,contrast=Math.max(0,1+values.contrast/100),brilliance=values.brilliance/100,vibrance=values.vibrance/100;
@@ -437,8 +443,9 @@ function render(){
    if(useToneCurve){r=applyToneCurve(r,values.toneCurve);g=applyToneCurve(g,values.toneCurve);b=applyToneCurve(b,values.toneCurve)}r=source[i]*(1-mix)+r*mix;g=source[i+1]*(1-mix)+g*mix;b=source[i+2]*(1-mix)+b*mix;p[i]=clamp(r);p[i+1]=clamp(g);p[i+2]=clamp(b);
   }
  }
- ctx.putImageData(frame,0,0);
- if(caption){ctx.save();const size=Math.max(24,Math.round(w*.055));ctx.font='500 '+size+'px "DM Sans",sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.shadowColor='#0009';ctx.shadowBlur=size*.25;ctx.fillStyle='#fff';ctx.fillText(caption,w/2,h*.91,w*.86);ctx.restore()}
+ workCtx.putImageData(frame,0,0);
+ if(caption){workCtx.save();const size=Math.max(24,Math.round(w*.055));workCtx.font='500 '+size+'px "DM Sans",sans-serif';workCtx.textAlign='center';workCtx.textBaseline='bottom';workCtx.shadowColor='#0009';workCtx.shadowBlur=size*.25;workCtx.fillStyle='#fff';workCtx.fillText(caption,w/2,h*.91,w*.86);ctx.restore()}
+ if(preview){ctx.clearRect(0,0,fullW,fullH);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(workCanvas,0,0,fullW,fullH)}
  $('#lookTag').textContent=preset.toUpperCase();
  $('#status').textContent=preset==='original'?'MOODCUT CAMERA':preset==='custom'?'CUSTOM LOOK':preset.toUpperCase();
 }
@@ -454,6 +461,7 @@ function applyPreset(name){values={...defaults,...looks[name]};preset=name;syncC
 function reset(){values={...defaults};preset='original';caption='';$('#caption').value='';syncControls();render();checkpoint();haptic()}
 async function exportPhoto(){
  if(!img){file.click();return}
+ render();
  const button=$('#exportTop');if(button.disabled)return;
  button.disabled=true;button.textContent=document.documentElement.lang==='ru'?'ЭКСПОРТ…':'EXPORTING…';
  try{
@@ -492,8 +500,8 @@ $$('.frame-action').forEach(b=>b.addEventListener('click',()=>{if(!img){toast('�
  try{const pending=localStorage.getItem('moodcut.pendingStudioPreset');if(pending){localStorage.removeItem('moodcut.pendingStudioPreset');if(looks[pending]){applyPreset(pending);const active=document.querySelector('.preset[data-preset="'+pending+'"]');if(active){document.querySelectorAll('.preset').forEach(x=>x.classList.toggle('active',x===active))}}}}catch(e){}
 renderPresetThumbnails();
 $$('.analog-look').forEach(b=>b.onclick=()=>{if(!img){toast('Сначала открой фото');return}$$('.analog-look').forEach(x=>x.classList.toggle('active',x===b));applyPreset(b.dataset.film);$('#lookTag').textContent=b.querySelector('b').textContent.toUpperCase()});
-document.querySelectorAll('[data-key]').forEach(el=>{el.addEventListener('input',()=>{values[el.dataset.key]=Number(el.value);el.nextElementSibling.value=el.dataset.key==='presetIntensity'?el.value+'%':el.value;if(el.dataset.key!=='presetIntensity'){preset='custom';document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'))}schedule()});el.addEventListener('change',checkpoint)});
-document.querySelectorAll('[data-hsl]').forEach(el=>{el.addEventListener('input',()=>{const ns=['Red','Orange','Yellow','Green','Aqua','Blue','Purple','Magenta'],idx=ns.indexOf(el.dataset.hsl),ch=el.dataset.channel;values.hsl=values.hsl||{h:Array(8).fill(0),s:Array(8).fill(0),l:Array(8).fill(0)};values.hsl[ch][idx]=Number(el.value);el.nextElementSibling.value=el.value;preset='custom';schedule()});el.addEventListener('change',checkpoint)});
+document.querySelectorAll('[data-key]').forEach(el=>{el.addEventListener('input',()=>{values[el.dataset.key]=Number(el.value);el.nextElementSibling.value=el.dataset.key==='presetIntensity'?el.value+'%':el.value;if(el.dataset.key!=='presetIntensity'){preset='custom';document.querySelectorAll('.preset').forEach(x=>x.classList.remove('active'))}schedule()});el.addEventListener('change',()=>{render();checkpoint()})});
+document.querySelectorAll('[data-hsl]').forEach(el=>{el.addEventListener('input',()=>{const ns=['Red','Orange','Yellow','Green','Aqua','Blue','Purple','Magenta'],idx=ns.indexOf(el.dataset.hsl),ch=el.dataset.channel;values.hsl=values.hsl||{h:Array(8).fill(0),s:Array(8).fill(0),l:Array(8).fill(0)};values.hsl[ch][idx]=Number(el.value);el.nextElementSibling.value=el.value;preset='custom';schedule()});el.addEventListener('change',()=>{render();checkpoint()})});
 document.querySelectorAll('[data-grade]').forEach(el=>{el.addEventListener('input',()=>{values.grading=values.grading||{shadowsHue:0,shadowsSat:0,midHue:0,midSat:0,highHue:0,highSat:0};values.grading[el.dataset.grade]=Number(el.value);el.nextElementSibling.value=el.value;preset='custom';schedule()});el.addEventListener('change',checkpoint)});
 
 
