@@ -402,7 +402,7 @@ function render(preview=false){
  if(!img)return;
  if(!preview)renderRevision++;
  const fullW=canvas.width,fullH=canvas.height;
- const previewScale=preview?Math.min(1,1400/Math.max(fullW,fullH),Math.sqrt(1600000/(fullW*fullH))):1;
+ const previewScale=preview?Math.min(1,1200/Math.max(fullW,fullH),Math.sqrt(1000000/(fullW*fullH))):1;
  const w=Math.max(1,Math.round(fullW*previewScale)),h=Math.max(1,Math.round(fullH*previewScale));
  const workCanvas=preview?(previewCanvas||(previewCanvas=document.createElement('canvas'))):canvas;
  if(preview){workCanvas.width=w;workCanvas.height=h}
@@ -490,7 +490,7 @@ async function exportPhoto(){
  }finally{button.disabled=false;button.textContent=document.documentElement.lang==='ru'?'СОХРАНИТЬ ФОТО':'SAVE PHOTO'}
 }
 function compareOn(){if(!img||comparing)return;comparing=true;renderOriginal()}
-function renderOriginal(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(framedSource||img,0,0,canvas.width,canvas.height);$('#lookTag').textContent='ORIGINAL'}
+function renderOriginal(){renderRevision++;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(framedSource||img,0,0,canvas.width,canvas.height);$('#lookTag').textContent='ORIGINAL'}
 function compareOff(){if(!comparing)return;comparing=false;render()}
 file.addEventListener('change',e=>{const selected=e.target.files&&e.target.files[0];if(selected)loadPhoto(selected);file.value='';});
 file.addEventListener('cancel',()=>toast('Фото не выбрано'));
