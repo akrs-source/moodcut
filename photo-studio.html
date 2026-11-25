@@ -342,10 +342,30 @@ const looks={original:{},dark_aesthetic:{exposure:-100,brilliance:-53,highlights
   food_daylight:{exposure:7,contrast:4,highlights:-30,shadows:14,whites:-6,blacks:5,temperature:6,tint:2,vibrance:12,saturation:3,clarity:7,sharpen:5,hsl:{h:[0,-2,-8,-12,-6,-7,0,0],s:[0,5,-12,-20,-10,-8,-4,-4],l:[1,5,6,2,2,0,0,0]}}
 };
 function renderPresetThumbnails(){
- document.querySelectorAll('#presets .preset .swatch').forEach(swatch=>{
-  swatch.replaceChildren();
-  swatch.style.background='linear-gradient(145deg,#514139,#211c19 55%,#b18b78)';
- });
+ const cards=[...document.querySelectorAll('#presets .preset')];
+ const placeholder=()=>cards.forEach(card=>{const swatch=card.querySelector('.swatch');if(!swatch)return;swatch.replaceChildren();swatch.style.background='linear-gradient(145deg,#514139,#211c19 55%,#b18b78)'});
+ if(!img||!canvas.width||!canvas.height){placeholder();return}
+ const fullW=canvas.width,fullH=canvas.height,ratio=fullW/fullH;
+ const thumbW=Math.max(1,Math.round(Math.min(240,180*ratio))),thumbH=Math.max(1,Math.round(thumbW/ratio));
+ const savedValues=values,savedPreset=preset,savedCaption=caption;
+ try{
+  canvas.width=thumbW;canvas.height=thumbH;
+  cards.forEach(card=>{
+   const key=card.dataset.preset,swatch=card.querySelector('.swatch');
+   if(!swatch||!Object.prototype.hasOwnProperty.call(looks,key))return;
+   values={...defaults,...looks[key]};preset=key;caption='';
+   render();
+   const preview=document.createElement('img');
+   preview.alt=key+' preset preview';preview.loading='lazy';preview.decoding='async';
+   preview.src=canvas.toDataURL('image/jpeg',.84);
+   swatch.replaceChildren(preview);swatch.style.background='#211c19';
+  });
+ }catch(err){console.error('Preset thumbnail rendering failed',err);placeholder()}
+ finally{
+  canvas.width=fullW;canvas.height=fullH;
+  values=savedValues;preset=savedPreset;caption=savedCaption;
+  render();
+ }
 }
 
 let img=null,framedSource=null,previewCanvas=null,frame={rotation:0,flipX:false,flipY:false,ratio:'free'},values={...defaults},preset='original',caption='',history=[],cursor=-1,comparing=false,scale=1,tx=0,ty=0,pointers=new Map(),gesture=null,renderQueued=false,renderRevision=0;
@@ -383,7 +403,7 @@ async function loadPhoto(f){
     $('#empty').classList.add('hidden');canvas.style.display='block';
     $('#photoName').textContent=(f.name||'PHOTO').slice(0,26).toUpperCase();
     scale=1;tx=ty=0;applyTransform();values={...defaults};preset='original';caption='';$('#caption').value='';
-    syncControls();render();history=[];cursor=-1;checkpoint();
+    syncControls();renderPresetThumbnails();history=[];cursor=-1;checkpoint();
     $('#status').textContent='READY TO CREATE';toast('Фото загружено');haptic();
    }catch(err){console.error('Photo render failed',err);img=null;$('#status').textContent='PHOTO ERROR';toast('Фото выбрано, но не удалось отобразить его')}
    finally{URL.revokeObjectURL(url)}
@@ -497,7 +517,7 @@ file.addEventListener('cancel',()=>toast('Фото не выбрано'));
 window.addEventListener('error',e=>{console.error('MOODCUT runtime error',e.message);if(!img)$('#status').textContent='READY WHEN YOU ARE'});
 $$('.tab').forEach(b=>b.onclick=()=>{haptic();$$('.tab').forEach(x=>x.classList.toggle('active',x===b));$$('.panel').forEach(p=>p.classList.toggle('hidden',p.id!==b.dataset.tab))});
 $$('.preset').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
-$$('.frame-action').forEach(b=>b.addEventListener('click',()=>{if(!img){toast('Сначала открой фото');return}if(b.dataset.ratio){frame.ratio=b.dataset.ratio;$$('[data-ratio]').forEach(x=>x.classList.toggle('active',x===b))}else{const a=b.dataset.frame;if(a==='rotate-left')frame.rotation=(frame.rotation+270)%360;else if(a==='rotate-right')frame.rotation=(frame.rotation+90)%360;else if(a==='flip-x')frame.flipX=!frame.flipX;else if(a==='reset'){frame={rotation:0,flipX:false,flipY:false,ratio:'free'};$$('[data-ratio]').forEach(x=>x.classList.toggle('active',x.dataset.ratio==='free'))}}setCanvasSize();render();checkpoint();haptic()}));
+$$('.frame-action').forEach(b=>b.addEventListener('click',()=>{if(!img){toast('Сначала открой фото');return}if(b.dataset.ratio){frame.ratio=b.dataset.ratio;$$('[data-ratio]').forEach(x=>x.classList.toggle('active',x===b))}else{const a=b.dataset.frame;if(a==='rotate-left')frame.rotation=(frame.rotation+270)%360;else if(a==='rotate-right')frame.rotation=(frame.rotation+90)%360;else if(a==='flip-x')frame.flipX=!frame.flipX;else if(a==='reset'){frame={rotation:0,flipX:false,flipY:false,ratio:'free'};$$('[data-ratio]').forEach(x=>x.classList.toggle('active',x.dataset.ratio==='free'))}}setCanvasSize();renderPresetThumbnails();checkpoint();haptic()}));
  try{const pending=localStorage.getItem('moodcut.pendingStudioPreset');if(pending){localStorage.removeItem('moodcut.pendingStudioPreset');if(looks[pending]){applyPreset(pending);const active=document.querySelector('.preset[data-preset="'+pending+'"]');if(active){document.querySelectorAll('.preset').forEach(x=>x.classList.toggle('active',x===active))}}}}catch(e){}
 renderPresetThumbnails();
 $$('.analog-look').forEach(b=>b.onclick=()=>{if(!img){toast('Сначала открой фото');return}$$('.analog-look').forEach(x=>x.classList.toggle('active',x===b));applyPreset(b.dataset.film);$('#lookTag').textContent=b.querySelector('b').textContent.toUpperCase()});
