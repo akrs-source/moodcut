@@ -412,6 +412,8 @@ function render(){
  const temp=values.temperature/100,tint=values.tint/30,filterMix=values.filter/100,glow=values.glow/100,skinTone=(values.skinTone||0)/100;
  const hi=values.highlights/50,sh=values.shadows/50,whites=values.whites/100,blacks=values.blacks/100;
  const fade=values.fade/100,grain=values.grain*.85,vignette=values.vignette/100,denoise=(values.denoise||0)/100;
+ const hsl=values.hsl,useHsl=!!hsl&&Object.values(hsl).some(channel=>Array.isArray(channel)&&channel.some(v=>Number(v)!==0));
+ const grading=values.grading,useGrading=!!grading&&Object.values(grading).some(v=>Number(v)!==0);
  const cx=w/2,cy=h/2,invX=1/(cx*cx),invY=1/(cy*cy);
  for(let y=0;y<h;y++){
   for(let x=0;x<w;x++){
@@ -429,8 +431,8 @@ function render(){
    const l=.2126*r+.7152*g+.0722*b;
    const chroma=Math.max(Math.abs(r-l),Math.abs(g-l),Math.abs(b-l));const satFactor=Math.max(0,1+values.saturation/100+vibrance*(1-chroma/255));
    r=l+(r-l)*satFactor;g=l+(g-l)*satFactor;b=l+(b-l)*satFactor;
-   if(values.hsl){const q=applyHslAdjust(r,g,b,values.hsl);r=q[0];g=q[1];b=q[2]}
-   if(values.grading){const q=applyGrade(r,g,b,values.grading);r=q[0];g=q[1];b=q[2]}
+   if(useHsl){const q=applyHslAdjust(r,g,b,hsl);r=q[0];g=q[1];b=q[2]}
+   if(useGrading){const q=applyGrade(r,g,b,grading);r=q[0];g=q[1];b=q[2]}
    if(values.clarity!==0&&x>0&&x<w-1&&y>0&&y<h-1){const midR=(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,midG=(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,midB=(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=values.clarity/100*.8;r+=(source[i]-midR)*amount;g+=(source[i+1]-midG)*amount;b+=(source[i+2]-midB)*amount;}
    if((values.sharpen>0||values.resolution>0)&&x>0&&x<w-1&&y>0&&y<h-1){const edgeR=source[i]-(source[i-4]+source[i+4]+source[i-w*4]+source[i+w*4])*.25,edgeG=source[i+1]-(source[i-3]+source[i+5]+source[i-w*4+1]+source[i+w*4+1])*.25,edgeB=source[i+2]-(source[i-2]+source[i+6]+source[i-w*4+2]+source[i+w*4+2])*.25,amount=(values.sharpen/100*.9)+(values.resolution/100*.45);r+=edgeR*amount;g+=edgeG*amount;b+=edgeB*amount;}
    if(glow){const bright=Math.max(0,(Math.max(r,g,b)-145)/110)*glow*28;r+=bright;g+=bright*.88;b+=bright*.68;}
