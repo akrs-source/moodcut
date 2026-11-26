@@ -4,7 +4,23 @@ const app = document.querySelector('#app');
 const main = app?.querySelector('main');
 if (app && main) {
   const initialHome = main.innerHTML;
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [] };
+  const tg = window.Telegram?.WebApp;
+  tg?.ready?.();
+  tg?.expand?.();
+  const initData = tg?.initData || '';
+  const api = async (action, payload = {}) => {
+    if (!initData) return null;
+    const response = await fetch('https://tidrkegmipucdcoqdxvd.supabase.co/functions/v1/forma-api', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData, action, payload })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || 'Ошибка синхронизации');
+    return result;
+  };
+  const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
+  const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: null, preferences: null, weights: [] };
   const targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const fmt = n => Math.round(n).toLocaleString('ru-RU');
   const totals = () => state.meals.reduce((a,m) => ({kcal:a.kcal+m.kcal,p:a.p+m.p,f:a.f+m.f,c:a.c+m.c}),{kcal:0,p:0,f:0,c:0});
@@ -49,10 +65,10 @@ if (app && main) {
   function toast(message) { let el=app.querySelector('.toast'); if(!el){el=document.createElement('div');el.className='toast';app.append(el);} el.textContent=message;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2200); }
   function bindPage() {
     main.querySelectorAll('[data-action],[data-go]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.action||b.dataset.go)));
-    main.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{state.meals.splice(Number(b.dataset.remove),1);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render(state.tab);}));
-    const wf=main.querySelector('#forma-weight-form'); if(wf) wf.addEventListener('submit',e=>{e.preventDefault();state.weight=main.querySelector('#forma-weight').value;localStorage.setItem('forma-weight',state.weight);render('body');toast('Измерение сохранено');});
+    main.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',async()=>{const item=state.meals[Number(b.dataset.remove)];state.meals.splice(Number(b.dataset.remove),1);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render(state.tab);if(item?.id){try{await api('delete_entry',{id:item.id});}catch(e){toast('Не удалось синхронизировать удаление');}}}));
+    const wf=main.querySelector('#forma-weight-form'); if(wf) wf.addEventListener('submit',async e=>{e.preventDefault();state.weight=main.querySelector('#forma-weight').value;localStorage.setItem('forma-weight',state.weight);render('body');toast('Измерение сохранено');try{const saved=await api('save_weight',{weight_kg:Number(state.weight)});if(saved){state.weights.unshift({measured_at:saved.measured_at,weight_kg:saved.weight_kg});toast('Вес сохранён в аккаунте Telegram');}}catch(err){toast('Сохранено на устройстве; синхронизация не удалась');}});
     const cf=main.querySelector('#forma-chat-form'); if(cf) cf.addEventListener('submit',e=>{e.preventDefault();const v=new FormData(cf).get('message').trim();if(v){state.chat.push(v);render('chat');}});
-    const pf=main.querySelector('#forma-product-form'); if(pf) pf.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(pf);const grams=Number(d.get('grams'));const factor=grams/100;state.meals.push({name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor});localStorage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');});
+    const pf=main.querySelector('#forma-product-form'); if(pf) pf.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pf);const grams=Number(d.get('grams'));const factor=grams/100;const item={name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor};state.meals.push(item);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(item.type),grams:item.grams,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'label',source:'manual'});if(saved?.entry){item.id=saved.entry.id;localStorage.setItem('forma-meals',JSON.stringify(state.meals));toast('Запись синхронизирована с аккаунтом');}}catch(err){toast('Запись сохранена на устройстве; синхронизация не удалась');}});
   }
   function action(a) {
     if(a==='diary'){render('diary');return;}
@@ -66,5 +82,23 @@ if (app && main) {
     main.querySelector('#forma-back').onclick=()=>render('diary');bindPage();
   }
   document.addEventListener('click',e=>{const b=e.target.closest('.nav-item');if(b){e.preventDefault();e.stopImmediatePropagation();render(b.dataset.tab);}},true);
+  async function hydrate() {
+    if (!initData) return;
+    try {
+      const data = await api('bootstrap');
+      state.profile = data.profile; state.goals = data.goals; state.preferences = data.preferences; state.weights = data.weights || [];
+      state.meals = (data.entries || []).map(row => ({
+        id: row.id, name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
+        kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
+      }));
+      if (state.weights.length) state.weight = String(state.weights[0].weight_kg);
+      localStorage.setItem('forma-meals', JSON.stringify(state.meals));
+      if (state.weight) localStorage.setItem('forma-weight', state.weight);
+      render(state.tab);
+    } catch (err) {
+      toast('Не удалось подключиться к аккаунту. Проверь запуск через Telegram.');
+    }
+  }
   render('home');
+  hydrate();
 }
