@@ -168,6 +168,7 @@ if (app && main) {
         : '<p class="muted">Пока нет пользователей.</p>';
       main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card forma-settings"><button data-action="admin-subscriptions"><span><b>Подписки PRO</b><small>Выдача, продление и отключение доступа</small></span><i>›</i></button></section><section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted" id="forma-admin-user-count">Показаны '+fmt(result.users.length)+' аккаунтов</p></div></div><label class="forma-admin-search-label">Поиск по имени, username или Telegram ID<input id="forma-admin-search" type="search" placeholder="Начни вводить для поиска…" autocomplete="off"></label><div id="forma-admin-user-list">'+usersHtml+'</div></section><p class="forma-footnote">Список показывает последние аккаунты, загруженные из базы данных. Административный доступ проверяется сервером.</p>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+      main.querySelector('[data-action="admin-subscriptions"]').onclick=()=>adminSubscriptionsPage();
       const search=main.querySelector('#forma-admin-search');
       search?.addEventListener('input',()=>{
         const query=search.value.trim().toLowerCase();
