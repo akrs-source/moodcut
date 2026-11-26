@@ -41,8 +41,15 @@ if (app && main) {
   const totals = (items=state.meals) => items.reduce((a,m) => ({kcal:a.kcal+Number(m.kcal||0),p:a.p+Number(m.p||0),f:a.f+Number(m.f||0),c:a.c+Number(m.c||0)}),{kcal:0,p:0,f:0,c:0});
   const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const nav = [...app.querySelectorAll('.nav-item')];
-  const navLabels = {home:['⌂','Сегодня'],diary:['◫','Питание'],menu:['▦','План'],body:['↗','Прогресс'],profile:['○','Профиль']};
-  nav.forEach(b=>{const pair=navLabels[b.dataset.tab];if(pair)b.innerHTML='<span>'+pair[0]+'</span><small>'+pair[1]+'</small>';});
+  const navIcons = {
+    home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.8l8.5 6.7"/><path d="M5.5 9.5v10h13v-10M9.5 19.5v-6h5v6"/></svg>',
+    diary: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v15H4z"/><path d="M8 3.5v4M16 3.5v4M8 11h8M8 15h5"/></svg>',
+    menu: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+    body: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V14M10 19.5V9M16 19.5V4.5M22 19.5H2"/></svg>',
+    profile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-3.5 3.4-5.5 7.5-5.5s6.7 2 7.5 5.5"/></svg>'
+  };
+  const navLabels = {home:'Сегодня',diary:'Питание',menu:'План',body:'Прогресс',profile:'Профиль'};
+  nav.forEach(b=>{const key=b.dataset.tab;if(navIcons[key])b.innerHTML='<span class="nav-icon">'+navIcons[key]+'</span><small>'+navLabels[key]+'</small>';});
   const mealsHTML = () => diaryMeals().length ? diaryMeals().map(m=>`<article class="forma-food-row"><div class="forma-food-icon">✳</div><div class="forma-food-main"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${m.grams} г · ${fmt(m.kcal)} ккал</span><small>Б ${m.p} г · Ж ${m.f} г · У ${m.c} г</small></div><button class="forma-remove" data-remove="${esc(String(m.id || ''))}" aria-label="Удалить">×</button></article>`).join('') : '<div class="forma-empty"><span>＋</span><b>Дневник пока пуст</b><p>Добавь первый продукт или блюдо — показатели обновятся автоматически.</p></div>';
   function home() {
     const t=totals(todayMeals()), left=Math.max(0,targets.kcal-t.kcal), pct=Math.min(100,t.kcal/targets.kcal*100), today=new Date(), day=today.toLocaleDateString('ru-RU',{weekday:'long'}).toUpperCase(), date=today.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}).toUpperCase();
