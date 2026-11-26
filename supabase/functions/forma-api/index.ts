@@ -158,6 +158,34 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+    if (action === "save_plan") {
+      const planDate = String(payload.plan_date || "");
+      const title = String(payload.title || "").trim();
+      const mealType = allowed(payload.meal_type, ["breakfast","lunch","snack","dinner"]) ? payload.meal_type : "";
+      const numeric = (v: unknown) => Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : 0;
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(planDate) || !title || title.length > 160 || !mealType) {
+        return json({ error: "invalid_plan" }, 400);
+      }
+      const values = {
+        telegram_id, plan_date: planDate, meal_type: mealType, title,
+        description: String(payload.description || "").slice(0, 1000),
+        kcal: numeric(payload.kcal), protein_g: numeric(payload.protein_g),
+        fat_g: numeric(payload.fat_g), carbs_g: numeric(payload.carbs_g),
+      };
+      const id = String(payload.id || "");
+      const rows = id && /^[0-9a-f-]{36}$/i.test(id)
+        ? await db("forma_meal_plans", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "PATCH", values, "return=representation")
+        : await db("forma_meal_plans", "", "POST", values, "return=representation");
+      return json({ ok: true, plan: rows?.[0] || null });
+    }
+
+    if (action === "delete_plan") {
+      const id = String(payload.id || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
+      await db("forma_meal_plans", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "DELETE");
+      return json({ ok: true });
+    }
+
     if (action === "save_entry") {
       const name = String(payload.food_name || "").trim();
       const grams = Number(payload.grams);
