@@ -20,7 +20,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]').map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), shopping: JSON.parse(localStorage.getItem('forma-shopping') || '[]'), recipes: JSON.parse(localStorage.getItem('forma-recipes') || '[]'), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]').map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, isAdmin: false, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), shopping: JSON.parse(localStorage.getItem('forma-shopping') || '[]'), recipes: JSON.parse(localStorage.getItem('forma-recipes') || '[]'), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -128,7 +128,20 @@ if (app && main) {
       <button data-action="settings-food"><span><b>Питание и предпочтения</b><small>${p.meals_per_day?`${p.meals_per_day} приёма пищи · ${(p.excluded_foods||[]).length} исключений`:'Вкусы, аллергии, бюджет и время готовки'}</small></span><i>›</i></button>
       <button data-action="settings-goals"><span><b>Мои нормы КБЖУ</b><small>${g.daily_kcal?`${g.daily_kcal} ккал · Б ${g.protein_g} · Ж ${g.fat_g} · У ${g.carbs_g}`:'Рассчитать после заполнения параметров'}</small></span><i>›</i></button>
       <button data-action="setting-subscription"><span><b>Подписка FORMA</b><small>Тарифы и дополнительные возможности</small></span><i>›</i></button>
-    </section><p class="forma-footnote">Данные и ориентиры можно изменить в любой момент. Расчёт носит справочный характер.</p>`;
+    </section>${state.isAdmin?`<section class="forma-card forma-settings"><button data-action="admin"><span><b>Панель администратора</b><small>Пользователи и статистика FORMA</small></span><i>›</i></button></section>`:''}<p class="forma-footnote">Данные и ориентиры можно изменить в любой момент. Расчёт носит справочный характер.</p>`;
+  }
+  async function adminPage() {
+    main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Загружаем данные пользователей…</p></section>';
+    main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+    try {
+      const result = await api('admin_overview');
+      if (!result || !Array.isArray(result.users)) throw new Error('admin_data_unavailable');
+      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Пользователи приложения</p></section><section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Всего в списке: '+fmt(result.total_returned||result.users.length)+'</h2></div></div>'+ (result.users.length ? result.users.map(u=>'<article class="forma-history-row"><span>'+esc(u.first_name||'Без имени')+(u.username?' · @'+esc(u.username):'')+'<small style="display:block">'+esc(u.telegram_id)+'</small></span><b>'+esc((u.updated_at||'').slice(0,10))+'</b></article>').join('') : '<p class="muted">Пока нет пользователей.</p>') +'</section><p class="forma-footnote">Доступ к этому разделу проверяется сервером для каждого запроса.</p>';
+      main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+    } catch (e) {
+      main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Не удалось загрузить</h1><p class="muted">Проверь подключение или права администратора.</p></section>';
+      main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+    }
   }
   function chat() {
     return `<section class="forma-page-intro"><p class="eyebrow">ТВОЙ ПЕРСОНАЛЬНЫЙ ПОМОЩНИК</p><h1>Давай разберёмся.</h1><p class="muted">Можно спросить о питании, меню или своих показателях.</p></section><section class="forma-chat-window"><div class="forma-chat-message assistant"><small>FORMA</small>Привет! Я помогу разобраться с питанием и планированием. С чего начнём?</div>${state.chat.map(m=>`<div class="forma-chat-message user">${esc(m)}</div><div class="forma-chat-message assistant"><small>FORMA</small>Я пока работаю в демонстрационном режиме. В полноценной версии смогу анализировать твои записи и предлагать решения с учётом контекста.</div>`).join('')}</section><form id="forma-chat-form" class="forma-chat-form"><input name="message" placeholder="Напиши свой вопрос..." required><button aria-label="Отправить">↑</button></form><p class="forma-footnote">Ответы помощника в этой версии демонстрационные.</p>`;
@@ -228,6 +241,7 @@ if (app && main) {
     if(a==='add-product'){productForm();return;} if(a==='add-plan'){planForm();return;}
     if(a==='settings-goals'){goalsEditor();return;} if(a==='settings-food'){preferencesEditor();return;}
     if(a==='shopping'){shoppingList();return;} if(a==='recipes'){recipesPage();return;} if(a==='add-recipe'){recipeForm();return;} if(a==='shopping-clear'){state.shopping=state.shopping.filter(x=>!x.done);localStorage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();return;}
+    if(a==='admin'){adminPage();return;}
     if(a==='setting-subscription'){toast('Подписку подключим после готовности основных функций');return;}
     if(a==='photo'||a==='barcode'){toast('Эта функция запланирована для следующего этапа');return;}
     toast('Этот экран добавим следующим этапом');
@@ -250,7 +264,7 @@ if (app && main) {
     if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; localStorage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(state.goals){applyGoals(state.goals);localStorage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)localStorage.setItem('forma-preferences',JSON.stringify(state.preferences)); localStorage.setItem('forma-plans',JSON.stringify(state.plans));
+      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; localStorage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(state.goals){applyGoals(state.goals);localStorage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)localStorage.setItem('forma-preferences',JSON.stringify(state.preferences)); localStorage.setItem('forma-plans',JSON.stringify(state.plans));
       state.meals = (data.entries || []).map(row => ({
         id: row.id, eaten_at: row.eaten_at, date: row.eaten_at ? localDate(row.eaten_at) : localDate(new Date()), name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
