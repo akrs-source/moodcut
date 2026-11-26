@@ -160,10 +160,26 @@ if (app && main) {
       const availableStats = statItems.filter(([label,value]) => value != null);
       const statsHtml = '<section class="forma-admin-stats">'+availableStats.map(([label,value])=>'<article class="forma-admin-stat"><span>'+esc(label)+'</span><b>'+metric(value)+'</b></article>').join('')+'</section>';
       const usersHtml = result.users.length
-        ? result.users.map(u=>'<article class="forma-history-row"><span><b>'+esc(u.first_name||'Без имени')+(u.last_name?' '+esc(u.last_name):'')+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small style="display:block">ID: '+esc(u.telegram_id)+'</small></span><span class="forma-admin-user-date">'+esc((u.updated_at||'').slice(0,10)||'—')+'</span></article>').join('')
+        ? result.users.map(u=>{
+          const fullName=[u.first_name,u.last_name].filter(Boolean).join(' ')||'Без имени';
+          const searchText=[fullName,u.username,u.telegram_id].filter(Boolean).join(' ').toLowerCase();
+          return '<article class="forma-history-row" data-admin-user data-search="'+esc(searchText)+'"><span><b>'+esc(fullName)+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small style="display:block">ID: '+esc(u.telegram_id)+'</small></span><span class="forma-admin-user-date">'+esc((u.updated_at||'').slice(0,10)||'—')+'</span></article>';
+        }).join('')
         : '<p class="muted">Пока нет пользователей.</p>';
-      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted">Показаны последние '+fmt(result.users.length)+' аккаунтов</p></div></div>'+usersHtml+'</section><p class="forma-footnote">Статистика загружается из базы данных. Административный доступ проверяется сервером.</p>';
+      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted" id="forma-admin-user-count">Показаны '+fmt(result.users.length)+' аккаунтов</p></div></div><label class="forma-admin-search-label">Поиск по имени, username или Telegram ID<input id="forma-admin-search" type="search" placeholder="Начни вводить для поиска…" autocomplete="off"></label><div id="forma-admin-user-list">'+usersHtml+'</div></section><p class="forma-footnote">Список показывает последние аккаунты, загруженные из базы данных. Административный доступ проверяется сервером.</p>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+      const search=main.querySelector('#forma-admin-search');
+      search?.addEventListener('input',()=>{
+        const query=search.value.trim().toLowerCase();
+        let visible=0;
+        main.querySelectorAll('[data-admin-user]').forEach(row=>{
+          const match=!query||row.dataset.search.includes(query);
+          row.hidden=!match;
+          if(match)visible++;
+        });
+        const count=main.querySelector('#forma-admin-user-count');
+        if(count)count.textContent='Найдено '+fmt(visible)+' из '+fmt(result.users.length);
+      });
     } catch (e) {
       main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Не удалось загрузить</h1><p class="muted">Проверь подключение или права администратора.</p></section>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
