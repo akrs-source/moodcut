@@ -1,8 +1,8 @@
-name: Deploy MOODCUT to GitHub Pages
+name: Deploy MOODCUT and FORMA preview
 
 on:
   push:
-    branches: [main]
+    branches: [main, nutrition-app-rebuild]
   workflow_dispatch:
 
 permissions:
@@ -18,16 +18,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main site
         uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
+      - name: Build main site
+        run: |
+          npm install
+          npm run build
+
+      - name: Checkout FORMA preview source
+        uses: actions/checkout@v4
+        with:
+          ref: nutrition-app-rebuild
+          path: forma-src
+      - name: Build FORMA preview
+        working-directory: forma-src
+        run: |
+          npm install
+          npm run build -- --base=/moodcut/preview/
+      - name: Add FORMA preview without replacing main site
+        run: |
+          mkdir -p dist/preview
+          cp -R forma-src/dist/. dist/preview/
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
