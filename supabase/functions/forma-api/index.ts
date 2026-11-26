@@ -186,6 +186,33 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+    if (action === "search_food") {
+      const query = String(payload.query || "").trim().replace(/\s+/g, " ");
+      if (query.length < 2 || query.length > 80) return json({ error: "invalid_query" }, 400);
+      const params = new URLSearchParams({
+        search_terms: query, search_simple: "1", action: "process", json: "1",
+        page_size: "12", fields: "product_name,brands,quantity,nutriments,code",
+      });
+      const response = await fetch("https://world.openfoodfacts.org/cgi/search.pl?" + params.toString(), {
+        headers: { "User-Agent": "FORMA/1.0 (https://akrs-source.github.io/moodcut/)" },
+        signal: AbortSignal.timeout(9000),
+      });
+      if (!response.ok) return json({ error: "food_database_unavailable" }, 502);
+      const result = await response.json();
+      const products = (Array.isArray(result.products) ? result.products : []).map((p: any) => {
+        const n = p?.nutriments || {};
+        const numeric = (v: unknown) => v == null || v === "" ? NaN : Number(v);
+        const kcalRaw = n["energy-kcal_100g"] ?? n["energy-kcal_value"];
+        const energyKj = n["energy-kj_100g"] ?? n["energy-kj_value"] ?? n["energy_100g"];
+        const kcal = kcalRaw != null && kcalRaw !== "" ? numeric(kcalRaw) : (energyKj != null && energyKj !== "" ? numeric(energyKj) / 4.184 : NaN);
+        const protein = numeric(n.proteins_100g), fat = numeric(n.fat_100g), carbs = numeric(n.carbohydrates_100g);
+        const name = String(p?.product_name || "").trim().slice(0, 160);
+        if (!name || !Number.isFinite(kcal) || !Number.isFinite(protein) || !Number.isFinite(fat) || !Number.isFinite(carbs) || kcal < 0 || protein < 0 || fat < 0 || carbs < 0) return null;
+        return { name, brand: String(p?.brands || "").slice(0, 100), quantity: String(p?.quantity || "").slice(0, 80), code: String(p?.code || "").slice(0, 32), kcal: Math.round(kcal * 10) / 10, p: Math.round(protein * 10) / 10, f: Math.round(fat * 10) / 10, c: Math.round(carbs * 10) / 10 };
+      }).filter(Boolean).slice(0, 12);
+      return json({ ok: true, products });
+    }
+
     if (action === "save_entry") {
       const name = String(payload.food_name || "").trim();
       const grams = Number(payload.grams);
