@@ -137,7 +137,7 @@ if (app && main) {
       const result = await api('admin_overview');
       if (!result || !Array.isArray(result.users)) throw new Error('admin_data_unavailable');
       const stats = result.stats || {};
-      const metric = (value) => fmt(Number(value || 0));
+      const metric = (value) => value == null ? '—' : fmt(Number(value));
       const statItems = [
         ['Пользователи', stats.total_users ?? result.total_returned ?? result.users.length],
         ['Заполнили цели', stats.users_with_goals],
