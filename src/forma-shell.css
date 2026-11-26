@@ -116,3 +116,22 @@ html body textarea{font-size:16px!important;}
 .forma-subscription-actions{grid-column:1/-1;display:flex;gap:8px}.forma-subscription-actions button{min-height:36px;padding:0 12px;border:1px solid var(--line,#e9e3d9);border-radius:11px;background:var(--surface,#faf9f6);color:var(--ink,#39352f);font:inherit;font-size:12px}.forma-subscription-actions button.is-muted{color:var(--muted,#777)}
 .forma-subscription-row[hidden]{display:none!important}
 @media(min-width:560px){.forma-subscription-row{grid-template-columns:minmax(0,1fr) auto auto}.forma-subscription-actions{grid-column:auto}}
+
+
+/* Compact admin layout */
+.forma-admin-stats{gap:7px;margin-bottom:10px}
+.forma-admin-stat{padding:10px 12px;border-radius:13px}
+.forma-admin-stat span{font-size:11px;line-height:1.25}
+.forma-admin-stat b{margin-top:3px;font-size:21px;line-height:1.15}
+.forma-admin-pro-card,.forma-admin-users-card,.forma-admin-form-card{padding:14px!important}
+.forma-admin-pro-card button{min-height:54px!important;padding:9px 0!important}
+.forma-admin-search-label{gap:5px;margin:9px 0}
+.forma-admin-search-label input{min-height:40px;padding-inline:11px;border-radius:11px}
+.forma-subscription-row{gap:6px 9px;padding:9px 0}
+.forma-subscription-user{gap:2px}
+.forma-subscription-user b{font-size:13px}
+.forma-subscription-status{padding:4px 7px;font-size:10px}
+.forma-subscription-actions{gap:6px}
+.forma-subscription-actions button{min-height:32px;padding-inline:10px}
+.forma-admin-form-card .forma-product-form{gap:9px}
+.forma-admin-form-card input{min-height:40px}
