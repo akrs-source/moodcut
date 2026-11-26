@@ -189,6 +189,8 @@ if (app && main) {
       const query=String(new FormData(foodSearch).get('query')||'').trim();
       const results=main.querySelector('#forma-food-results'),button=foodSearch.querySelector('button');
       if(!query||query.length<2)return;
+      if(Date.now()-lastFoodSearchAt<6000){toast('Подожди несколько секунд перед следующим поиском');return;}
+      lastFoodSearchAt=Date.now();
       button.disabled=true;button.textContent='Ищем…';results.innerHTML='<p class="forma-footnote">Ищем продукты в базе…</p>';
       try{
         const data=await api('search_food',{query});
@@ -198,11 +200,13 @@ if (app && main) {
       }catch(err){results.innerHTML='<p class="forma-footnote">Не удалось выполнить поиск. Попробуй ещё раз или заполни форму вручную.</p>';}
       finally{button.disabled=false;button.textContent='Найти';}
     });
-    main.querySelectorAll('[data-food-pick]').forEach(b=>b.addEventListener('click',()=>{
+    const foodResults=main.querySelector('#forma-food-results');
+    if(foodResults)foodResults.addEventListener('click',e=>{
+      const b=e.target.closest?.('[data-food-pick]');if(!b)return;
       const p=state.foodSearchResults[Number(b.dataset.foodPick)],form=main.querySelector('#forma-product-form');if(!p||!form)return;
-      form.elements.name.value=p.name;form.elements.kcal.value=p.kcal;form.elements.p.value=p.p;form.elements.f.value=p.f;form.elements.c.value=p.c;form.elements.state.value='label';
+      form.elements.name.value=p.name+(p.brand?' — '+p.brand:'');form.elements.kcal.value=p.kcal;form.elements.p.value=p.p;form.elements.f.value=p.f;form.elements.c.value=p.c;form.elements.state.value='label';
       form.scrollIntoView({behavior:'smooth',block:'start'});toast('Данные перенесены в форму. Проверь их перед сохранением.');
-    }));
+    });
     const pfm=main.querySelector('#forma-product-form');if(pfm)pfm.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pfm);const grams=Number(d.get('grams')),factor=grams/100;const item={name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor,weight_state:d.get('state')||'label'};state.meals.push(item);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(item.type),grams:item.grams,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:item.weight_state,source:'manual'});if(saved?.entry){item.id=saved.entry.id;localStorage.setItem('forma-meals',JSON.stringify(state.meals));toast('Запись синхронизирована с аккаунтом');}}catch(err){toast('Запись сохранена на устройстве; синхронизация не удалась');}});
   }
   function action(a) {
@@ -219,10 +223,11 @@ if (app && main) {
     <form id="forma-plan-form" class="forma-card forma-product-form"><label>Дата<input name="plan_date" type="date" value="${state.planDate}" required></label><label>Приём пищи<select name="meal_type"><option value="breakfast">Завтрак</option><option value="lunch">Обед</option><option value="snack">Перекус</option><option value="dinner">Ужин</option></select></label><label>Название блюда<input name="title" placeholder="Например, омлет с овощами" maxlength="160" required></label><label>Комментарий / состав<textarea name="description" rows="3" placeholder="Ингредиенты или заметка"></textarea></label><div class="forma-form-divider">Пищевая ценность порции</div><div class="forma-nutrient-grid"><label>Ккал<input name="kcal" type="number" min="0" step="1" value="0"></label><label>Белки, г<input name="protein_g" type="number" min="0" step="0.1" value="0"></label><label>Жиры, г<input name="fat_g" type="number" min="0" step="0.1" value="0"></label><label>Углеводы, г<input name="carbs_g" type="number" min="0" step="0.1" value="0"></label></div><button class="forma-primary">Сохранить в план <span>→</span></button></form>`;
     main.querySelector('#forma-back').onclick=()=>render('menu');bindPage();
   }
+  let lastFoodSearchAt = 0;
   function productForm() {
     state.foodSearchResults=[];
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← Дневник</button><p class="eyebrow">ПОДРОБНАЯ ЗАПИСЬ</p><h1>Добавить продукт</h1><p class="muted">Найди продукт в базе или внеси данные с упаковки вручную.</p></section>
-    <section class="forma-card forma-food-search"><form id="forma-food-search"><label for="forma-food-query">Поиск по продуктам</label><div class="forma-food-search-line"><input id="forma-food-query" name="query" minlength="2" maxlength="80" placeholder="Например, творог 5%, банан, йогурт..." required><button class="forma-primary">Найти</button></div></form><div id="forma-food-results" aria-live="polite"><p class="forma-footnote">Поиск выполняется по базе Open Food Facts. Состав и значения могут быть неполными — сверяй их с упаковкой.</p></div></section>
+    <section class="forma-card forma-food-search"><form id="forma-food-search"><label for="forma-food-query">Поиск по продуктам</label><div class="forma-food-search-line"><input id="forma-food-query" name="query" minlength="2" maxlength="80" placeholder="Например, творог 5%, банан, йогурт..." required><button class="forma-primary">Найти</button></div></form><div id="forma-food-results" aria-live="polite"><p class="forma-footnote">Данные Open Food Facts (ODbL). Значения могут быть неполными — сверяй их с упаковкой.</p></div></section>
     <form id="forma-product-form" class="forma-card forma-product-form"><div class="forma-card-head"><div><p class="eyebrow">РУЧНОЙ ВВОД</p><h2>Добавить самостоятельно</h2></div></div><label>Название продукта<input name="name" placeholder="Например, куриное филе" required></label><label>Приём пищи<select name="type"><option>Завтрак</option><option>Обед</option><option>Перекус</option><option>Ужин</option></select></label><label>Вес порции, г<input name="grams" type="number" min="1" max="5000" value="150" required></label><div class="forma-form-divider">Пищевая ценность на 100 г</div><div class="forma-nutrient-grid"><label>Калории, ккал<input name="kcal" type="number" min="0" step="0.1" placeholder="165" required></label><label>Белки, г<input name="p" type="number" min="0" step="0.1" placeholder="31" required></label><label>Жиры, г<input name="f" type="number" min="0" step="0.1" placeholder="3.6" required></label><label>Углеводы, г<input name="c" type="number" min="0" step="0.1" placeholder="0" required></label></div><label>Состояние продукта<select name="state"><option value="raw">Сырой вес</option><option value="cooked">Готовый вес</option><option value="label">Указано на упаковке</option></select></label><button class="forma-primary">Добавить в дневник <span>→</span></button><p class="forma-footnote">Пищевая ценность будет рассчитана пропорционально указанному весу.</p></form>`;
     main.querySelector('#forma-back').onclick=()=>render('diary');bindPage();
   }
