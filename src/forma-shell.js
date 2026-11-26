@@ -131,12 +131,25 @@ if (app && main) {
     </section>${state.isAdmin?`<section class="forma-card forma-settings"><button data-action="admin"><span><b>Панель администратора</b><small>Пользователи и статистика FORMA</small></span><i>›</i></button></section>`:''}<p class="forma-footnote">Данные и ориентиры можно изменить в любой момент. Расчёт носит справочный характер.</p>`;
   }
   async function adminPage() {
-    main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Загружаем данные пользователей…</p></section>';
+    main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Загружаем статистику и пользователей…</p></section>';
     main.querySelector('#forma-admin-back').onclick=()=>render('profile');
     try {
       const result = await api('admin_overview');
       if (!result || !Array.isArray(result.users)) throw new Error('admin_data_unavailable');
-      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Пользователи приложения</p></section><section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Всего в списке: '+fmt(result.total_returned||result.users.length)+'</h2></div></div>'+ (result.users.length ? result.users.map(u=>'<article class="forma-history-row"><span>'+esc(u.first_name||'Без имени')+(u.username?' · @'+esc(u.username):'')+'<small style="display:block">'+esc(u.telegram_id)+'</small></span><b>'+esc((u.updated_at||'').slice(0,10))+'</b></article>').join('') : '<p class="muted">Пока нет пользователей.</p>') +'</section><p class="forma-footnote">Доступ к этому разделу проверяется сервером для каждого запроса.</p>';
+      const stats = result.stats || {};
+      const metric = (value) => fmt(Number(value || 0));
+      const statItems = [
+        ['Пользователи', stats.total_users ?? result.total_returned ?? result.users.length],
+        ['Заполнили цели', stats.users_with_goals],
+        ['Записи в дневниках', stats.diary_entries],
+        ['Записи веса', stats.weight_logs],
+        ['Блюда в планах', stats.meal_plans],
+      ];
+      const statsHtml = '<section class="forma-admin-stats">'+statItems.map(([label,value])=>'<article class="forma-admin-stat"><span>'+esc(label)+'</span><b>'+metric(value)+'</b></article>').join('')+'</section>';
+      const usersHtml = result.users.length
+        ? result.users.map(u=>'<article class="forma-history-row"><span><b>'+esc(u.first_name||'Без имени')+(u.last_name?' '+esc(u.last_name):'')+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small style="display:block">ID: '+esc(u.telegram_id)+'</small></span><span class="forma-admin-user-date">'+esc((u.updated_at||'').slice(0,10)||'—')+'</span></article>').join('')
+        : '<p class="muted">Пока нет пользователей.</p>';
+      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted">Показаны последние '+fmt(result.users.length)+' аккаунтов</p></div></div>'+usersHtml+'</section><p class="forma-footnote">Статистика загружается из базы данных. Административный доступ проверяется сервером.</p>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
     } catch (e) {
       main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Не удалось загрузить</h1><p class="muted">Проверь подключение или права администратора.</p></section>';
