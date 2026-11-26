@@ -20,8 +20,20 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: null, preferences: null, weights: [] };
-  const targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: [], plans: [] };
+  let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
+  const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
+  const calculateTargets = g => {
+    const age=Number(g.age), height=Number(g.height_cm), weight=Number(g.current_weight_kg);
+    const activity={sedentary:1.2,light:1.375,moderate:1.55,high:1.725,athlete:1.9}[g.activity_level]||1.2;
+    const sexAdj=g.sex==='male'?5:g.sex==='female'?-161:-78;
+    const bmr=10*weight+6.25*height-5*age+sexAdj;
+    const factor={lose:.85,gain:1.1,maintain:1,recomposition:.95,healthier:1}[g.goal_type]||1;
+    const kcal=Math.round(Math.max(1200,Math.min(6000,bmr*activity*factor))/50)*50;
+    const protein=Math.round(weight*1.6), fat=Math.round(weight*.8), carbs=Math.max(0,Math.round((kcal-protein*4-fat*9)/4));
+    return {daily_kcal:kcal,protein_g:protein,fat_g:fat,carbs_g:carbs};
+  };
+  applyGoals(state.goals);
   const fmt = n => Math.round(n).toLocaleString('ru-RU');
   const totals = () => state.meals.reduce((a,m) => ({kcal:a.kcal+m.kcal,p:a.p+m.p,f:a.f+m.f,c:a.c+m.c}),{kcal:0,p:0,f:0,c:0});
   const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -51,22 +63,89 @@ if (app && main) {
   function progress() {
     return `<section class="forma-page-intro"><p class="eyebrow">ИЗМЕНЕНИЯ ВО ВРЕМЕНИ</p><h1>Прогресс</h1><p class="muted">Смотрим на тенденции, а не на отдельные цифры.</p></section><section class="forma-card forma-weight-card"><p class="eyebrow">ТЕКУЩИЙ ВЕС</p><div class="forma-weight-value">${state.weight?esc(state.weight)+' <small>кг</small>':'— <small>кг</small>'}</div><p class="muted">Последнее записанное значение</p><form id="forma-weight-form"><label for="forma-weight">Добавить измерение</label><div><input id="forma-weight" type="number" min="20" max="400" step="0.1" placeholder="Например, 72.5" required><button class="forma-primary">Сохранить</button></div></form></section><section class="forma-card forma-empty"><span>↗</span><b>Твоя динамика появится здесь</b><p>Добавляй измерения регулярно, в комфортном для себя ритме.</p></section><section class="forma-card forma-plan-tools"><button data-action="measurements">Замеры тела <span>↗</span></button><button data-action="report">Отчёт за неделю <span>↗</span></button></section>`;
   }
-  function profile() {
-    return `<section class="forma-page-intro"><p class="eyebrow">ТВОИ НАСТРОЙКИ</p><h1>Профиль</h1><p class="muted">FORMA подстраивается под твою жизнь.</p></section><section class="forma-card forma-profile-head"><div class="forma-profile-avatar">F</div><div><b>Мой профиль</b><span>Персональные настройки</span></div></section><section class="forma-card forma-settings">${[['Личные данные','Возраст, рост, вес'],['Моя цель','Снижение веса, набор или поддержание'],['Активность','Движение и тренировки'],['Предпочтения в питании','Любимые продукты и исключения'],['Аллергии и ограничения','Что важно учитывать'],['Мои нормы','Калории и КБЖУ'],['Уведомления','Напоминания и отчёты'],['Подписка FORMA','Тариф и возможности']].map(([a,b])=>`<button data-action="setting"><span><b>${a}</b><small>${b}</small></span><i>›</i></button>`).join('')}</section>`;
+function profile() {
+    const g=state.goals||{},p=state.preferences||{};
+    return `<section class="forma-page-intro"><p class="eyebrow">ТВОИ НАСТРОЙКИ</p><h1>Профиль</h1><p class="muted">FORMA подстраивается под твою жизнь.</p></section>
+    <section class="forma-card forma-profile-head"><div class="forma-profile-avatar">F</div><div><b>${esc(state.profile?.first_name||'Мой профиль')}</b><span>${g.daily_kcal?`Ориентир ${fmt(g.daily_kcal)} ккал в день`:'Заполни данные, чтобы настроить FORMA'}</span></div></section>
+    <section class="forma-card forma-settings">
+      <button data-action="settings-goals"><span><b>Личные данные и цель</b><small>${g.age?`${g.age} лет · ${g.height_cm} см · ${g.current_weight_kg} кг`:'Добавить возраст, рост и вес'}</small></span><i>›</i></button>
+      <button data-action="settings-food"><span><b>Питание и предпочтения</b><small>${p.meals_per_day?`${p.meals_per_day} приёма пищи · ${(p.excluded_foods||[]).length} исключений`:'Вкусы, аллергии, бюджет и время готовки'}</small></span><i>›</i></button>
+      <button data-action="settings-goals"><span><b>Мои нормы КБЖУ</b><small>${g.daily_kcal?`${g.daily_kcal} ккал · Б ${g.protein_g} · Ж ${g.fat_g} · У ${g.carbs_g}`:'Рассчитать после заполнения параметров'}</small></span><i>›</i></button>
+      <button data-action="setting-subscription"><span><b>Подписка FORMA</b><small>Тарифы и дополнительные возможности</small></span><i>›</i></button>
+    </section><p class="forma-footnote">Данные и ориентиры можно изменить в любой момент. Расчёт носит справочный характер.</p>`;
   }
   function chat() {
     return `<section class="forma-page-intro"><p class="eyebrow">ТВОЙ ПЕРСОНАЛЬНЫЙ ПОМОЩНИК</p><h1>Давай разберёмся.</h1><p class="muted">Можно спросить о питании, меню или своих показателях.</p></section><section class="forma-chat-window"><div class="forma-chat-message assistant"><small>FORMA</small>Привет! Я помогу разобраться с питанием и планированием. С чего начнём?</div>${state.chat.map(m=>`<div class="forma-chat-message user">${esc(m)}</div><div class="forma-chat-message assistant"><small>FORMA</small>Я пока работаю в демонстрационном режиме. В полноценной версии смогу анализировать твои записи и предлагать решения с учётом контекста.</div>`).join('')}</section><form id="forma-chat-form" class="forma-chat-form"><input name="message" placeholder="Напиши свой вопрос..." required><button aria-label="Отправить">↑</button></form><p class="forma-footnote">Ответы помощника в этой версии демонстрационные.</p>`;
   }
   function render(tab) {
     state.tab=tab; nav.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    if(tab==='home' && !state.goals) { onboarding(); return; }
     main.innerHTML=tab==='home'?home():tab==='diary'?diary():tab==='menu'?plan():tab==='body'?progress():tab==='profile'?profile():chat();
     bindPage();
+  }
+  function onboarding() {
+    main.innerHTML=`<section class="forma-page-intro"><p class="eyebrow">НАЧНЁМ С ТЕБЯ</p><h1>Настроим FORMA.</h1><p class="muted">Несколько деталей — и мы рассчитаем ориентиры, от которых можно отталкиваться.</p></section>
+    <form id="forma-onboarding-form" class="forma-card forma-product-form">
+      <p class="eyebrow">ТВОЯ ЦЕЛЬ</p><label>Что хочешь изменить?<select name="goal_type"><option value="lose">Снизить вес</option><option value="gain">Набрать вес</option><option value="recomposition">Изменить состав тела</option><option value="maintain">Поддерживать вес</option><option value="healthier">Наладить питание</option></select></label>
+      <div class="forma-nutrient-grid"><label>Возраст<input name="age" type="number" min="18" max="100" required placeholder="25"></label><label>Пол для расчёта<input type="hidden" name="sex" value="female"><select name="sex"><option value="female">Женский</option><option value="male">Мужской</option><option value="other">Другое / не указывать</option></select></label>
+      <label>Рост, см<input name="height_cm" type="number" min="100" max="250" step="0.1" required placeholder="170"></label><label>Текущий вес, кг<input name="current_weight_kg" type="number" min="20" max="400" step="0.1" required placeholder="75"></label>
+      <label>Желаемый вес, кг<input name="target_weight_kg" type="number" min="20" max="400" step="0.1" placeholder="70"></label><label>Активность<select name="activity_level"><option value="sedentary">Преимущественно сижу</option><option value="light">Немного хожу, лёгкая активность</option><option value="moderate">Тренировки 3–5 раз в неделю</option><option value="high">Активно двигаюсь почти каждый день</option><option value="athlete">Высокая спортивная нагрузка</option></select></label></div>
+      <button class="forma-primary">Рассчитать мои ориентиры <span>→</span></button><p class="forma-footnote">Это предварительная оценка, а не медицинское назначение. При беременности, заболеваниях или расстройствах пищевого поведения цели нужно согласовать со специалистом.</p>
+    </form>`;
+    bindPage();
+  }
+  function preferencesEditor() {
+    const p=state.preferences||{};
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← Профиль</button><p class="eyebrow">ТВОЙ ОБРАЗ ЖИЗНИ</p><h1>Питание и привычки</h1><p class="muted">Чтобы рекомендации учитывали твои вкусы, ограничения и время.</p></section>
+    <form id="forma-preferences-form" class="forma-card forma-product-form">
+      <label>Что предпочитаешь? <input name="dietary_preferences" value="${esc((p.dietary_preferences||[]).join(', '))}" placeholder="Например: обычное питание, больше овощей"></label>
+      <label>Какие продукты исключить? <input name="excluded_foods" value="${esc((p.excluded_foods||[]).join(', '))}" placeholder="Например: грибы, свинина"></label>
+      <label>Аллергии <input name="allergies" value="${esc((p.allergies||[]).join(', '))}" placeholder="Укажи через запятую"></label>
+      <label>Сколько приёмов пищи удобно?<select name="meals_per_day"><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="2">2</option><option value="6">6</option></select></label>
+      <label>Бюджет на продукты<select name="budget_level"><option value="low">Экономный</option><option value="medium">Средний</option><option value="flexible">Гибкий</option></select></label>
+      <label>Сколько времени готовить?<select name="cooking_time"><option value="quick">До 20 минут</option><option value="medium">Около 30–45 минут</option><option value="flexible">Время не принципиально</option></select></label>
+      <button class="forma-primary">Сохранить предпочтения <span>→</span></button>
+    </form>`;
+    const form=main.querySelector('#forma-preferences-form');
+    if(form){form.elements.meals_per_day.value=String(p.meals_per_day||3);form.elements.budget_level.value=p.budget_level||'medium';form.elements.cooking_time.value=p.cooking_time||'quick';}
+    main.querySelector('#forma-back').onclick=()=>render('profile');bindPage();
+  }
+  function goalsEditor() {
+    const g=state.goals||{};
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← Профиль</button><p class="eyebrow">ЛИЧНЫЕ ДАННЫЕ И ЦЕЛИ</p><h1>Мои ориентиры</h1><p class="muted">Измени параметры — мы пересчитаем дневные ориентиры.</p></section>
+    <form id="forma-goals-form" class="forma-card forma-product-form">
+      <label>Цель<select name="goal_type"><option value="lose">Снижение веса</option><option value="gain">Набор веса</option><option value="recomposition">Изменение состава тела</option><option value="maintain">Поддержание</option><option value="healthier">Наладить питание</option></select></label>
+      <div class="forma-nutrient-grid"><label>Возраст<input name="age" type="number" min="18" max="100" required></label><label>Пол<select name="sex"><option value="female">Женский</option><option value="male">Мужской</option><option value="other">Другое / не указывать</option></select></label><label>Рост, см<input name="height_cm" type="number" min="100" max="250" step="0.1" required></label><label>Текущий вес, кг<input name="current_weight_kg" type="number" min="20" max="400" step="0.1" required></label><label>Желаемый вес, кг<input name="target_weight_kg" type="number" min="20" max="400" step="0.1"></label><label>Активность<select name="activity_level"><option value="sedentary">Низкая</option><option value="light">Лёгкая</option><option value="moderate">Средняя</option><option value="high">Высокая</option><option value="athlete">Спортивная</option></select></label></div>
+      <button class="forma-primary">Пересчитать и сохранить</button>
+    </form>`;
+    const f=main.querySelector('#forma-goals-form');
+    if(g.goal_type)f.elements.goal_type.value=g.goal_type;
+    ['age','sex','height_cm','current_weight_kg','target_weight_kg','activity_level'].forEach(k=>{if(g[k]!=null)f.elements[k].value=g[k];});
+    main.querySelector('#forma-back').onclick=()=>render('profile');bindPage();
   }
   function toast(message) { let el=app.querySelector('.toast'); if(!el){el=document.createElement('div');el.className='toast';app.append(el);} el.textContent=message;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2200); }
   function bindPage() {
     main.querySelectorAll('[data-action],[data-go]').forEach(b=>b.addEventListener('click',()=>action(b.dataset.action||b.dataset.go)));
     main.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',async()=>{const item=state.meals[Number(b.dataset.remove)];state.meals.splice(Number(b.dataset.remove),1);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render(state.tab);if(item?.id){try{await api('delete_entry',{id:item.id});}catch(e){toast('Не удалось синхронизировать удаление');}}}));
-    const wf=main.querySelector('#forma-weight-form'); if(wf) wf.addEventListener('submit',async e=>{e.preventDefault();state.weight=main.querySelector('#forma-weight').value;localStorage.setItem('forma-weight',state.weight);render('body');toast('Измерение сохранено');try{const saved=await api('save_weight',{weight_kg:Number(state.weight)});if(saved){state.weights.unshift({measured_at:saved.measured_at,weight_kg:saved.weight_kg});toast('Вес сохранён в аккаунте Telegram');}}catch(err){toast('Сохранено на устройстве; синхронизация не удалась');}});
+    const saveGoalForm = async form => {
+      const d=new FormData(form); const g=Object.fromEntries(d.entries());
+      ['age','height_cm','current_weight_kg','target_weight_kg'].forEach(k=>g[k]=g[k]===''?null:Number(g[k]));
+      const calculated=calculateTargets(g); Object.assign(g,calculated);
+      state.goals=g; applyGoals(g); localStorage.setItem('forma-goals',JSON.stringify(g));
+      try { const saved=await api('save_goals',g); toast(saved?'Цели сохранены в аккаунте':'Цели сохранены на устройстве'); }
+      catch(err){toast('Цели сохранены на устройстве; синхронизация не удалась');}
+      render('home');
+    };
+    const of=main.querySelector('#forma-onboarding-form'); if(of) of.addEventListener('submit',e=>{e.preventDefault();saveGoalForm(of);});
+    const gf=main.querySelector('#forma-goals-form'); if(gf) gf.addEventListener('submit',e=>{e.preventDefault();saveGoalForm(gf);});
+    const pref=main.querySelector('#forma-preferences-form'); if(pref) pref.addEventListener('submit',async e=>{
+      e.preventDefault(); const d=new FormData(pref); const split=k=>String(d.get(k)||'').split(',').map(x=>x.trim()).filter(Boolean);
+      state.preferences={dietary_preferences:split('dietary_preferences'),excluded_foods:split('excluded_foods'),allergies:split('allergies'),meals_per_day:Number(d.get('meals_per_day')),budget_level:d.get('budget_level'),cooking_time:d.get('cooking_time')};
+      localStorage.setItem('forma-preferences',JSON.stringify(state.preferences));
+      try{const saved=await api('save_preferences',state.preferences);toast(saved?'Предпочтения сохранены':'Сохранено на устройстве');}catch(err){toast('Сохранено на устройстве; синхронизация не удалась');}
+      render('profile');
+    });
+    const wf=main.querySelector('#forma-weight-form'); if(wf) wf.addEventListener('submit',async e=>{e.preventDefault();state.weight=main.querySelector('#forma-weight').value;localStorage.setItem('forma-weight',state.weight);try{const saved=await api('save_weight',{weight_kg:Number(state.weight)});if(saved){state.weights.unshift({id:saved.id,measured_at:saved.measured_at,weight_kg:saved.weight_kg});toast('Измерение сохранено');}}catch(err){toast('Сохранено на устройстве; синхронизация не удалась');}render('body');});
     const cf=main.querySelector('#forma-chat-form'); if(cf) cf.addEventListener('submit',e=>{e.preventDefault();const v=new FormData(cf).get('message').trim();if(v){state.chat.push(v);render('chat');}});
     const pf=main.querySelector('#forma-product-form'); if(pf) pf.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pf);const grams=Number(d.get('grams'));const factor=grams/100;const item={name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor};state.meals.push(item);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(item.type),grams:item.grams,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'label',source:'manual'});if(saved?.entry){item.id=saved.entry.id;localStorage.setItem('forma-meals',JSON.stringify(state.meals));toast('Запись синхронизирована с аккаунтом');}}catch(err){toast('Запись сохранена на устройстве; синхронизация не удалась');}});
   }
@@ -74,6 +153,9 @@ if (app && main) {
     if(a==='diary'){render('diary');return;}
     if(a==='chat'){render('chat');return;}
     if(a==='add-product'){productForm();return;}
+    if(a==='settings-goals'){goalsEditor();return;}
+    if(a==='settings-food'){preferencesEditor();return;}
+    if(a==='setting-subscription'){toast('Подписку подключим после готовности основных функций');return;}
     if(a==='photo'||a==='barcode'){toast('Эта функция запланирована для следующего этапа');return;}
     toast('Этот экран добавим следующим этапом');
   }
@@ -83,10 +165,12 @@ if (app && main) {
   }
   document.addEventListener('click',e=>{const b=e.target.closest('.nav-item');if(b){e.preventDefault();e.stopImmediatePropagation();render(b.dataset.tab);}},true);
   async function hydrate() {
-    if (!initData) return;
+    if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.goals = data.goals; state.preferences = data.preferences; state.weights = data.weights || [];
+      state.profile = data.profile; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = data.weights || []; state.plans=data.plans||[];
+      if(state.goals){applyGoals(state.goals);localStorage.setItem('forma-goals',JSON.stringify(state.goals));}
+      if(state.preferences)localStorage.setItem('forma-preferences',JSON.stringify(state.preferences));
       state.meals = (data.entries || []).map(row => ({
         id: row.id, name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
