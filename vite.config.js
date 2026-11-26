@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         photoStudio: 'photo-studio.html',
+        nutrition: 'nutrition.html',
       },
     },
   },
