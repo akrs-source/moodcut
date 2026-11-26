@@ -20,7 +20,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: [], plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), planDate: '' };
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), planDate: '' };
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -179,7 +179,7 @@ if (app && main) {
     if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = data.weights || []; state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(state.goals){applyGoals(state.goals);localStorage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)localStorage.setItem('forma-preferences',JSON.stringify(state.preferences)); localStorage.setItem('forma-plans',JSON.stringify(state.plans));
+      state.profile = data.profile; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; localStorage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(state.goals){applyGoals(state.goals);localStorage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)localStorage.setItem('forma-preferences',JSON.stringify(state.preferences)); localStorage.setItem('forma-plans',JSON.stringify(state.plans));
       state.meals = (data.entries || []).filter(row => { const d=new Date(row.eaten_at); return !Number.isNaN(d.getTime()) && localDate(d)===localDate(new Date()); }).map(row => ({
         id: row.id, name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
