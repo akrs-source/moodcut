@@ -27,3 +27,70 @@ html body textarea{font-size:16px!important;}
 .forma-diary-date label{display:flex;flex:1;flex-direction:column;align-items:center;gap:5px;min-width:0;}
 .forma-diary-date label span{font-size:10px;letter-spacing:.12em;color:var(--muted,#888);}
 .forma-diary-date input{max-width:100%;border:0;background:transparent;color:inherit;font:inherit;font-weight:600;text-align:center;}
+
+
+/* FORMA Natural Wellness visual refresh */
+:root{
+  --forma-ink:#293329;--forma-muted:#7e887b;--forma-paper:#fffdf8;
+  --forma-line:#e5e9df;--forma-green:#687b60;--forma-sage:#e5ebdf;--forma-bg:#f5f4eb;
+}
+.forma-greeting h1,.forma-page-intro h1,.forma-card h2,.forma-section-head h2,
+.forma-diary-summary>div:first-child b,.forma-weight-value{
+  font-family:'Cormorant Garamond',Georgia,serif!important;
+  color:#293329;letter-spacing:-.7px;
+}
+.forma-greeting h1,.forma-page-intro h1{font-weight:600;line-height:1.02}
+.forma-date{color:#879183;letter-spacing:.9px}
+.forma-card{
+  background:rgba(255,253,248,.92);border:1px solid #e6e9df;
+  border-radius:23px;box-shadow:0 7px 24px rgba(66,78,57,.045);
+}
+.forma-card h2,.forma-section-head h2{font-weight:600}
+.forma-tag{background:#e8eee3;color:#5f7358}
+.forma-donut{background:conic-gradient(#74866b var(--pct),#e8ece3 0)}
+.forma-donut:before{background:#fffdf8}
+.forma-donut b{font-family:'Cormorant Garamond',Georgia,serif;font-size:37px;font-weight:600;color:#293329}
+.forma-energy-numbers b{color:#344034}
+.forma-macros>div>div{color:#758071}
+.forma-macros b{color:#344034}
+.forma-macros i{background:#edf0e9;height:8px}
+.forma-macros em{background:#829477}
+.forma-macros>div:nth-child(2) em{background:#c4a98a}
+.forma-macros>div:nth-child(3) em{background:#9eaa91}
+.forma-primary{background:#718367;color:#fffdf8;border-radius:14px}
+.forma-insight{background:#e8eee3;border-color:#e8eee3}
+.forma-spark{background:#d9e3d2;color:#5e7456}
+.forma-link,.forma-next button{color:#63785b}
+.forma-food-icon,.forma-next-icon,.forma-empty>span{background:#edf1e9;color:#6e8264}
+.forma-next{background:#edf1e9;border-radius:18px}
+.forma-next-icon{background:#fffdf8}
+.forma-back{color:#687e60}
+.forma-diary-date{background:#fffdf8!important;border:1px solid #e5e9df}
+.forma-diary-date>button{border-color:#e5e9df}
+.forma-add-methods button,.forma-food-result{
+  background:#fffdf8;border-color:#e5e9df;border-radius:16px
+}
+.forma-add-methods button>span,.forma-plan-tools span,.forma-settings i{color:#718367}
+.forma-week>div{background:#edf1e9}
+.forma-week .selected{background:#718367;color:white}
+.forma-plan-tools button,.forma-settings button{border-color:#e8ebe3}
+.forma-weight-card input,.forma-product-form input,.forma-product-form select,
+.forma-product-form textarea,.forma-chat-form input,.forma-shopping-form input,
+.forma-food-search-line input{
+  background:#fffdf8;border-color:#e3e8de;color:#293329;border-radius:13px
+}
+.forma-profile-avatar{background:#e5ebdf;color:#60765a}
+.forma-chat-message.assistant{background:#e9eee4}
+.forma-chat-message.user{background:#fffdf8;border-color:#e5e9df}
+.forma-chat-form{background:#fffdf8;border-color:#e5e9df}
+.forma-chat-form button{background:#718367}
+.forma-chart-change,.forma-chart-empty>span{color:#718367}
+.forma-plan-entry>button,.forma-shopping-row>button{background:#edf1e9;color:#657a5d}
+.forma-shopping-row input{accent-color:#718367}
+.forma-recipe-actions button{background:#e8eee3;color:#5e7456}
+.forma-recipe-actions button:last-child{background:#f2f3ec}
+@media(max-width:720px){
+  .forma-card{border-radius:21px}
+  .forma-greeting{margin-top:7px}
+  .forma-energy-line{padding:21px 0}
+}
