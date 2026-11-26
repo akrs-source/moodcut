@@ -166,7 +166,7 @@ if (app && main) {
           return '<article class="forma-history-row" data-admin-user data-search="'+esc(searchText)+'"><span><b>'+esc(fullName)+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small style="display:block">ID: '+esc(u.telegram_id)+'</small></span><span class="forma-admin-user-date">'+esc((u.updated_at||'').slice(0,10)||'—')+'</span></article>';
         }).join('')
         : '<p class="muted">Пока нет пользователей.</p>';
-      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted" id="forma-admin-user-count">Показаны '+fmt(result.users.length)+' аккаунтов</p></div></div><label class="forma-admin-search-label">Поиск по имени, username или Telegram ID<input id="forma-admin-search" type="search" placeholder="Начни вводить для поиска…" autocomplete="off"></label><div id="forma-admin-user-list">'+usersHtml+'</div></section><p class="forma-footnote">Список показывает последние аккаунты, загруженные из базы данных. Административный доступ проверяется сервером.</p>';
+      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Общая статистика приложения</p></section>'+statsHtml+'<section class="forma-card forma-settings"><button data-action="admin-subscriptions"><span><b>Подписки PRO</b><small>Выдача, продление и отключение доступа</small></span><i>›</i></button></section><section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Пользователи</h2><p class="muted" id="forma-admin-user-count">Показаны '+fmt(result.users.length)+' аккаунтов</p></div></div><label class="forma-admin-search-label">Поиск по имени, username или Telegram ID<input id="forma-admin-search" type="search" placeholder="Начни вводить для поиска…" autocomplete="off"></label><div id="forma-admin-user-list">'+usersHtml+'</div></section><p class="forma-footnote">Список показывает последние аккаунты, загруженные из базы данных. Административный доступ проверяется сервером.</p>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
       const search=main.querySelector('#forma-admin-search');
       search?.addEventListener('input',()=>{
@@ -183,6 +183,65 @@ if (app && main) {
     } catch (e) {
       main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Не удалось загрузить</h1><p class="muted">Проверь подключение или права администратора.</p></section>';
       main.querySelector('#forma-admin-back').onclick=()=>render('profile');
+    }
+  }
+  async function adminSubscriptionsPage() {
+    main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-subscriptions-back">← Администрирование</button><p class="eyebrow">FORMA · PRO</p><h1>Подписки</h1><p class="muted">Загружаем аккаунты и статусы…</p></section>';
+    main.querySelector('#forma-subscriptions-back').onclick=()=>adminPage();
+    try {
+      const result = await api('admin_subscriptions');
+      if (!result || !Array.isArray(result.users) || !Array.isArray(result.subscriptions)) throw new Error('subscriptions_unavailable');
+      const subs = new Map(result.subscriptions.map(s=>[String(s.telegram_id),s]));
+      const statusLabel = s => {
+        if(!s) return 'Нет PRO';
+        if(s.status==='cancelled') return 'Отключена';
+        if(new Date(s.expires_at).getTime()<=Date.now()) return 'Истекла';
+        return 'Активна';
+      };
+      const expiryLabel = s => s?.expires_at ? new Date(s.expires_at).toLocaleDateString('ru-RU') : '—';
+      const rows = result.users.map(u=>{
+        const id=String(u.telegram_id);
+        const s=subs.get(id);
+        const fullName=[u.first_name,u.last_name].filter(Boolean).join(' ')||'Без имени';
+        const search=[fullName,u.username,id,statusLabel(s)].filter(Boolean).join(' ').toLowerCase();
+        const active=s&&s.status==='active'&&new Date(s.expires_at).getTime()>Date.now();
+        return '<article class="forma-subscription-row" data-subscription-user data-search="'+esc(search)+'"><div class="forma-subscription-user"><b>'+esc(fullName)+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small>ID: '+esc(id)+'</small></div><div class="forma-subscription-meta"><span class="forma-subscription-status '+(active?'is-active':'')+'">'+esc(statusLabel(s))+'</span><small>До: '+esc(expiryLabel(s))+'</small></div><div class="forma-subscription-actions"><button type="button" data-sub-grant="'+esc(id)+'">+30 дней</button>'+(s?'<button type="button" class="is-muted" data-sub-revoke="'+esc(id)+'">Отключить</button>':'')+'</div></article>';
+      }).join('');
+      main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-subscriptions-back">← Администрирование</button><p class="eyebrow">FORMA · PRO</p><h1>Подписки</h1><p class="muted">Ручное управление доступом PRO</p></section><section class="forma-card"><p class="eyebrow">ВЫДАТЬ ДОСТУП</p><form id="forma-subscription-grant-form" class="forma-product-form"><label>Telegram ID пользователя<input name="telegram_id" inputmode="numeric" pattern="[0-9]{1,24}" required placeholder="Например, 123456789"></label><div class="forma-nutrient-grid"><label>Срок, дней<input name="days" type="number" min="1" max="3650" value="30" required></label><label>Комментарий<input name="note" maxlength="300" placeholder="Необязательно"></label></div><button class="forma-primary">Выдать / продлить PRO <span>→</span></button></form></section><section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">АККАУНТЫ</p><h2>Статусы подписок</h2><p class="muted" id="forma-subscription-count">Пользователей: '+fmt(result.users.length)+'</p></div></div><label class="forma-admin-search-label">Поиск по имени или Telegram ID<input id="forma-subscription-search" type="search" placeholder="Найти пользователя…" autocomplete="off"></label><div id="forma-subscription-list">'+(rows||'<p class="muted">Пока нет пользователей.</p>')+'</div></section><p class="forma-footnote">Подписки сейчас выдаются вручную администратором. Автоматическая оплата и проверка доступа к PRO-функциям подключаются отдельно.</p>';
+      main.querySelector('#forma-subscriptions-back').onclick=()=>adminPage();
+      const form=main.querySelector('#forma-subscription-grant-form');
+      form.addEventListener('submit',async e=>{
+        e.preventDefault();
+        const data=new FormData(form);
+        const button=form.querySelector('button');
+        if(button)button.disabled=true;
+        try {
+          await api('admin_set_subscription',{operation:'grant',telegram_id:String(data.get('telegram_id')||'').trim(),days:Number(data.get('days')),note:String(data.get('note')||'')});
+          toast('Подписка PRO выдана');
+          await adminSubscriptionsPage();
+        } catch(err) {
+          toast('Не удалось выдать подписку');
+          if(button)button.disabled=false;
+        }
+      });
+      main.querySelectorAll('[data-sub-grant]').forEach(button=>button.addEventListener('click',async()=>{
+        try { await api('admin_set_subscription',{operation:'grant',telegram_id:button.dataset.subGrant,days:30}); toast('Добавлено 30 дней PRO'); await adminSubscriptionsPage(); }
+        catch(e){toast('Не удалось продлить подписку');}
+      }));
+      main.querySelectorAll('[data-sub-revoke]').forEach(button=>button.addEventListener('click',async()=>{
+        if(!confirm('Отключить подписку PRO для этого пользователя?'))return;
+        try { await api('admin_set_subscription',{operation:'revoke',telegram_id:button.dataset.subRevoke}); toast('Подписка отключена'); await adminSubscriptionsPage(); }
+        catch(e){toast('Не удалось отключить подписку');}
+      }));
+      const search=main.querySelector('#forma-subscription-search');
+      search?.addEventListener('input',()=>{
+        const q=search.value.trim().toLowerCase();let count=0;
+        main.querySelectorAll('[data-subscription-user]').forEach(row=>{const match=!q||row.dataset.search.includes(q);row.hidden=!match;if(match)count++;});
+        const label=main.querySelector('#forma-subscription-count');if(label)label.textContent='Найдено '+fmt(count)+' из '+fmt(result.users.length);
+      });
+    } catch(e) {
+      main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-subscriptions-back">← Администрирование</button><p class="eyebrow">FORMA · PRO</p><h1>Не удалось загрузить</h1><p class="muted">Проверь подключение или права администратора.</p></section>';
+      main.querySelector('#forma-subscriptions-back').onclick=()=>adminPage();
     }
   }
   function chat() {
@@ -284,6 +343,7 @@ if (app && main) {
     if(a==='settings-goals'){goalsEditor();return;} if(a==='settings-food'){preferencesEditor();return;}
     if(a==='shopping'){shoppingList();return;} if(a==='recipes'){recipesPage();return;} if(a==='add-recipe'){recipeForm();return;} if(a==='shopping-clear'){state.shopping=state.shopping.filter(x=>!x.done);storage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();return;}
     if(a==='admin'){adminPage();return;}
+    if(a==='admin-subscriptions'){adminSubscriptionsPage();return;}
     if(a==='setting-subscription'){toast('Подписку подключим после готовности основных функций');return;}
     if(a==='photo'||a==='barcode'){toast('Эта функция запланирована для следующего этапа');return;}
     toast('Этот экран добавим следующим этапом');
