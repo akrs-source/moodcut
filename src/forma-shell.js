@@ -145,7 +145,8 @@ if (app && main) {
         ['Записи веса', stats.weight_logs],
         ['Блюда в планах', stats.meal_plans],
       ];
-      const statsHtml = '<section class="forma-admin-stats">'+statItems.map(([label,value])=>'<article class="forma-admin-stat"><span>'+esc(label)+'</span><b>'+metric(value)+'</b></article>').join('')+'</section>';
+      const availableStats = statItems.filter(([label,value]) => value != null);
+      const statsHtml = '<section class="forma-admin-stats">'+availableStats.map(([label,value])=>'<article class="forma-admin-stat"><span>'+esc(label)+'</span><b>'+metric(value)+'</b></article>').join('')+'</section>';
       const usersHtml = result.users.length
         ? result.users.map(u=>'<article class="forma-history-row"><span><b>'+esc(u.first_name||'Без имени')+(u.last_name?' '+esc(u.last_name):'')+'</b>'+(u.username?' <small>@'+esc(u.username)+'</small>':'')+'<small style="display:block">ID: '+esc(u.telegram_id)+'</small></span><span class="forma-admin-user-date">'+esc((u.updated_at||'').slice(0,10)||'—')+'</span></article>').join('')
         : '<p class="muted">Пока нет пользователей.</p>';
