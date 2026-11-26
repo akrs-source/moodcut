@@ -163,7 +163,7 @@ Deno.serve(async (req: Request) => {
       const title = String(payload.title || "").trim();
       const mealType = allowed(payload.meal_type, ["breakfast","lunch","snack","dinner"]) ? payload.meal_type : "";
       const numeric = (v: unknown) => Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : 0;
-      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(planDate) || !title || title.length > 160 || !mealType) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(planDate) || !title || title.length > 160 || !mealType) {
         return json({ error: "invalid_plan" }, 400);
       }
       const values = {
