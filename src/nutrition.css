@@ -33,3 +33,90 @@ body{background:#f7f1e9}
 .dialog input,.dialog select{background:#fffaf4;border-color:#e9ded2;color:#302a25}
 .dialog input:focus,.dialog select:focus{border-color:#c19a74}
 .close-btn{background:#f0e5d8;color:#806348}
+
+
+/* FORMA Natural Wellness — app frame, typography and navigation */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap');
+:root{
+  font-family:'DM Sans',sans-serif;color:#293329;background:#f5f4eb;
+  --ink:#293329;--muted:#7e887b;--line:#e5e9df;--paper:#fffdf8;
+  --green:#718367;--sage:#e5ebdf;--sand:#e8e1d3;
+}
+html{background:#f5f4eb}
+body{
+  color:#293329;
+  background:
+    radial-gradient(ellipse at 92% 4%,rgba(193,205,178,.24),transparent 31rem),
+    linear-gradient(180deg,#f7f5ed 0%,#f2f3e9 100%);
+}
+.topbar{
+  height:76px;background:rgba(247,246,238,.88);border:0;
+  border-bottom:1px solid rgba(218,225,211,.8);
+  backdrop-filter:blur(16px);
+}
+.brand{
+  font:600 31px 'Cormorant Garamond',Georgia,serif;
+  letter-spacing:1.8px;text-transform:uppercase;color:#293329;
+}
+.brand span{color:#718367}
+.avatar{width:40px;height:40px;background:#e5ebdf;color:#5d7255;border:1px solid #dce4d5}
+.shell{padding-top:34px}
+.eyebrow{color:#899585}
+.goal-pill,.soft-tag{background:#e8eee3;color:#5f7358}
+.dot{background:#819477}
+.panel,.meal-empty,.meal-card,.empty-state{
+  background:rgba(255,253,248,.94);border-color:#e5e9df;
+  border-radius:22px;box-shadow:0 7px 24px rgba(66,78,57,.045)
+}
+.panel h2,.section-row h2,.dialog h2,.page-heading h1{
+  font-family:'Cormorant Garamond',Georgia,serif!important;
+  color:#293329;font-weight:600;letter-spacing:-.3px
+}
+.page-heading h1{font-size:38px;line-height:1.05}
+.ring{background:conic-gradient(#74866b var(--progress,0%),#e8ece3 0)}
+.ring:before{background:#fffdf8}
+.ring strong{font:600 36px 'Cormorant Garamond',Georgia,serif;color:#293329}
+.macro-top{color:#778273}
+.macro-top b{color:#344034}
+.track{background:#edf0e9;height:8px}
+.protein{background:#819477}.fat{background:#c4a98a}.carb{background:#a2ad95}
+.primary-btn{background:#718367;color:#fffdf8;border-radius:14px}
+.secondary-btn{background:#e8eee3;color:#5e7456;border-radius:14px}
+.trend,.text-btn{color:#687e60}
+.meal-empty>span,.meal-symbol{background:#edf1e9;color:#6e8264}
+.quote-panel,.menu-note{background:#e8eee3;border-radius:18px}
+.quote-panel>span,.chart-icon,.empty-state>span{color:#718367}
+.bottom-nav{
+  height:78px;background:rgba(255,253,248,.94);border-color:#e5e9df;
+  backdrop-filter:blur(18px);padding-bottom:max(9px,env(safe-area-inset-bottom))
+}
+.nav-item{color:#929b8d;gap:4px}
+.nav-item span{font-size:21px}
+.nav-item small{font-size:9px;letter-spacing:.1px}
+.nav-item.active{color:#61775a}
+.toast{background:#344034}
+.dialog{background:#fffdf8}
+.dialog input,.dialog select,.body-form input,.profile-form input,
+.profile-form select,.goals-form input{
+  background:#fffdf8;border-color:#e3e8de;color:#293329;border-radius:12px
+}
+.dialog input:focus,.dialog select:focus,.body-form input:focus,
+.profile-form input:focus,.profile-form select:focus,.goals-form input:focus{
+  border-color:#879b7d
+}
+.close-btn{background:#edf1e9;color:#61775a}
+.empty-state{background:rgba(255,253,248,.94)}
+.menu-note{border:1px solid #e2e9dc}
+.day-title>span{background:#e8eee3;color:#687e60}
+.planned-meal{background:#f5f6ef}
+.body-diff{background:#e8eee3;color:#657a5d}
+.measures-list{background:#fffdf8;border-color:#e5e9df;border-radius:18px}
+.delete-entry{background:#edf1e9}
+@media(max-width:720px){
+  .topbar{height:68px;padding:0 19px}
+  .brand{font-size:29px}
+  .shell{padding:26px 16px 28px}
+  .page-heading h1{font-size:34px}
+  .bottom-nav{height:76px}
+  .panel{border-radius:21px}
+}
