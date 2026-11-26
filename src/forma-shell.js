@@ -10,6 +10,8 @@ if (app && main) {
   const totals = () => state.meals.reduce((a,m) => ({kcal:a.kcal+m.kcal,p:a.p+m.p,f:a.f+m.f,c:a.c+m.c}),{kcal:0,p:0,f:0,c:0});
   const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const nav = [...app.querySelectorAll('.nav-item')];
+  const navLabels = {home:['⌂','Сегодня'],diary:['◫','Питание'],menu:['▦','План'],body:['↗','Прогресс'],profile:['○','Профиль']};
+  nav.forEach(b=>{const pair=navLabels[b.dataset.tab];if(pair)b.innerHTML='<span>'+pair[0]+'</span><small>'+pair[1]+'</small>';});
   const mealsHTML = () => state.meals.length ? state.meals.map((m,i)=>`<article class="forma-food-row"><div class="forma-food-icon">✳</div><div class="forma-food-main"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${m.grams} г · ${fmt(m.kcal)} ккал</span><small>Б ${m.p} г · Ж ${m.f} г · У ${m.c} г</small></div><button class="forma-remove" data-remove="${i}" aria-label="Удалить">×</button></article>`).join('') : '<div class="forma-empty"><span>＋</span><b>Дневник пока пуст</b><p>Добавь первый продукт или блюдо — показатели обновятся автоматически.</p></div>';
   function home() {
     const t=totals(), left=Math.max(0,targets.kcal-t.kcal), pct=Math.min(100,t.kcal/targets.kcal*100);
