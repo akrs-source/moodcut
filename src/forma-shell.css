@@ -13,3 +13,8 @@
 @media(max-width:420px){.forma-recipe-card{flex-direction:column}.forma-recipe-actions{width:100%;justify-content:flex-end}}
 
 .forma-food-search{padding:18px;margin-bottom:14px}.forma-food-search label{display:block;font-size:11px;color:#696d62;margin-bottom:8px}.forma-food-search-line{display:flex;gap:8px}.forma-food-search-line input{flex:1;min-width:0;border:1px solid #e9ded2;background:#fffaf4;border-radius:10px;padding:12px;font:13px 'DM Sans';color:#302a25}.forma-food-search-line .forma-primary{width:auto;margin:0;white-space:nowrap}.forma-food-search .forma-footnote{margin:12px 0 0}.forma-food-results{display:grid;gap:7px;margin-top:12px}.forma-food-result{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:12px;border:1px solid var(--forma-line);border-radius:11px;background:#fffaf4;color:var(--forma-ink)}.forma-food-result>span{display:grid;gap:4px;min-width:0}.forma-food-result b{font-size:12px;overflow-wrap:anywhere}.forma-food-result small{font-size:9px;color:var(--forma-muted);line-height:1.4}.forma-food-result i{font-style:normal;font-size:9px;color:#9b724e;font-weight:700;white-space:nowrap}.forma-food-search button:disabled{opacity:.6}
+
+/* iOS input focus zoom fix: Safari zooms fields with text smaller than 16px. */
+html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body select,
+html body textarea{font-size:16px!important;}
