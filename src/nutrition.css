@@ -7,3 +7,29 @@
 /* FORMA sections */
 .page-heading{margin:0 0 25px}.page-heading h1{font:700 34px Manrope,sans-serif;letter-spacing:-1.5px;margin:0 0 8px}.page-heading .eyebrow{margin-bottom:9px}.page-heading .muted{max-width:560px;line-height:1.6}.diary-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:28px}.diary-summary>div{display:grid;gap:8px;min-width:0}.diary-summary span,.body-current span{font-size:10px;color:var(--muted)}.diary-summary strong{font:700 15px Manrope;white-space:nowrap}.diary-summary strong small{font:400 10px 'DM Sans';color:var(--muted)}.compact{width:auto;margin:0;padding:11px 15px}.empty-state{background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px 20px;text-align:center;display:flex;align-items:center;flex-direction:column;gap:9px}.empty-state>span{font-size:25px;color:#819379}.empty-state b{font:700 14px Manrope}.empty-state p{font-size:11px;color:var(--muted);margin:0 0 7px}.page-note{margin-top:18px}.delete-entry{border:0;background:#f5f5f0;border-radius:50%;width:27px;height:27px;color:#8c8e84;font-size:17px;flex:0 0 27px}.menu-note{display:flex;gap:13px;align-items:flex-start;background:#e9ede4;border-radius:15px;padding:16px 18px;margin-bottom:18px}.menu-note>span{font-size:20px;color:#718268}.menu-note b{font:700 12px Manrope}.menu-note p{font-size:10px;line-height:1.5;color:#788071;margin:5px 0 0}.day-card{margin-bottom:11px;padding:18px 20px}.day-title{display:flex;align-items:center;gap:10px;margin-bottom:15px}.day-title>span{font:700 11px Manrope;color:#87967e;background:#eef1e9;border-radius:8px;padding:7px}.day-title>b{font:700 12px Manrope;letter-spacing:.5px}.day-meals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.planned-meal{background:#fafaf7;border-radius:11px;padding:12px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-height:95px}.planned-meal small{font-size:9px;color:#92958a}.planned-meal b{font-size:11px;line-height:1.45;flex:1}.planned-meal button{border:0;background:none;color:#718268;font-size:10px;font-weight:700;padding:2px 0}.body-current{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.body-current>div:first-child{display:grid;gap:7px}.body-current strong{font:800 34px Manrope;letter-spacing:-1px}.body-current strong small{font-size:15px}.body-current .muted{font-size:10px}.body-diff{font-size:11px;color:#788b70;background:#eef1e9;padding:9px 12px;border-radius:20px}.body-form,.profile-form,.goals-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;margin-top:18px}.body-form label,.profile-form label,.goals-form label{display:grid;gap:7px;font-size:10px;color:#777a70}.body-form input,.profile-form input,.profile-form select,.goals-form input{width:100%;min-width:0;border:1px solid #e6e7df;background:#fbfbf8;border-radius:9px;padding:12px;color:#292c25;outline:none;font-size:13px}.body-form input:focus,.profile-form input:focus,.profile-form select:focus,.goals-form input:focus{border-color:#87977e}.body-form .primary-btn,.profile-form .primary-btn,.goals-form .primary-btn{grid-column:1/-1}.measures-list{background:#fff;border:1px solid var(--line);border-radius:15px;padding:0 16px}.measure-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.measure-row:last-child{border-bottom:0}.measure-row>div{display:grid;gap:4px}.measure-row b{font:700 13px Manrope}.measure-row small,.measure-row>span{font-size:10px;color:var(--muted)}.goal-panel{margin-top:13px}.goals-form{grid-template-columns:repeat(4,minmax(0,1fr))}.profile-foot{text-align:center;font-size:9px;letter-spacing:1.3px;color:#a0a196;padding:28px 0 4px}
 @media(max-width:720px){.page-heading h1{font-size:29px}.diary-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.diary-summary>div:last-child{grid-column:1/-1}.day-meals{grid-template-columns:1fr}.planned-meal{min-height:0;display:grid;grid-template-columns:65px 1fr auto;align-items:center}.planned-meal b{font-size:10px}.body-form,.profile-form{grid-template-columns:1fr 1fr}.goals-form{grid-template-columns:repeat(2,minmax(0,1fr))}.measure-row{align-items:flex-start;flex-direction:column;gap:6px}.body-current{gap:10px}.body-current strong{font-size:29px}.body-diff{font-size:9px;padding:8px}.day-card{padding:15px}}
+
+/* FORMA warm minimal visual system */
+:root{color:#302a25;background:#f7f1e9;--ink:#302a25;--muted:#91877c;--line:#eee5da;--paper:#fffaf4;--green:#a47b55;--sage:#f0e5d8;--sand:#ead9c7}
+body{background:#f7f1e9}
+.topbar{background:#faf5ee;border-color:#eee5da}
+.brand span{color:#a47b55}
+.avatar{background:#f0e5d8;color:#9b724e}
+.goal-pill,.soft-tag{background:#f0e5d8;color:#946d4c}
+.dot{background:#b58b63}
+.panel,.meal-empty,.meal-card,.empty-state{background:#fffaf4;border-color:#eee5da}
+.ring{background:conic-gradient(#b58b63 var(--progress,0%),#f0e5d8 0)}
+.ring:before{background:#fffaf4}
+.track{background:#f0e8df}
+.protein{background:#b58b63}.fat{background:#c9a17a}.carb{background:#b7a18b}
+.primary-btn{background:#a47b55;color:#fffaf4}
+.secondary-btn{background:#f0e5d8;color:#946d4c}
+.trend,.text-btn{color:#a47b55}
+.meal-empty>span,.meal-symbol{background:#f4ece3;color:#a47b55}
+.quote-panel,.menu-note{background:#f1e7dc}
+.quote-panel>span,.chart-icon,.empty-state>span{color:#a47b55}
+.bottom-nav{background:rgba(255,250,244,.96);border-color:#eee5da}
+.nav-item.active{color:#9b724e}
+.toast{background:#514239}
+.dialog input,.dialog select{background:#fffaf4;border-color:#e9ded2;color:#302a25}
+.dialog input:focus,.dialog select:focus{border-color:#c19a74}
+.close-btn{background:#f0e5d8;color:#806348}
