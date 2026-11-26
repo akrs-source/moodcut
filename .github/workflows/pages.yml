@@ -1,4 +1,4 @@
-name: Deploy FORMA nutrition preview
+name: Deploy FORMA main app
 
 on:
   push:
