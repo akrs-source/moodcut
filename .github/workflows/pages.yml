@@ -1,4 +1,4 @@
-name: Deploy MOODCUT to GitHub Pages
+name: Deploy FORMA nutrition preview
 
 on:
   push:
