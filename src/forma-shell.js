@@ -20,7 +20,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), shopping: JSON.parse(localStorage.getItem('forma-shopping') || '[]'), recipes: JSON.parse(localStorage.getItem('forma-recipes') || '[]'), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]').map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), shopping: JSON.parse(localStorage.getItem('forma-shopping') || '[]'), recipes: JSON.parse(localStorage.getItem('forma-recipes') || '[]'), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -61,7 +61,7 @@ if (app && main) {
     <section class="forma-card forma-food-list">${mealsHTML()}</section>
     <div class="forma-add-methods"><button data-action="add-product"><span>＋</span><b>Добавить продукт</b><small>Найти и указать граммовку</small></button><button data-action="add-product"><span>▧</span><b>Добавить блюдо</b><small>Состав и ингредиенты</small></button><button data-action="photo"><span>◎</span><b>По фото</b><small>Распознавание — позже</small></button><button data-action="barcode"><span>▥</span><b>По штрихкоду</b><small>Сканирование — позже</small></button></div>`;
   }
-  const localDate = d => { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+  function localDate(d) { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
   const mealLabel = v => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин'}[v]||'Приём пищи');
   function plan() {
     const today=new Date(), monday=new Date(today); monday.setDate(today.getDate()-((today.getDay()+6)%7));
