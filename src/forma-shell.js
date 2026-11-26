@@ -20,7 +20,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), planDate: '' };
+  const state = { tab: 'home', meals: JSON.parse(localStorage.getItem('forma-meals') || '[]'), weight: localStorage.getItem('forma-weight') || '', chat: [], profile: null, goals: JSON.parse(localStorage.getItem('forma-goals') || 'null'), preferences: JSON.parse(localStorage.getItem('forma-preferences') || 'null'), weights: JSON.parse(localStorage.getItem('forma-weights') || '[]'), plans: JSON.parse(localStorage.getItem('forma-plans') || '[]'), shopping: JSON.parse(localStorage.getItem('forma-shopping') || '[]'), planDate: '' };
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -71,6 +71,16 @@ if (app && main) {
     <div class="forma-section-head"><div><p class="eyebrow">${selected?.date===localDate(today)?'СЕГОДНЯ':selected?.date}</p><h2>Приёмы пищи</h2></div><button class="forma-link" data-action="add-plan">＋ Добавить</button></div>
     ${chosen.length?chosen.map(p=>`<article class="forma-plan-entry"><div><small>${mealLabel(p.meal_type)}</small><b>${esc(p.title)}</b>${p.description?`<p>${esc(p.description)}</p>`:''}<span>${fmt(p.kcal||0)} ккал · Б ${fmt(p.protein_g||0)} · Ж ${fmt(p.fat_g||0)} · У ${fmt(p.carbs_g||0)}</span></div><button data-plan-remove="${esc(p.id)}" aria-label="Удалить">×</button></article>`).join(''):'<div class="forma-empty"><span>✳</span><b>Пока ничего не запланировано</b><p>Добавь блюдо или приём пищи на этот день.</p><button class="forma-primary" data-action="add-plan">Добавить в план</button></div>'}
     </section><section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
+  }
+  function shoppingList() {
+    const active=state.shopping.filter(x=>!x.done),done=state.shopping.filter(x=>x.done);
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← План</button><p class="eyebrow">ПОКУПКИ БЕЗ ХАОСА</p><h1>Список покупок</h1><p class="muted">Собирай всё необходимое в одном месте и отмечай по ходу покупок.</p></section>
+    <form id="forma-shopping-form" class="forma-card forma-shopping-form"><input name="item" placeholder="Например, яйца, молоко, овощи..." maxlength="100" required><button class="forma-primary">Добавить <span>＋</span></button></form>
+    <section class="forma-card forma-shopping-list"><div class="forma-section-head"><div><p class="eyebrow">НУЖНО КУПИТЬ</p><h2>Список</h2></div><span class="forma-tag">${active.length} осталось</span></div>
+    ${active.length?active.map(x=>`<div class="forma-shopping-row"><label><input type="checkbox" data-shopping-toggle="${x.id}"><span>${esc(x.name)}</span></label><button data-shopping-remove="${x.id}" aria-label="Удалить">×</button></div>`).join(''):'<div class="forma-empty"><span>✓</span><b>Пока всё куплено</b><p>Добавь продукты, которые понадобятся.</p></div>'}
+    ${done.length?`<div class="forma-shopping-done-head"><span>УЖЕ КУПЛЕНО · ${done.length}</span><button data-action="shopping-clear">Очистить</button></div>${done.map(x=>`<div class="forma-shopping-row is-done"><label><input type="checkbox" checked data-shopping-toggle="${x.id}"><span>${esc(x.name)}</span></label><button data-shopping-remove="${x.id}" aria-label="Удалить">×</button></div>`).join('')}`:''}
+    </section><p class="forma-footnote">Список пока хранится на этом устройстве.</p>`;
+    main.querySelector('#forma-back').onclick=()=>render('menu');bindPage();
   }
   function progress() {
     const history=[...state.weights].filter(x=>Number.isFinite(Number(x.weight_kg))).sort((a,b)=>String(a.measured_at).localeCompare(String(b.measured_at)));
@@ -148,6 +158,9 @@ if (app && main) {
     main.querySelectorAll('[data-plan-date]').forEach(b=>b.addEventListener('click',()=>{state.planDate=b.dataset.planDate;render('menu');}));
     main.querySelectorAll('[data-plan-remove]').forEach(b=>b.addEventListener('click',async()=>{const id=b.dataset.planRemove;state.plans=state.plans.filter(p=>String(p.id)!==String(id));localStorage.setItem('forma-plans',JSON.stringify(state.plans));render('menu');if(/^[0-9a-f-]{36}$/i.test(id)){try{await api('delete_plan',{id});}catch(e){toast('Не удалось синхронизировать удаление');}}}));
     main.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',async()=>{const item=state.meals[Number(b.dataset.remove)];state.meals.splice(Number(b.dataset.remove),1);localStorage.setItem('forma-meals',JSON.stringify(state.meals));render(state.tab);if(item?.id){try{await api('delete_entry',{id:item.id});}catch(e){toast('Не удалось синхронизировать удаление');}}}));
+    const sf=main.querySelector('#forma-shopping-form');if(sf)sf.addEventListener('submit',e=>{e.preventDefault();const name=String(new FormData(sf).get('item')||'').trim();if(name){state.shopping.push({id:'shop-'+Date.now(),name,done:false});localStorage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();}});
+    main.querySelectorAll('[data-shopping-toggle]').forEach(b=>b.addEventListener('change',()=>{const item=state.shopping.find(x=>x.id===b.dataset.shoppingToggle);if(item)item.done=b.checked;localStorage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();}));
+    main.querySelectorAll('[data-shopping-remove]').forEach(b=>b.addEventListener('click',()=>{state.shopping=state.shopping.filter(x=>x.id!==b.dataset.shoppingRemove);localStorage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();}));
     const saveGoalForm=async form=>{const d=new FormData(form),g=Object.fromEntries(d.entries());['age','height_cm','current_weight_kg','target_weight_kg'].forEach(k=>g[k]=g[k]===''?null:Number(g[k]));Object.assign(g,calculateTargets(g));state.goals=g;applyGoals(g);localStorage.setItem('forma-goals',JSON.stringify(g));try{const saved=await api('save_goals',g);toast(saved?'Цели сохранены в аккаунте':'Цели сохранены на устройстве');}catch(e){toast('Сохранено на устройстве; синхронизация не удалась');}render('home');};
     const of=main.querySelector('#forma-onboarding-form');if(of)of.addEventListener('submit',e=>{e.preventDefault();saveGoalForm(of);});
     const gf=main.querySelector('#forma-goals-form');if(gf)gf.addEventListener('submit',e=>{e.preventDefault();saveGoalForm(gf);});
@@ -161,6 +174,7 @@ if (app && main) {
     if(a==='diary'){render('diary');return;} if(a==='chat'){render('chat');return;}
     if(a==='add-product'){productForm();return;} if(a==='add-plan'){planForm();return;}
     if(a==='settings-goals'){goalsEditor();return;} if(a==='settings-food'){preferencesEditor();return;}
+    if(a==='shopping'){shoppingList();return;} if(a==='shopping-clear'){state.shopping=state.shopping.filter(x=>!x.done);localStorage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();return;}
     if(a==='setting-subscription'){toast('Подписку подключим после готовности основных функций');return;}
     if(a==='photo'||a==='barcode'){toast('Эта функция запланирована для следующего этапа');return;}
     toast('Этот экран добавим следующим этапом');
