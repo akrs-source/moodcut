@@ -590,7 +590,7 @@ Deno.serve(async (req: Request) => {
     if (action === "admin_set_subscription") {
       if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
       const targetId = String(payload.telegram_id || "").trim();
-      if (!/^\\d{1,24}$/.test(targetId)) return json({ error: "invalid_telegram_id" }, 400);
+      if (!/^\d{1,24}$/.test(targetId)) return json({ error: "invalid_telegram_id" }, 400);
       const operation = String(payload.operation || "");
       const now = new Date();
       const existing = await db("forma_subscriptions",
