@@ -131,8 +131,22 @@ Deno.serve(async (req) => {
 
       if (body.pre_checkout_query) {
         const query = body.pre_checkout_query;
+        const invoicePayload = String(query.invoice_payload || "");
+        if (invoicePayload.startsWith("forma_")) {
+          const { data: pending } = await db.from("forma_pending_payments")
+            .select("telegram_id,plan_code,total_amount,expires_at").eq("invoice_payload", invoicePayload).maybeSingle();
+          const valid = !!pending && String(pending.telegram_id) === String(query.from?.id)
+            && String(query.currency || "") === "XTR"
+            && Number(query.total_amount || 0) === Number(pending.total_amount)
+            && new Date(pending.expires_at).getTime() > Date.now();
+          await telegramApi("answerPreCheckoutQuery", {
+            pre_checkout_query_id: query.id, ok: valid,
+            ...(valid ? {} : { error_message: "Счёт FORMA устарел. Открой приложение и создай новый." }),
+          });
+          return json({ ok: true, forma_payment: true });
+        }
         const { data: pending } = await db.from("moodcut_pending_payments")
-          .select("telegram_id,expires_at").eq("invoice_payload", String(query.invoice_payload || "")).maybeSingle();
+          .select("telegram_id,expires_at").eq("invoice_payload", invoicePayload).maybeSingle();
         const valid = !!pending && String(pending.telegram_id) === String(query.from?.id)
           && new Date(pending.expires_at).getTime() > Date.now();
         await telegramApi("answerPreCheckoutQuery", {
@@ -146,6 +160,71 @@ Deno.serve(async (req) => {
       const payment = message.successful_payment;
       const payerId = String(message.from?.id || "");
       const payload = String(payment.invoice_payload || "");
+      if (payload.startsWith("forma_")) {
+        const { data: pending } = await db.from("forma_pending_payments")
+          .select("telegram_id,plan_code,total_amount,expires_at").eq("invoice_payload", payload).maybeSingle();
+        const isRecurring = payment.is_recurring === true;
+        const { data: currentSub } = await db.from("forma_subscriptions")
+          .select("telegram_id,plan_code,status,expires_at").eq("telegram_id", payerId).maybeSingle();
+        const planCode = pending?.plan_code || (isRecurring ? currentSub?.plan_code : null);
+        const expectedAmount: Record<string, number> = { pro: 450, pro_support: 700, extra_question: 150 };
+        const expected = planCode ? expectedAmount[planCode] : null;
+        const pendingValid = !!pending && String(pending.telegram_id) === payerId
+          && new Date(pending.expires_at).getTime() > Date.now();
+        const recurringValid = !pending && isRecurring && !!currentSub
+          && currentSub.status === "active" && ["pro", "pro_support"].includes(String(currentSub.plan_code));
+        if ((!pendingValid && !recurringValid) || !planCode || Number(payment.total_amount || 0) !== expected
+          || String(payment.currency || "") !== "XTR") {
+          return json({ ok: true, ignored: true });
+        }
+        const chargeId = String(payment.telegram_payment_charge_id || "");
+        if (!chargeId) return json({ error: "forma_payment_charge_missing" }, 400);
+        const expiresAt = planCode === "extra_question" ? null : (
+          payment.subscription_expiration_date
+            ? new Date(Number(payment.subscription_expiration_date) * 1000).toISOString()
+            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        );
+        const { error: eventError } = await db.from("forma_payment_events").insert({
+          telegram_payment_charge_id: chargeId, telegram_id: payerId,
+          invoice_payload: payload, plan_code: planCode, total_amount: Number(payment.total_amount),
+          currency: String(payment.currency), is_recurring: isRecurring,
+          subscription_expiration_date: expiresAt, raw_payment: payment,
+        });
+        if (eventError) {
+          if (eventError.code === "23505") return json({ ok: true, duplicate: true, forma_payment: true });
+          throw eventError;
+        }
+        if (planCode === "extra_question") {
+          if (!currentSub || currentSub.plan_code !== "pro_support" || currentSub.status !== "active"
+            || new Date(currentSub.expires_at).getTime() <= Date.now()) {
+            return json({ error: "forma_support_subscription_missing" }, 409);
+          }
+          const { data: quotaRow, error: quotaError } = await db.from("forma_subscriptions")
+            .select("support_questions_bonus").eq("telegram_id", payerId).single();
+          if (quotaError) throw quotaError;
+          const { error: bonusError } = await db.from("forma_subscriptions")
+            .update({ support_questions_bonus: Number(quotaRow?.support_questions_bonus || 0) + 1, updated_at: new Date().toISOString() })
+            .eq("telegram_id", payerId);
+          if (bonusError) throw bonusError;
+        } else {
+          const now = new Date().toISOString();
+          const { error: subError } = await db.from("forma_subscriptions").upsert({
+            telegram_id: payerId, plan_code: planCode, status: "active",
+            starts_at: now, expires_at: expiresAt, note: null, granted_by: "telegram_stars",
+            support_questions_used: 0, support_questions_bonus: 0, support_period_start: now,
+            last_charge_id: chargeId, is_recurring: isRecurring, updated_at: now,
+          }, { onConflict: "telegram_id" });
+          if (subError) throw subError;
+        }
+        if (pending) await db.from("forma_pending_payments").delete().eq("invoice_payload", payload);
+        await telegramApi("sendMessage", {
+          chat_id: Number(payerId),
+          text: planCode === "extra_question"
+            ? "FORMA · Оплата прошла успешно. Добавлено одно личное обращение."
+            : "FORMA · Оплата прошла успешно. Подписка активирована на 30 дней. Открой приложение, чтобы пользоваться PRO.",
+        });
+        return json({ ok: true, forma_payment: true, plan_code: planCode, subscription_expires_at: expiresAt });
+      }
       const { data: pending } = await db.from("moodcut_pending_payments")
         .select("telegram_id,expires_at").eq("invoice_payload", payload).maybeSingle();
       const isRecurring = payment.is_recurring === true;
