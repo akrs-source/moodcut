@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
           .select("telegram_id,plan_code,total_amount,expires_at").eq("invoice_payload", payload).maybeSingle();
         const isRecurring = payment.is_recurring === true;
         const { data: currentSub } = await db.from("forma_subscriptions")
-          .select("telegram_id,plan_code,status,expires_at").eq("telegram_id", payerId).maybeSingle();
+          .select("telegram_id,plan_code,status,expires_at,support_questions_bonus").eq("telegram_id", payerId).maybeSingle();
         const planCode = pending?.plan_code || (isRecurring ? currentSub?.plan_code : null);
         const expectedAmount: Record<string, number> = { pro: 450, pro_support: 700, extra_question: 150 };
         const expected = planCode ? expectedAmount[planCode] : null;
@@ -211,7 +211,7 @@ Deno.serve(async (req) => {
           const { error: subError } = await db.from("forma_subscriptions").upsert({
             telegram_id: payerId, plan_code: planCode, status: "active",
             starts_at: now, expires_at: expiresAt, note: null, granted_by: "telegram_stars",
-            support_questions_used: 0, support_questions_bonus: 0, support_period_start: now,
+            support_questions_used: 0, support_questions_bonus: isRecurring && currentSub?.plan_code === planCode ? Number(currentSub.support_questions_bonus || 0) : 0, support_period_start: now,
             last_charge_id: chargeId, is_recurring: isRecurring, updated_at: now,
           }, { onConflict: "telegram_id" });
           if (subError) throw subError;
