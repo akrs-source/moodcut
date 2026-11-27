@@ -423,7 +423,7 @@ Deno.serve(async (req: Request) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             chat_id: groupChatId,
-            text: `Новый вопрос FORMA\nОт: ${user.first_name || "Пользователь"}${user.username ? " (@" + user.username + ")" : ""}\nTelegram ID: ${telegram_id}\n\n${message}`,
+            text: `FORMA · НОВОЕ ОБРАЩЕНИЕ\nОт: ${user.first_name || "Пользователь"}${user.username ? " · @" + user.username : ""}\n\n${message}\n\n↩ Ответь на это сообщение — и ответ появится у пользователя в FORMA.`,
             disable_web_page_preview: true,
           }),
         });
