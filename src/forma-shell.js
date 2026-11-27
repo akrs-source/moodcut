@@ -27,7 +27,7 @@ if (app && main) {
   const api = async (action, payload = {}) => {
     if (!initData) return null;
     const response = await fetch('https://tidrkegmipucdcoqdxvd.supabase.co/functions/v1/forma-api', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_j5lH2msrU2kpLBLk0mg4OA_9hXr-l_t' },
       body: JSON.stringify({ initData, action, payload })
     });
     const result = await response.json().catch(() => ({}));
