@@ -5,6 +5,10 @@ const main = app?.querySelector('main');
 if (app && main) {
   const initialHome = main.innerHTML;
   const tg = window.Telegram?.WebApp;
+  const profileAvatar = app.querySelector('.avatar');
+  const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const avatarLetter = String(telegramUser?.username || telegramUser?.first_name || 'F').trim().charAt(0).toLocaleUpperCase('ru-RU');
+  if (profileAvatar) profileAvatar.textContent = avatarLetter || 'F';
   tg?.ready?.();
   tg?.expand?.();
   const initData = tg?.initData || '';
