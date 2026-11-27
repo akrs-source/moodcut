@@ -122,17 +122,18 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString(),
       }, "resolution=merge-duplicates,return=minimal");
       const isAdmin = ADMIN_TELEGRAM_IDS.has(telegram_id);
-      const [profile, goals, preferences, entries, weights, plans, catalog] = await Promise.all([
+      const [profile, goals, preferences, entries, weights, measurements, plans, catalog] = await Promise.all([
         db("forma_profiles", `telegram_id=eq.${telegram_id}&select=telegram_id,username,first_name,last_name,created_at,updated_at`),
         db("forma_goals", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_preferences", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_food_entries", `telegram_id=eq.${telegram_id}&select=*&order=eaten_at.desc&limit=300`),
         db("forma_weight_logs", `telegram_id=eq.${telegram_id}&select=*&order=measured_at.desc&limit=180`),
+        db("forma_body_measurements", `telegram_id=eq.${telegram_id}&select=*&order=measured_at.desc&limit=180`),
         db("forma_meal_plans", `telegram_id=eq.${telegram_id}&select=*&order=plan_date.asc&limit=100`),
         db("forma_recipe_catalog", `select=*&${isAdmin ? "" : "is_published=eq.true&"}order=created_at.desc&limit=300`),
       ]);
       return json({ ok: true, user, profile: profile?.[0] || null, goals: goals?.[0] || null,
-        preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], plans: plans || [],
+        preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], measurements: measurements || [], plans: plans || [],
         is_admin: isAdmin, catalog: catalog || [] });
     }
 
@@ -308,6 +309,46 @@ Deno.serve(async (req: Request) => {
       if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
       await db("forma_food_entries", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "DELETE");
       return json({ ok: true });
+    }
+
+    if (action === "save_body_measurement") {
+      const date = typeof payload.measured_at === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(payload.measured_at)
+        ? payload.measured_at : new Date().toISOString().slice(0, 10);
+      const fields = ["waist_cm", "abdomen_cm", "hips_cm", "chest_cm", "under_bust_cm", "thigh_cm", "arm_cm"];
+      const row: Record<string, unknown> = { telegram_id, measured_at: date, updated_at: new Date().toISOString() };
+      let count = 0;
+      for (const field of fields) {
+        const raw = payload[field];
+        if (raw === "" || raw === null || raw === undefined) { row[field] = null; continue; }
+        const value = Number(raw);
+        const min = field === "thigh_cm" || field === "arm_cm" ? 10 : 20;
+        const max = field === "arm_cm" ? 100 : field === "thigh_cm" ? 150 : 250;
+        if (!Number.isFinite(value) || value < min || value > max) return json({ error: "invalid_" + field }, 400);
+        row[field] = value;
+        count++;
+      }
+      if (!count) return json({ error: "empty_measurement" }, 400);
+      const rows = await db("forma_body_measurements", "on_conflict=telegram_id,measured_at", "POST", row,
+        "resolution=merge-duplicates,return=representation");
+      return json({ ok: true, measurement: rows?.[0] || row });
+    }
+
+    if (action === "delete_body_measurement") {
+      const id = String(payload.id || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
+      await db("forma_body_measurements", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "DELETE");
+      return json({ ok: true });
+    }
+
+    if (action === "update_weight") {
+      const id = String(payload.id || "");
+      const weight = Number(payload.weight_kg);
+      const date = String(payload.measured_at || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
+      if (!Number.isFinite(weight) || weight < 20 || weight > 400) return json({ error: "invalid_weight" }, 400);
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return json({ error: "invalid_date" }, 400);
+      await db("forma_weight_logs", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "PATCH", { weight_kg: weight, measured_at: date });
+      return json({ ok: true, id, measured_at: date, weight_kg: weight });
     }
 
     if (action === "save_weight") {
