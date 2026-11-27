@@ -32,7 +32,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], supportMessages: [], profile: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), measurements: readJSON('forma-measurements', []), editingWeightId: null, editingMeasurementId: null, plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], supportMessages: [], profile: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), measurements: readJSON('forma-measurements', []), editingWeightId: null, editingMeasurementId: null, plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()), planMonth: localDate(new Date()).slice(0,7) };
   let supportPoll = null;
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
@@ -89,17 +89,43 @@ if (app && main) {
   function localDate(d) { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
   const mealLabel = v => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин'}[v]||'Приём пищи');
   function plan() {
-    const today=new Date(), monday=new Date(today); monday.setDate(today.getDate()-((today.getDay()+6)%7));
-    const days=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return {date:localDate(d),label:['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'][i],day:d.getDate()};});
-    if(!days.some(d=>d.date===state.planDate))state.planDate=localDate(today);
+    const today=localDate(new Date());
+    if(!state.planDate)state.planDate=today;
+    if(!state.planMonth)state.planMonth=state.planDate.slice(0,7);
+    const [year,month]=state.planMonth.split('-').map(Number);
+    const first=new Date(year,month-1,1),offset=(first.getDay()+6)%7,daysInMonth=new Date(year,month,0).getDate();
+    const monthTitle=first.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+    const monthDays=Array.from({length:Math.ceil((offset+daysInMonth)/7)*7},(_,i)=>{
+      const n=i-offset+1;
+      if(n<1||n>daysInMonth)return null;
+      const d=new Date(year,month-1,n),date=localDate(d),count=state.plans.filter(p=>p.plan_date===date).length;
+      return {date,day:n,count,isToday:date===today,isSelected:date===state.planDate};
+    });
     const chosen=state.plans.filter(p=>p.plan_date===state.planDate);
-    const selected=days.find(d=>d.date===state.planDate);
-    return `<section class="forma-page-intro"><p class="eyebrow">ТВОЯ СИСТЕМА ПИТАНИЯ</p><h1>План</h1><p class="muted">Собирай меню на неделю и меняй его под свои планы.</p></section>
-    <section class="forma-card"><div class="forma-card-head"><div><p class="eyebrow">НЕДЕЛЯ</p><h2>Твоё меню</h2></div><span class="forma-tag">Планирование</span></div>
-    <div class="forma-week">${days.map(d=>`<button type="button" data-plan-date="${d.date}" class="${d.date===state.planDate?'selected':''}"><small>${d.label}</small><b>${d.day}</b></button>`).join('')}</div>
-    <div class="forma-section-head"><div><p class="eyebrow">${selected?.date===localDate(today)?'СЕГОДНЯ':selected?.date}</p><h2>Приёмы пищи</h2></div><button class="forma-link" data-action="add-plan">＋ Добавить</button></div>
-    ${chosen.length?chosen.map(p=>`<article class="forma-plan-entry"><div><small>${mealLabel(p.meal_type)}</small><b>${esc(p.title)}</b>${p.description?`<p>${esc(p.description)}</p>`:''}<span>${fmt(p.kcal||0)} ккал · Б ${fmt(p.protein_g||0)} · Ж ${fmt(p.fat_g||0)} · У ${fmt(p.carbs_g||0)}</span></div><button data-plan-remove="${esc(p.id)}" aria-label="Удалить">×</button></article>`).join(''):'<div class="forma-empty"><span>✳</span><b>Пока ничего не запланировано</b><p>Добавь блюдо или приём пищи на этот день.</p><button class="forma-primary" data-action="add-plan">Добавить в план</button></div>'}
-    </section><section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
+    const selected=new Date(state.planDate+'T12:00:00');
+    const selectedLabel=selected.toLocaleDateString('ru-RU',{day:'numeric',month:'long',weekday:'long'});
+    const mealOrder=['breakfast','lunch','snack','dinner','other'];
+    const mealTitle={breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'};
+    const grouped=mealOrder.map(type=>({type,items:chosen.filter(p=>p.meal_type===type)})).filter(g=>g.items.length);
+    const total=chosen.reduce((a,p)=>a+Number(p.kcal||0),0);
+    const shiftMonth=delta=>{
+      const d=new Date(year,month-1+delta,1);
+      state.planMonth=localDate(d).slice(0,7);
+      const targetDay=Math.min(Number(state.planDate.slice(8,10))||1,new Date(d.getFullYear(),d.getMonth()+1,0).getDate());
+      state.planDate=localDate(new Date(d.getFullYear(),d.getMonth(),targetDay));
+    };
+    return `<section class="forma-page-intro"><p class="eyebrow">ТВОЯ СИСТЕМА ПИТАНИЯ</p><h1>План питания</h1><p class="muted">Планируй меню на каждый день и держи всё под рукой.</p></section>
+    <section class="forma-card forma-calendar-card">
+      <div class="forma-calendar-top"><div><p class="eyebrow">КАЛЕНДАРЬ ПИТАНИЯ</p><h2>${monthTitle.charAt(0).toUpperCase()+monthTitle.slice(1)}</h2></div><div class="forma-calendar-arrows"><button type="button" data-plan-month="-1" aria-label="Предыдущий месяц">‹</button><button type="button" data-plan-month="1" aria-label="Следующий месяц">›</button></div></div>
+      <div class="forma-calendar-weekdays">${['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'].map(d=>'<span>'+d+'</span>').join('')}</div>
+      <div class="forma-month-grid">${monthDays.map(d=>d?`<button type="button" class="forma-calendar-day ${d.isSelected?'is-selected':''} ${d.isToday?'is-today':''} ${d.count?'has-plan':''}" data-plan-date="${d.date}"><span>${d.day}</span>${d.count?'<i aria-label="Есть запланированные приёмы"></i>':'<i class="is-empty"></i>'}</button>`:'<span class="forma-calendar-blank"></span>').join('')}</div>
+      <div class="forma-calendar-legend"><span><i></i> Есть план</span><span><i class="today-dot"></i> Сегодня</span></div>
+    </section>
+    <section class="forma-card forma-selected-day">
+      <div class="forma-selected-heading"><div><p class="eyebrow">ВЫБРАННЫЙ ДЕНЬ</p><h2>${selectedLabel}</h2><p>${chosen.length?chosen.length+' '+(chosen.length===1?'приём пищи':chosen.length<5?'приёма пищи':'приёмов пищи')+' запланировано':'Пока нет запланированных блюд'}</p></div><button class="forma-primary" data-action="add-plan">＋ Добавить</button></div>
+      ${chosen.length?'<div class="forma-day-total"><span>Всего запланировано</span><b>'+fmt(total)+' ккал</b></div>'+grouped.map(g=>'<div class="forma-plan-group"><div class="forma-plan-group-title">'+mealTitle[g.type]+'</div>'+g.items.map(p=>'<article class="forma-plan-entry"><div><b>'+esc(p.title)+'</b>'+(p.description?'<p>'+esc(p.description)+'</p>':'')+'<span>'+fmt(p.kcal||0)+' ккал · Б '+fmt(p.protein_g||0)+' · Ж '+fmt(p.fat_g||0)+' · У '+fmt(p.carbs_g||0)+'</span></div><button data-plan-remove="'+esc(p.id)+'" aria-label="Удалить блюдо">×</button></article>').join('')+'</div>').join(''):'<div class="forma-calendar-empty"><span>＋</span><b>День пока свободен</b><p>Добавь завтрак, обед, перекус или ужин — и они появятся здесь.</p><button class="forma-secondary" data-action="add-plan">Добавить первый приём пищи</button></div>'}
+    </section>
+    <section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
   }
   // Встроенные демо-рецепты отключены: каталог наполняется только рецептами администратора.
   const defaultRecipeCatalog = [];
