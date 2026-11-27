@@ -425,3 +425,11 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
   .bottom-nav .nav-item .nav-icon,.bottom-nav .nav-item .nav-icon svg{width:18px!important;height:18px!important}
   .bottom-nav .nav-item small{font-size:8px!important}
 }
+
+
+/* Tighter greeting hero: remove unnecessary empty space above the title */
+@media(max-width:720px){
+  .forma-editorial-hero{min-height:154px!important;padding:54px 16px 14px!important;margin:-58px -13px 0!important}
+  .forma-brand-kicker{margin-bottom:4px!important}
+  .forma-greeting h1{line-height:.96!important}
+}
