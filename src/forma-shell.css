@@ -350,3 +350,67 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
  .bottom-nav .nav-item small{font-size:9px!important}
  #app{padding-bottom:82px!important}
 }
+
+/* FORMA — Diary screen: Premium Minimal / Soft Glass */
+.forma-diary-screen{padding:22px 0 28px}
+.forma-diary-heading{margin:0 0 24px}
+.forma-diary-heading .eyebrow{margin:0 0 5px;font-size:9px;letter-spacing:1.55px}
+.forma-diary-heading h1{margin:0;font:600 43px/1 'Cormorant Garamond',Georgia,serif;color:#211d1a;letter-spacing:-.7px}
+.forma-week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:0 0 30px;padding:12px 10px;border:1px solid rgba(255,255,255,.75);border-radius:23px;background:rgba(255,250,246,.55);box-shadow:0 7px 24px rgba(74,55,43,.035);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.forma-week-day{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;min-width:0;padding:5px 0;border:0;background:transparent;color:#8d8178}
+.forma-week-day small{font:500 10px 'DM Sans',sans-serif}
+.forma-week-day b{width:35px;height:35px;display:grid;place-items:center;border-radius:50%;font:500 13px 'DM Sans',sans-serif;color:#514840}
+.forma-week-day.is-selected b{background:#29231f;color:#fffaf5;box-shadow:0 4px 10px rgba(41,35,31,.18)}
+.forma-week-day:disabled{opacity:.28}
+.forma-diary-section-title{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 13px}
+.forma-diary-section-title>span{font:600 27px 'Cormorant Garamond',Georgia,serif;color:#211d1a}
+.forma-diary-section-title>small{font-size:11px;color:#92857a;text-transform:capitalize}
+.forma-diary-meals{display:grid;gap:11px}
+.forma-diary-meal-card{min-height:94px;display:flex;align-items:center;gap:15px;padding:11px 14px;border:1px solid rgba(255,255,255,.8);border-radius:22px;background:rgba(255,250,246,.62);box-shadow:0 8px 24px rgba(74,55,43,.045);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.forma-diary-meal-thumb{width:68px;height:68px;flex:0 0 68px;overflow:hidden;border-radius:17px;background:rgba(233,222,211,.65);display:grid;place-items:center}
+.forma-diary-meal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.forma-diary-meal-thumb.is-plate{background:rgba(238,230,222,.78)}
+.forma-diary-plate{width:37px;height:37px;border:1.5px solid #8b7d71;border-radius:50%;display:grid;place-items:center;color:transparent;position:relative}
+.forma-diary-plate:after{content:'';position:absolute;inset:5px;border:1px solid rgba(139,125,113,.55);border-radius:50%}
+.forma-diary-meal-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.forma-diary-meal-copy>span{font:500 11px 'DM Sans',sans-serif;color:#887c72;letter-spacing:.3px}
+.forma-diary-meal-copy>b{font:600 23px/1.05 'Cormorant Garamond',Georgia,serif;color:#211d1a}
+.forma-diary-meal-copy>small{font-size:10px;color:#93877d}
+.forma-diary-add,.forma-diary-meal-card>.forma-meal-check{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;border:0;border-radius:50%;background:#29231f;color:#fffaf5;font:300 23px/1 'DM Sans',sans-serif}
+.forma-diary-meal-card>.forma-meal-check{font-size:16px}
+.forma-water-glass{margin:18px 0 0;padding:18px 18px 16px;border:1px solid rgba(255,255,255,.8);border-radius:23px;background:rgba(255,250,246,.6);box-shadow:0 8px 25px rgba(74,55,43,.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.forma-water-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.forma-water-head>div{display:flex;flex-direction:column;gap:3px}
+.forma-water-head>div>span{font:600 25px 'Cormorant Garamond',Georgia,serif;color:#211d1a}
+.forma-water-head>div>small{font-size:10px;color:#92857a}
+.forma-water-head>b{font:600 16px 'DM Sans',sans-serif;color:#29231f;white-space:nowrap}
+.forma-water-head>b small{font:400 10px 'DM Sans',sans-serif;color:#8d8178}
+.forma-water-drops{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:15px}
+.forma-water-drop{width:28px;height:31px;padding:0;border:0;background:transparent;display:grid;place-items:center}
+.forma-water-drop svg{width:19px;height:24px;overflow:visible}
+.forma-water-drop svg path{fill:transparent;stroke:#b9aaa0;stroke-width:1.5;transition:fill .18s ease,stroke .18s ease}
+.forma-water-drop.is-filled svg path{fill:#29231f;stroke:#29231f}
+.forma-diary-total{display:flex;align-items:center;gap:8px;margin:20px 3px 0;padding:15px 0;border-top:1px solid rgba(120,102,87,.16)}
+.forma-diary-total>span{font-size:12px;color:#82766c;flex:1}
+.forma-diary-total>b{font:600 20px 'DM Sans',sans-serif;color:#29231f}
+.forma-diary-total>b small{font-size:10px;font-weight:400;color:#8d8178}
+.forma-diary-total>button{border:0;background:transparent;color:#75675c;font-size:10px}
+.forma-diary-total>button span{font-size:14px;margin-left:3px}
+@media(max-width:420px){
+ .forma-diary-screen{padding:18px 0 22px}
+ .forma-diary-heading{margin-bottom:19px}
+ .forma-diary-heading h1{font-size:40px}
+ .forma-week-strip{gap:3px;padding:10px 6px;margin-bottom:24px;border-radius:19px}
+ .forma-week-day b{width:33px;height:33px}
+ .forma-diary-section-title{margin-bottom:10px}
+ .forma-diary-section-title>span{font-size:25px}
+ .forma-diary-meals{gap:9px}
+ .forma-diary-meal-card{min-height:82px;padding:9px 11px;gap:12px;border-radius:19px}
+ .forma-diary-meal-thumb{width:59px;height:59px;flex-basis:59px;border-radius:15px}
+ .forma-diary-meal-copy>b{font-size:21px}
+ .forma-diary-add,.forma-diary-meal-card>.forma-meal-check{width:32px;height:32px;flex-basis:32px}
+ .forma-water-glass{margin-top:14px;padding:15px 14px 13px;border-radius:20px}
+ .forma-water-drop{width:25px}
+ .forma-water-drop svg{width:17px;height:22px}
+ .forma-diary-total{margin-top:15px;padding-top:12px}
+}
