@@ -525,7 +525,12 @@ if (app && main) {
     main.innerHTML=tab==='home'?home():tab==='diary'?diary():tab==='menu'?plan():tab==='body'?progress():tab==='profile'?profile():chat();
     bindPage();
     if(tab==='chat' && initData) {
-      refreshSupportMessages(true);
+      refreshSupportMessages(true).then(()=>{
+        if(state.tab==='chat') {
+          const form=main.querySelector('#forma-chat-form');
+          if(form) form.scrollIntoView({behavior:'smooth',block:'end'});
+        }
+      });
       supportPoll = setInterval(()=>{ if(state.tab==='chat') refreshSupportMessages(true); },12000);
     }
   }
