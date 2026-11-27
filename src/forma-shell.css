@@ -787,3 +787,20 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
     bottom:calc(66px + env(safe-area-inset-bottom))!important;
   }
 }
+
+
+/* Admin recipe catalogue: compact visual cards instead of a long text list. */
+.forma-admin-recipe-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.forma-admin-recipe-tile{min-width:0;display:flex;flex-direction:column;gap:7px;padding:13px;border:1px solid #e9dfd5;border-radius:16px;background:rgba(255,250,245,.92);box-shadow:0 5px 18px rgba(68,50,37,.035)}
+.forma-admin-recipe-top{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
+.forma-admin-recipe-category{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#987d66}
+.forma-admin-recipe-visibility{font-size:8px;padding:4px 6px;border-radius:20px;background:#eee9e1;color:#7d746b}
+.forma-admin-recipe-visibility.is-live{background:#e8eee4;color:#617456}
+.forma-admin-recipe-visibility.is-hidden{background:#f4e9e4;color:#9a6e5c}
+.forma-admin-recipe-tile h2{font:600 15px/1.25 'Cormorant Garamond',Georgia,serif;margin:2px 0;overflow-wrap:anywhere}
+.forma-admin-recipe-tile p{font-size:10px;color:#887e75;margin:0}
+.forma-admin-recipe-tile>small{font-size:9px;color:#887e75;white-space:nowrap}
+.forma-admin-recipe-tile .forma-recipe-actions{margin-top:auto;padding-top:5px}
+.forma-admin-recipe-tile .forma-recipe-actions button:first-child{flex:1}
+.forma-admin-recipe-tile .forma-recipe-actions button{padding:8px 9px}
+@media(max-width:360px){.forma-admin-recipe-grid{grid-template-columns:1fr}}
