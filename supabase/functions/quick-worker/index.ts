@@ -80,11 +80,37 @@ Deno.serve(async (req) => {
       return result.result;
     };
 
-    // Telegram webhook: verify the secret token before accepting payment updates.
-    if (body.pre_checkout_query || body.message?.successful_payment) {
-      const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "";
+    // Telegram webhook: payment updates and replies from the private FORMA support group.
+    if (body.pre_checkout_query || body.message) {
+      const { data: supportSettings } = await db.from("forma_support_settings")
+        .select("group_chat_id,webhook_secret").eq("id", 1).maybeSingle();
+      const webhookSecret = supportSettings?.webhook_secret || Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "";
       const suppliedSecret = req.headers.get("x-telegram-bot-api-secret-token") || "";
       if (!webhookSecret || !safeEqual(webhookSecret, suppliedSecret)) return json({ error: "webhook_unauthorized" }, 403);
+
+      if (body.message && !body.message.successful_payment) {
+        const message = body.message;
+        const isSupportReply = String(message.chat?.id || "") === String(supportSettings?.group_chat_id || "")
+          && !!message.reply_to_message?.message_id && !!message.text
+          && String(message.from?.id || "") === String(adminId);
+        if (!isSupportReply) return json({ ok: true, ignored: true });
+        const { data: supportMessage, error: supportLookupError } = await db.from("forma_support_messages")
+          .select("id,telegram_id,message")
+          .eq("group_message_id", Number(message.reply_to_message.message_id)).maybeSingle();
+        if (supportLookupError) throw supportLookupError;
+        if (!supportMessage) return json({ ok: true, ignored: true });
+        const replyText = String(message.text).trim().slice(0, 3500);
+        if (!replyText) return json({ ok: true, ignored: true });
+        await telegramApi("sendMessage", {
+          chat_id: Number(supportMessage.telegram_id),
+          text: "Ответ FORMA:\\n\\n" + replyText,
+        });
+        const { error: updateError } = await db.from("forma_support_messages")
+          .update({ status: "replied", admin_reply: replyText, replied_at: new Date().toISOString() })
+          .eq("id", supportMessage.id);
+        if (updateError) throw updateError;
+        return json({ ok: true, replied: true });
+      }
 
       if (body.pre_checkout_query) {
         const query = body.pre_checkout_query;
