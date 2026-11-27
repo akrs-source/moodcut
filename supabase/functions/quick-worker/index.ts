@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
         if (!replyText) return json({ ok: true, ignored: true });
         await telegramApi("sendMessage", {
           chat_id: Number(supportMessage.telegram_id),
-          text: "Ответ FORMA:\\n\\n" + replyText,
+          text: `FORMA · ОТВЕТ ПОДДЕРЖКИ\n\n${replyText}`,
         });
         const { error: updateError } = await db.from("forma_support_messages")
           .update({ status: "replied", admin_reply: replyText, replied_at: new Date().toISOString() })
