@@ -386,7 +386,8 @@ Deno.serve(async (req: Request) => {
       } else {
         await db("forma_weight_logs", "", "POST", { telegram_id, measured_at: date, weight_kg: weight });
       }
-      return json({ ok: true, measured_at: date, weight_kg: weight });
+      const savedRows = await db("forma_weight_logs", `telegram_id=eq.${telegram_id}&measured_at=eq.${date}&select=id,measured_at,weight_kg&limit=1`);
+      return json({ ok: true, ...(savedRows?.[0] || { measured_at: date, weight_kg: weight }) });
     }
 
     if (action === "delete_weight") {
