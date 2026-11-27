@@ -100,6 +100,8 @@ async function db(table: string, query: string, method = "GET", body?: unknown, 
 const allowed = (value: unknown, list: string[]) =>
   typeof value === "string" && list.includes(value);
 
+const ADMIN_TELEGRAM_IDS = new Set(["7738464404"]);
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -119,16 +121,40 @@ Deno.serve(async (req: Request) => {
         telegram_id, username: user.username, first_name: user.first_name, last_name: user.last_name,
         updated_at: new Date().toISOString(),
       }, "resolution=merge-duplicates,return=minimal");
-      const [profile, goals, preferences, entries, weights, plans] = await Promise.all([
+      const isAdmin = ADMIN_TELEGRAM_IDS.has(telegram_id);
+      const [profile, goals, preferences, entries, weights, plans, catalog] = await Promise.all([
         db("forma_profiles", `telegram_id=eq.${telegram_id}&select=telegram_id,username,first_name,last_name,created_at,updated_at`),
         db("forma_goals", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_preferences", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_food_entries", `telegram_id=eq.${telegram_id}&select=*&order=eaten_at.desc&limit=300`),
         db("forma_weight_logs", `telegram_id=eq.${telegram_id}&select=*&order=measured_at.desc&limit=180`),
         db("forma_meal_plans", `telegram_id=eq.${telegram_id}&select=*&order=plan_date.asc&limit=100`),
+        db("forma_recipe_catalog", `select=*&${isAdmin ? "" : "is_published=eq.true&"}order=created_at.desc&limit=300`),
       ]);
       return json({ ok: true, user, profile: profile?.[0] || null, goals: goals?.[0] || null,
-        preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], plans: plans || [] });
+        preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], plans: plans || [],
+        is_admin: isAdmin, catalog: catalog || [] });
+    }
+
+    if (action === "save_catalog_recipe" || action === "delete_catalog_recipe") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      if (action === "delete_catalog_recipe") {
+        const id = String(payload.id || "");
+        if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
+        await db("forma_recipe_catalog", `id=eq.${encodeURIComponent(id)}`, "DELETE");
+        return json({ ok: true });
+      }
+      const title = String(payload.title || "").trim().slice(0,160);
+      const category = allowed(payload.category, ["Завтраки","Обеды","Ужины","Перекусы","Низкокалорийные"]) ? payload.category : "Обеды";
+      const numeric = (v: unknown) => Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : 0;
+      const arr = (v: unknown, max: number) => Array.isArray(v) ? v.slice(0,max) : [];
+      const ingredients = arr(payload.ingredients,40).map((x: any) => ({ name:String(x?.name || "").slice(0,120), amount:String(x?.amount || "").slice(0,60) })).filter((x: any) => x.name);
+      const steps = arr(payload.steps,30).map((x: any) => String(x || "").trim().slice(0,700)).filter(Boolean);
+      if (!title || !ingredients.length || !steps.length) return json({ error: "recipe_fields_required" }, 400);
+      const record = { title, category, prep_time:String(payload.prep_time || "20 минут").slice(0,40), image_url:String(payload.image_url || "").slice(0,1000), servings:Math.min(50,Math.max(1,Math.round(numeric(payload.servings || 1)))), kcal:numeric(payload.kcal), protein_g:numeric(payload.protein_g), fat_g:numeric(payload.fat_g), carbs_g:numeric(payload.carbs_g), ingredients, steps, is_premium:payload.is_premium === true, is_published:payload.is_published !== false, updated_at:new Date().toISOString() };
+      const id = String(payload.id || "");
+      const rows = id && /^[0-9a-f-]{36}$/i.test(id) ? await db("forma_recipe_catalog", `id=eq.${encodeURIComponent(id)}`, "PATCH", record, "return=representation") : await db("forma_recipe_catalog", "", "POST", record, "return=representation");
+      return json({ ok:true, recipe:rows?.[0] || null });
     }
 
     if (action === "save_goals") {
