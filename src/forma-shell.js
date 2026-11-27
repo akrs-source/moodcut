@@ -381,7 +381,7 @@ if (app && main) {
       });
     } catch(error) {
       const msg=String(error?.message||'');
-      toast(msg.includes('pro_already_active')?'Подписка уже активна.':msg.includes('payment_webhook_not_configured')?'Оплата пока не настроена.':'Не удалось создать счёт. Попробуй позже.');
+      toast(msg.includes('pro_already_active')?'Подписка уже активна.':msg.includes('payment_webhook_not_configured')?'Оплата пока не настроена.':msg?'Ошибка оплаты: '+msg.slice(0,110):'Не удалось создать счёт. Попробуй позже.');
       if(button)button.disabled=false;
     }
   }
