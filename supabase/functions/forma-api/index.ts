@@ -297,6 +297,7 @@ Deno.serve(async (req: Request) => {
         kcal: numeric(payload.kcal), protein_g: numeric(payload.protein_g),
         fat_g: numeric(payload.fat_g), carbs_g: numeric(payload.carbs_g),
         weight_state, source,
+        ...(payload.image_url && /^https:\/\//i.test(String(payload.image_url)) ? { image_url: String(payload.image_url).slice(0,2048) } : {}),
         ...(payload.eaten_at ? { eaten_at: payload.eaten_at } : {}),
       }, "return=representation");
       return json({ ok: true, entry: rows?.[0] || null });
