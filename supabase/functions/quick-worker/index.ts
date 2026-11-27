@@ -28,6 +28,14 @@ async function sha256(value: string) {
   return hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
 function safeEqual(a: string, b: string) {
   if (a.length !== b.length) return false;
   let out = 0;
@@ -101,9 +109,18 @@ Deno.serve(async (req) => {
         if (!supportMessage) return json({ ok: true, ignored: true });
         const replyText = String(message.text).trim().slice(0, 3500);
         if (!replyText) return json({ ok: true, ignored: true });
+        const originalQuestion = String(supportMessage.message || "").trim();
+        const responseText = [
+          "FORMA · ОТВЕТ ПОДДЕРЖКИ",
+          "",
+          originalQuestion ? `<blockquote>${escapeHtml(originalQuestion)}</blockquote>` : "",
+          "",
+          escapeHtml(replyText),
+        ].filter((line, index, lines) => line !== "" || (index > 0 && lines[index - 1] !== "")).join("\n");
         await telegramApi("sendMessage", {
           chat_id: Number(supportMessage.telegram_id),
-          text: `FORMA · ОТВЕТ ПОДДЕРЖКИ\n\n${replyText}`,
+          text: responseText,
+          parse_mode: "HTML",
         });
         const { error: updateError } = await db.from("forma_support_messages")
           .update({ status: "replied", admin_reply: replyText, replied_at: new Date().toISOString() })
