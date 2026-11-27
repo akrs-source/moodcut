@@ -157,10 +157,10 @@ if (app && main) {
     main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
     main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
       const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':'Обед';
-      const item={name:r.title,type,grams:1,kcal:r.kcal,p:r.p,f:r.f,c:r.c,eaten_at:new Date().toISOString(),date:localDate(new Date())};
+      const item={name:r.title,type,grams:250,kcal:r.kcal,p:r.p,f:r.f,c:r.c,eaten_at:new Date().toISOString(),date:localDate(new Date())};
       state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));
       toast('Добавлено в дневник');
-      try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(type),grams:1,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'cooked',source:'recipe',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));}}catch(e){toast('Добавлено на устройстве; синхронизация не удалась');}
+      try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(type),grams:250,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'cooked',source:'recipe',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));}}catch(e){toast('Добавлено на устройстве; синхронизация не удалась');}
     };
   }
   function recipeForm() {
