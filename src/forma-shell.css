@@ -708,3 +708,43 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
   .forma-cook-grid{gap:7px!important}
   .forma-cook-card{aspect-ratio:.98!important;border-radius:14px!important}
 }
+
+
+/* FORMA Recipes — Compact layout refresh */
+.forma-recipes-intro{margin-bottom:10px!important}
+.forma-recipes-intro h1{font-size:36px!important;line-height:1.02!important;margin:2px 0 5px!important}
+.forma-recipes-intro .muted{font-size:11px!important;line-height:1.4!important;margin:0!important}
+.forma-recipe-search{height:42px!important;min-height:42px;padding:0 11px!important;margin-bottom:10px!important;border-radius:13px!important;gap:7px!important}
+.forma-recipe-search>span{font-size:20px!important}
+.forma-recipe-search input{font-size:12px!important}
+.forma-recipe-filters{gap:6px!important;padding-bottom:6px!important;margin-bottom:7px!important}
+.forma-recipe-filters button{padding:7px 11px!important;font-size:10px!important}
+.forma-recipe-results-head{margin:3px 1px 7px!important;font-size:9px!important}
+.forma-cook-grid{gap:8px!important}
+.forma-cook-card{aspect-ratio:1.02!important;border-radius:14px!important;box-shadow:0 4px 13px rgba(55,42,32,.07)!important}
+.forma-cook-fav{top:7px!important;right:7px!important;width:28px!important;height:28px!important;font-size:16px!important}
+.forma-cook-overlay{padding:25px 9px 9px!important}
+.forma-cook-overlay>span{font-size:7px!important}
+.forma-cook-overlay h2{font-size:17px!important;line-height:1!important;margin:3px 0!important}
+.forma-cook-overlay>b{font-size:9px!important}
+.forma-recipe-note{margin-top:9px!important;font-size:9px!important}
+.forma-recipe-detail{padding-bottom:82px!important}
+.forma-recipe-detail-hero{height:255px!important}
+.forma-recipe-detail-body{margin-top:-27px!important;padding:0 14px!important}
+.forma-recipe-detail-body>h1{font-size:35px!important;margin-bottom:12px!important}
+.forma-recipe-macros{padding:12px 6px!important;border-radius:15px!important}
+.forma-recipe-macros b{font-size:15px!important}
+.forma-recipe-section{margin-top:18px!important}
+.forma-recipe-section h2{font-size:25px!important;margin-bottom:9px!important}
+.forma-recipe-ingredients label{min-height:41px!important;padding:7px 10px!important;font-size:11px!important}
+.forma-recipe-steps{padding-left:20px!important}
+.forma-recipe-steps li{font-size:11px!important;line-height:1.55!important;padding:3px 0!important}
+.forma-recipe-bottom{padding:8px!important}
+.forma-recipe-bottom .forma-primary{min-height:43px!important;font-size:11px!important}
+@media(max-width:420px){
+ .forma-cook-grid{gap:7px!important}
+ .forma-cook-card{border-radius:13px!important}
+ .forma-cook-overlay{padding:23px 8px 8px!important}
+ .forma-cook-overlay h2{font-size:16px!important}
+ .forma-recipe-detail-hero{height:235px!important}
+}
