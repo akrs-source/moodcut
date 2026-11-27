@@ -170,51 +170,16 @@ if (app && main) {
     grid.innerHTML=list.map(recipeCardHTML).join('')||'<div class="forma-recipe-no-results"><span>⌕</span><b>Ничего не нашлось</b><p>Попробуй другое название или ингредиент.</p></div>';
     const count=main.querySelector('#forma-recipe-count');if(count)count.textContent=list.length+' '+(list.length===1?'рецепт':list.length<5?'рецепта':'рецептов');
   }
-  function formatRecipeAmount(amount,factor){
-    const value=String(amount??'').trim();
-    if(!value||Math.abs(factor-1)<0.000001)return value;
-    const match=value.match(/^(\\s*)(\\d+(?:[.,]\\d+)?)(.*)$/);
-    if(!match)return value;
-    const number=Number(match[2].replace(',','.'))*factor;
-    const rounded=Math.round(number*100)/100;
-    const formatted=String(rounded).replace('.',',');
-    return match[1]+formatted+match[3];
-  }
   function recipeDetail(id) {
     const r=recipeCatalog.find(x=>String(x.id)===String(id));if(!r)return;activeRecipeId=id;
-    const baseServings=Math.max(1,Number(r.servings)||1);
-    let selectedServings=2;
-    const ingredients=(r.ingredients||[]);
-    const ingredientRows=()=>ingredients.map((x,i)=>{
-      const name=Array.isArray(x)?x[0]:x.name;
-      const amount=Array.isArray(x)?x[1]:x.amount;
-      return `<label><input type="checkbox" data-recipe-ingredient="${i}"><span>${esc(name)}</span><small>${esc(formatRecipeAmount(amount,selectedServings/baseServings))}</small></label>`;
-    }).join('');
-    const macros=()=>({
-      kcal:Number(r.kcal||0)*selectedServings,
-      p:Number(r.p??r.protein_g??0)*selectedServings,
-      f:Number(r.f??r.fat_g??0)*selectedServings,
-      c:Number(r.c??r.carbs_g??0)*selectedServings
-    });
     main.innerHTML=`<section class="forma-recipe-detail">
       <div class="forma-recipe-detail-hero" style="--recipe-image:url('${r.image}')"><button class="forma-recipe-back" id="forma-recipe-back" aria-label="Назад к рецептам">←</button><button class="forma-cook-fav detail-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" id="forma-detail-fav" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button></div>
-      <div class="forma-recipe-detail-body"><p class="eyebrow">${r.category.toUpperCase()} · ${String(r.time||r.prep_time||'').toUpperCase()}</p><h1>${esc(r.title)}</h1>
-      <section class="forma-recipe-section forma-recipe-portions"><div class="forma-section-head"><div><p class="eyebrow">НАСТРОЙ КОЛИЧЕСТВО</p><h2>Порции</h2></div><span class="forma-tag" id="forma-recipe-portion-label">2 порции</span></div><div class="forma-recipe-portion-options" role="group" aria-label="Количество порций">${[2,3,4].map(n=>`<button type="button" data-recipe-portions="${n}" class="${n===2?'active':''}" aria-pressed="${n===2}">${n}</button>`).join('')}</div><p class="forma-recipe-portion-hint">Количество ингредиентов и общая пищевая ценность пересчитываются автоматически.</p></section>
-      <div class="forma-recipe-macros" id="forma-recipe-macros"><div><b>${r.kcal}</b><span>Ккал / порция</span></div><div><b>${r.p ?? r.protein_g ?? 0} г</b><span>Белки</span></div><div><b>${r.f ?? r.fat_g ?? 0} г</b><span>Жиры</span></div><div><b>${r.c ?? r.carbs_g ?? 0} г</b><span>Углеводы</span></div></div>
-      <section class="forma-recipe-section"><div class="forma-section-head"><div><p class="eyebrow">ПОДГОТОВЬ ЗАРАНЕЕ</p><h2>Ингредиенты</h2></div><span class="forma-tag" id="forma-recipe-ingredient-count">${ingredients.length} позиций</span></div><div class="forma-recipe-ingredients" id="forma-recipe-ingredients">${ingredientRows()}</div></section>
+      <div class="forma-recipe-detail-body"><p class="eyebrow">${r.category.toUpperCase()} · ${String(r.time||r.prep_time||'').toUpperCase()}</p><h1>${esc(r.title)}</h1><div class="forma-recipe-macros"><div><b>${r.kcal}</b><span>Ккал</span></div><div><b>${r.p ?? r.protein_g ?? 0} г</b><span>Белки</span></div><div><b>${r.f ?? r.fat_g ?? 0} г</b><span>Жиры</span></div><div><b>${r.c ?? r.carbs_g ?? 0} г</b><span>Углеводы</span></div></div>
+      <section class="forma-recipe-section"><div class="forma-section-head"><div><p class="eyebrow">ПОДГОТОВЬ ЗАРАНЕЕ</p><h2>Ингредиенты</h2></div><span class="forma-tag">${r.ingredients.length} позиций</span></div><div class="forma-recipe-ingredients">${r.ingredients.map((x,i)=>{const name=Array.isArray(x)?x[0]:x.name,amount=Array.isArray(x)?x[1]:x.amount;return `<label><input type="checkbox" data-recipe-ingredient="${i}"><span>${esc(name)}</span><small>${esc(amount||'')}</small></label>`}).join('')}</div></section>
       <section class="forma-recipe-section"><p class="eyebrow">ПРОСТО И ПОШАГОВО</p><h2>Приготовление</h2><ol class="forma-recipe-steps">${(r.steps||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>
-      <p class="forma-recipe-serving" id="forma-recipe-serving">Итого на 2 порции: ${Math.round(macros().kcal)} ккал. КБЖУ на одну порцию указано отдельно.</p></div>
-      <div class="forma-recipe-bottom"><button class="forma-primary" id="forma-add-recipe-diary">Добавить 1 порцию в дневник <span>→</span></button></div>
+      <p class="forma-recipe-serving">Пищевая ценность рассчитана на одну порцию.</p></div>
+      <div class="forma-recipe-bottom"><button class="forma-primary" id="forma-add-recipe-diary">Добавить в дневник за сегодня <span>→</span></button></div>
     </section>`;
-    const updatePortions=()=>{
-      const m=macros();
-      main.querySelector('#forma-recipe-ingredients').innerHTML=ingredientRows();
-      main.querySelector('#forma-recipe-portion-label').textContent=selectedServings+' '+(selectedServings===2?'порции':'порции');
-      main.querySelector('#forma-recipe-macros').innerHTML=`<div><b>${Math.round(m.kcal*10)/10}</b><span>Ккал / всё блюдо</span></div><div><b>${Math.round(m.p*10)/10} г</b><span>Белки</span></div><div><b>${Math.round(m.f*10)/10} г</b><span>Жиры</span></div><div><b>${Math.round(m.c*10)/10} г</b><span>Углеводы</span></div>`;
-      main.querySelector('#forma-recipe-serving').textContent='Итого на '+selectedServings+' порции: '+Math.round(m.kcal*10)/10+' ккал. На одну порцию: '+Number(r.kcal||0)+' ккал.';
-      main.querySelectorAll('[data-recipe-portions]').forEach(b=>{const active=Number(b.dataset.recipePortions)===selectedServings;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
-    };
-    main.querySelectorAll('[data-recipe-portions]').forEach(b=>b.onclick=()=>{selectedServings=Number(b.dataset.recipePortions);updatePortions();});
     main.querySelector('#forma-recipe-back').onclick=()=>recipesPage();
     main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
     main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
@@ -228,7 +193,7 @@ if (app && main) {
         else item.id='local-'+Date.now();
       }catch(e){item.id='local-'+Date.now();toast('Не удалось синхронизировать запись. Она сохранится на этом устройстве.');}
       state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));
-      toast('Добавлена 1 порция в дневник');render('diary');
+      toast('Добавлено в дневник');render('diary');
     };
   }
 
