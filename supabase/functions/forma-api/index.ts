@@ -397,6 +397,73 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+
+    if (action === "admin_overview") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      const [users, goals, entries, weights, plans] = await Promise.all([
+        db("forma_profiles", "select=telegram_id,username,first_name,last_name,updated_at&order=updated_at.desc&limit=1000"),
+        db("forma_goals", "select=telegram_id&limit=5000"),
+        db("forma_food_entries", "select=id&limit=10000"),
+        db("forma_weight_logs", "select=id&limit=10000"),
+        db("forma_meal_plans", "select=id&limit=10000"),
+      ]);
+      return json({
+        ok: true,
+        users: users || [],
+        total_returned: (users || []).length,
+        stats: {
+          total_users: (users || []).length,
+          users_with_goals: (goals || []).length,
+          diary_entries: (entries || []).length,
+          weight_logs: (weights || []).length,
+          meal_plans: (plans || []).length,
+        },
+      });
+    }
+
+    if (action === "admin_subscriptions") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      const [users, subscriptions] = await Promise.all([
+        db("forma_profiles", "select=telegram_id,username,first_name,last_name&order=created_at.desc&limit=1000"),
+        db("forma_subscriptions", "select=telegram_id,plan_code,status,starts_at,expires_at,note,granted_by,created_at,updated_at&order=updated_at.desc&limit=2000"),
+      ]);
+      return json({ ok: true, users: users || [], subscriptions: subscriptions || [] });
+    }
+
+    if (action === "admin_set_subscription") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      const targetId = String(payload.telegram_id || "").trim();
+      if (!/^\\d{1,24}$/.test(targetId)) return json({ error: "invalid_telegram_id" }, 400);
+      const operation = String(payload.operation || "");
+      const now = new Date();
+      const existing = await db("forma_subscriptions",
+        "telegram_id=eq." + encodeURIComponent(targetId) + "&select=telegram_id,expires_at,status&limit=1");
+      if (operation === "revoke") {
+        if (existing?.[0]) {
+          await db("forma_subscriptions", "telegram_id=eq." + encodeURIComponent(targetId), "PATCH",
+            { status: "cancelled", updated_at: now.toISOString() });
+        }
+        return json({ ok: true, operation, telegram_id: targetId });
+      }
+      if (operation !== "grant") return json({ error: "invalid_operation" }, 400);
+      const days = Number(payload.days ?? 30);
+      if (!Number.isInteger(days) || days < 1 || days > 3650) return json({ error: "invalid_days" }, 400);
+      const currentExpiry = existing?.[0]?.status === "active" && existing?.[0]?.expires_at
+        ? new Date(existing[0].expires_at) : now;
+      const base = currentExpiry > now ? currentExpiry : now;
+      const expires = new Date(base.getTime() + days * 86400000).toISOString();
+      const row = {
+        telegram_id: targetId, plan_code: "pro", status: "active",
+        starts_at: existing?.[0]?.starts_at || now.toISOString(),
+        expires_at: expires,
+        note: String(payload.note || "").slice(0, 500),
+        granted_by: telegram_id, updated_at: now.toISOString(),
+      };
+      await db("forma_subscriptions", "on_conflict=telegram_id", "POST", row,
+        "resolution=merge-duplicates,return=minimal");
+      return json({ ok: true, operation, telegram_id: targetId, expires_at: expires });
+    }
+
     return json({ error: "unknown_action" }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : "internal_error";
