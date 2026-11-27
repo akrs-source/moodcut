@@ -647,3 +647,10 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-pro-insight{background:#f4eee6;border:1px solid #ece2d7}
 .forma-pro-insight p{margin-bottom:0}
 .forma-primary:disabled,.forma-chat-form button:disabled{opacity:.55;cursor:default}
+
+
+/* Daily nutrition target visibility */
+.forma-diary-remaining{display:block;margin-top:5px;color:var(--muted,#8b8278);font-size:12px;font-weight:500}
+.forma-glass-macros>div>b{font-variant-numeric:tabular-nums}
+.forma-summary-macros{gap:10px}
+.forma-summary-macros>span{white-space:nowrap}
