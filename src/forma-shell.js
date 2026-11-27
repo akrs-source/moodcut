@@ -32,7 +32,8 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], profile: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], supportMessages: [], profile: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  let supportPoll = null;
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -305,15 +306,44 @@ if (app && main) {
       main.querySelector('#forma-subscriptions-back').onclick=()=>adminPage();
     }
   }
+  const supportTime = value => value ? new Date(value).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+  function supportChatMessages() {
+    if (!state.supportMessages.length) return '<div class="forma-chat-message assistant"><small>FORMA · ЛИЧНАЯ ПОДДЕРЖКА</small>Напиши свой вопрос. Он придёт в закрытый рабочий чат, а ответ специалиста появится здесь.</div>';
+    return state.supportMessages.map(m => {
+      const own = '<div class="forma-chat-message user"><small>Вы · '+esc(supportTime(m.created_at))+'</small>'+esc(m.message)+'</div>';
+      if (m.admin_reply) return own+'<div class="forma-chat-message assistant"><small>Ответ · '+esc(supportTime(m.replied_at))+'</small>'+esc(m.admin_reply)+'</div>';
+      if (m.status === 'failed') return own+'<div class="forma-chat-message assistant"><small>FORMA</small>Не удалось доставить сообщение. Попробуй отправить его ещё раз.</div>';
+      return own+'<div class="forma-chat-message assistant"><small>FORMA</small>Вопрос отправлен. Как только специалист ответит, сообщение появится здесь.</div>';
+    }).join('');
+  }
+  async function refreshSupportMessages(silent = false) {
+    try {
+      const result = await api('get_support_messages');
+      if (Array.isArray(result?.messages)) {
+        state.supportMessages = result.messages;
+        const box = main.querySelector('#forma-chat-messages');
+        if (box) {
+          const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 70;
+          box.innerHTML = supportChatMessages();
+          if (nearBottom) box.scrollTop = box.scrollHeight;
+        }
+      }
+    } catch (e) { if (!silent) toast('Не удалось обновить переписку'); }
+  }
   function chat() {
-    return `<section class="forma-page-intro"><p class="eyebrow">ТВОЙ ПЕРСОНАЛЬНЫЙ ПОМОЩНИК</p><h1>Давай разберёмся.</h1><p class="muted">Можно спросить о питании, меню или своих показателях.</p></section><section class="forma-chat-window"><div class="forma-chat-message assistant"><small>FORMA</small>Привет! Я помогу разобраться с питанием и планированием. С чего начнём?</div>${state.chat.map(m=>`<div class="forma-chat-message user">${esc(m)}</div><div class="forma-chat-message assistant"><small>FORMA</small>Я пока работаю в демонстрационном режиме. В полноценной версии смогу анализировать твои записи и предлагать решения с учётом контекста.</div>`).join('')}</section><form id="forma-chat-form" class="forma-chat-form"><input name="message" placeholder="Напиши свой вопрос..." required><button aria-label="Отправить">↑</button></form><p class="forma-footnote">Ответы помощника в этой версии демонстрационные.</p>`;
+    return `<section class="forma-page-intro"><p class="eyebrow">ЛИЧНАЯ ПОДДЕРЖКА</p><h1>Давай разберёмся.</h1><p class="muted">Задай вопрос о питании, меню или своих результатах. Я отвечу лично.</p></section><section class="forma-chat-window" id="forma-chat-messages" aria-live="polite">${supportChatMessages()}</section><form id="forma-chat-form" class="forma-chat-form"><input name="message" maxlength="3500" placeholder="Напиши свой вопрос..." autocomplete="off" required><button aria-label="Отправить">↑</button></form><p class="forma-footnote">Переписка приватная: её видишь ты и специалист FORMA.</p>`;
   }
   function render(tab) {
+    if (supportPoll) { clearInterval(supportPoll); supportPoll = null; }
     state.tab=tab; nav.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
     if(tab==='home' && !state.goals) { onboarding(); return; }
     if(tab==='recipes'){recipesPage();return;}
     main.innerHTML=tab==='home'?home():tab==='diary'?diary():tab==='menu'?plan():tab==='body'?progress():tab==='profile'?profile():chat();
     bindPage();
+    if(tab==='chat' && initData) {
+      refreshSupportMessages(true);
+      supportPoll = setInterval(()=>{ if(state.tab==='chat') refreshSupportMessages(true); },12000);
+    }
   }
   function onboarding() {
     main.innerHTML=`<section class="forma-page-intro"><p class="eyebrow">НАЧНЁМ С ТЕБЯ</p><h1>Настроим FORMA.</h1><p class="muted">Несколько деталей — и мы рассчитаем ориентиры, от которых можно отталкиваться.</p></section>
@@ -372,7 +402,21 @@ if (app && main) {
     const pf=main.querySelector('#forma-preferences-form');if(pf)pf.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pf),split=k=>String(d.get(k)||'').split(',').map(x=>x.trim()).filter(Boolean);state.preferences={dietary_preferences:split('dietary_preferences'),excluded_foods:split('excluded_foods'),allergies:split('allergies'),meals_per_day:Number(d.get('meals_per_day')),budget_level:d.get('budget_level'),cooking_time:d.get('cooking_time')};storage.setItem('forma-preferences',JSON.stringify(state.preferences));try{const saved=await api('save_preferences',state.preferences);toast(saved?'Предпочтения сохранены':'Сохранено на устройстве');}catch(e){toast('Сохранено на устройстве; синхронизация не удалась');}render('profile');});
     const plf=main.querySelector('#forma-plan-form');if(plf)plf.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(plf),payload={plan_date:d.get('plan_date'),meal_type:d.get('meal_type'),title:String(d.get('title')).trim(),description:d.get('description'),kcal:Number(d.get('kcal')||0),protein_g:Number(d.get('protein_g')||0),fat_g:Number(d.get('fat_g')||0),carbs_g:Number(d.get('carbs_g')||0)};try{const saved=await api('save_plan',payload);if(saved?.plan)state.plans.push(saved.plan);else state.plans.push({...payload,id:'local-'+Date.now()});toast(saved?'Блюдо сохранено в аккаунте':'Блюдо сохранено на устройстве');}catch(e){state.plans.push({...payload,id:'local-'+Date.now()});toast('Сохранено на устройстве; синхронизация не удалась');}storage.setItem('forma-plans',JSON.stringify(state.plans));state.planDate=payload.plan_date;render('menu');});
     const wf=main.querySelector('#forma-weight-form');if(wf)wf.addEventListener('submit',async e=>{e.preventDefault();state.weight=main.querySelector('#forma-weight').value;storage.setItem('forma-weight',state.weight);const measured_at=localDate(new Date());state.weights=state.weights.filter(x=>x.measured_at!==measured_at);state.weights.unshift({measured_at,weight_kg:Number(state.weight)});storage.setItem('forma-weights',JSON.stringify(state.weights));try{const saved=await api('save_weight',{weight_kg:Number(state.weight),measured_at});if(saved)toast('Измерение сохранено в аккаунте');else toast('Измерение сохранено на устройстве');}catch(err){toast('Сохранено на устройстве; синхронизация не удалась');}render('body');});
-    const cf=main.querySelector('#forma-chat-form');if(cf)cf.addEventListener('submit',e=>{e.preventDefault();const v=new FormData(cf).get('message').trim();if(v){state.chat.push(v);render('chat');}});
+    const cf=main.querySelector('#forma-chat-form');if(cf)cf.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const input=cf.elements.message, v=String(input.value||'').trim(), button=cf.querySelector('button');
+      if(!v)return;
+      if(button)button.disabled=true;
+      try {
+        const result=await api('send_support_message',{message:v});
+        if(!result?.message)throw new Error('support_message_missing');
+        state.supportMessages.push(result.message);
+        cf.reset();
+        const box=main.querySelector('#forma-chat-messages');
+        if(box){box.innerHTML=supportChatMessages();box.scrollTop=box.scrollHeight;}
+      } catch(err) { toast('Не удалось отправить вопрос. Открой FORMA через Telegram и попробуй ещё раз.'); }
+      finally { if(button)button.disabled=false; }
+    });
     const foodSearch=main.querySelector('#forma-food-search');
     if(foodSearch)foodSearch.addEventListener('submit',async e=>{
       e.preventDefault();
@@ -429,7 +473,7 @@ if (app && main) {
     if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
+      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.supportMessages = Array.isArray(data.support_messages) ? data.support_messages : []; if(state.isAdmin) api('admin_setup_support_webhook').catch(()=>{}); state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
       state.meals = (data.entries || []).map(row => ({
         id: row.id, eaten_at: row.eaten_at, date: row.eaten_at ? localDate(row.eaten_at) : localDate(new Date()), name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
