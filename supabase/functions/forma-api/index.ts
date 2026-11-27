@@ -151,7 +151,9 @@ Deno.serve(async (req: Request) => {
       const ingredients = arr(payload.ingredients,40).map((x: any) => ({ name:String(x?.name || "").slice(0,120), amount:String(x?.amount || "").slice(0,60) })).filter((x: any) => x.name);
       const steps = arr(payload.steps,30).map((x: any) => String(x || "").trim().slice(0,700)).filter(Boolean);
       if (!title || !ingredients.length || !steps.length) return json({ error: "recipe_fields_required" }, 400);
-      const record = { title, category, prep_time:String(payload.prep_time || "20 минут").slice(0,40), image_url:String(payload.image_url || "").slice(0,1000), servings:Math.min(50,Math.max(1,Math.round(numeric(payload.servings || 1)))), kcal:numeric(payload.kcal), protein_g:numeric(payload.protein_g), fat_g:numeric(payload.fat_g), carbs_g:numeric(payload.carbs_g), ingredients, steps, is_premium:payload.is_premium === true, is_published:payload.is_published !== false, updated_at:new Date().toISOString() };
+      const imageUrl = String(payload.image_url || "").trim();
+      if (imageUrl) { try { if (new URL(imageUrl).protocol !== "https:") return json({ error:"invalid_image_url" }, 400); } catch { return json({ error:"invalid_image_url" }, 400); } }
+      const record = { title, category, prep_time:String(payload.prep_time || "20 минут").slice(0,40), image_url:imageUrl.slice(0,1000), servings:Math.min(50,Math.max(1,Math.round(numeric(payload.servings || 1)))), kcal:numeric(payload.kcal), protein_g:numeric(payload.protein_g), fat_g:numeric(payload.fat_g), carbs_g:numeric(payload.carbs_g), ingredients, steps, is_premium:payload.is_premium === true, is_published:payload.is_published !== false, updated_at:new Date().toISOString() };
       const id = String(payload.id || "");
       const rows = id && /^[0-9a-f-]{36}$/i.test(id) ? await db("forma_recipe_catalog", `id=eq.${encodeURIComponent(id)}`, "PATCH", record, "return=representation") : await db("forma_recipe_catalog", "", "POST", record, "return=representation");
       return json({ ok:true, recipe:rows?.[0] || null });
