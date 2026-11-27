@@ -261,3 +261,55 @@ body{background:radial-gradient(ellipse at 88% 0%,rgba(221,207,192,.32),transpar
  .forma-energy-line{padding:21px 0}
  .bottom-nav{height:76px!important}
 }
+
+/* FORMA — Premium Minimal / Soft Glass dashboard */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--forma-bg:#f3ebe4;--forma-ink:#211d1a;--forma-muted:#8d8178;--forma-glass:rgba(255,250,246,.62);--forma-dark:#29231f}
+html,body{background:#f3ebe4!important;color:var(--forma-ink)!important}
+body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!important}
+#app{background:transparent;padding-bottom:105px!important}
+.topbar{position:relative;z-index:2;height:78px!important;padding:0 25px!important;background:rgba(244,236,229,.34)!important;border:0!important;backdrop-filter:blur(18px)}
+.brand{font-size:34px!important;letter-spacing:1.4px!important}
+.avatar{width:43px!important;height:43px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;border:1px solid rgba(255,255,255,.55)!important;backdrop-filter:blur(16px);font-size:0!important}
+.avatar:before{content:'♙';font-size:23px;color:#51463e}
+.shell{max-width:680px!important;padding:0 22px 28px!important}
+.forma-editorial-hero{position:relative;min-height:290px;margin:-78px -22px 0!important;padding:130px 27px 26px!important;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;overflow:hidden;background:linear-gradient(90deg,rgba(239,229,220,.94) 0%,rgba(239,229,220,.7) 43%,rgba(239,229,220,.05) 100%),url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1200&q=85') center 43%/cover no-repeat}
+.forma-editorial-hero:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(244,236,229,.1),rgba(244,236,229,.06) 65%,#f3ebe4 100%);pointer-events:none}
+.forma-greeting-copy,.forma-editorial-hero>.forma-date{position:relative;z-index:1}
+.forma-brand-kicker{font-size:9px;letter-spacing:1.7px;color:#87796e;margin:0 0 15px;font-weight:700}
+.forma-greeting h1{font:600 clamp(35px,8vw,45px)/.98 'Cormorant Garamond',Georgia,serif!important;letter-spacing:-.7px!important;color:#211d1a!important;margin:0!important}
+.forma-editorial-hero>.forma-date{font-size:10px;letter-spacing:.35px;text-align:right;max-width:110px;text-transform:capitalize}
+.forma-glass-energy{position:relative;margin:-2px 0 20px!important;padding:24px 20px 20px!important;background:rgba(255,250,246,.57)!important;border:1px solid rgba(255,255,255,.7)!important;border-radius:29px!important;box-shadow:0 12px 38px rgba(74,55,43,.07)!important;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.forma-energy-ring{width:190px;height:190px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#302923 var(--pct),rgba(177,162,150,.38) 0);position:relative}
+.forma-energy-ring:before{content:'';position:absolute;inset:10px;border-radius:50%;background:rgba(255,250,246,.92)}
+.forma-energy-ring>div{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px}
+.forma-energy-ring b{font:500 49px/1 'DM Sans',sans-serif;color:#211d1a;letter-spacing:-2px}
+.forma-energy-ring span{font:400 14px 'DM Sans',sans-serif;color:#514840}
+.forma-glass-macros{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(95,79,67,.16);padding-top:17px}
+.forma-glass-macros>div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.forma-glass-macros>div+div{border-left:1px solid rgba(95,79,67,.2)}
+.forma-glass-macros b{font:500 24px 'DM Sans',sans-serif;color:#29231f}
+.forma-glass-macros span{font-size:12px;color:#5f554d}
+.forma-energy-open{position:absolute;right:19px;top:calc(50% - 18px);width:43px;height:43px;border:0;border-radius:50%;background:rgba(255,255,255,.34);font-size:25px;color:#302923}
+.forma-plan-banner{width:100%;min-height:105px;margin:0 0 34px;padding:18px 24px;display:flex;align-items:center;gap:20px;border:0;border-radius:26px;background:#29231f;color:#fffaf5;text-align:left;box-shadow:0 10px 22px rgba(39,31,26,.12)}
+.forma-banner-star{font:400 37px 'Cormorant Garamond',serif;color:#fffaf5}
+.forma-plan-banner>span:nth-child(2){font:500 25px/1.05 'Cormorant Garamond',Georgia,serif;flex:1}
+.forma-banner-arrow{font:300 27px 'DM Sans',sans-serif}
+.forma-editorial-meals .forma-section-head{margin:0 0 14px!important;align-items:center}
+.forma-editorial-meals .forma-section-head h2{font:600 29px 'Cormorant Garamond',Georgia,serif!important}
+.forma-meal-stack{display:grid;gap:11px}
+.forma-meal-glass{display:flex;align-items:center;gap:15px;min-height:104px;padding:12px 16px;border:1px solid rgba(255,255,255,.76);border-radius:23px;background:rgba(255,250,246,.58);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 7px 22px rgba(74,55,43,.04)}
+.forma-meal-thumb{width:75px;height:75px;flex:0 0 75px;border-radius:50%;background:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=240&q=80') center/cover no-repeat}
+.forma-meal-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.forma-meal-copy>span{font-size:10px;color:#8b7e73;letter-spacing:.7px;text-transform:uppercase}
+.forma-meal-copy b{font:600 23px 'Cormorant Garamond',Georgia,serif;color:#211d1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.forma-meal-copy small{font-size:13px;color:#514840}
+.forma-meal-check{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#29231f;color:#fffaf5;font-size:17px}
+.forma-meal-empty{padding:24px;text-align:center;border:1px solid rgba(255,255,255,.72);border-radius:22px;background:rgba(255,250,246,.52);font-size:12px;color:#85796f}
+.forma-weekly-link{width:100%;margin:16px 0 0;padding:13px 2px;display:flex;justify-content:space-between;border:0;background:transparent;color:#74675d;font-size:12px}
+.bottom-nav{left:50%!important;right:auto!important;transform:translateX(-50%);bottom:max(10px,env(safe-area-inset-bottom))!important;width:min(100% - 24px,620px)!important;height:77px!important;padding:8px 10px max(8px,env(safe-area-inset-bottom))!important;justify-content:space-around!important;border:1px solid rgba(255,255,255,.78)!important;border-radius:40px!important;background:rgba(255,250,246,.76)!important;box-shadow:0 9px 28px rgba(65,49,39,.08)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important}
+.bottom-nav .nav-item{min-width:65px!important;color:#766b63!important}
+.bottom-nav .nav-item.active{color:#211d1a!important}
+.bottom-nav .nav-item .nav-icon,.bottom-nav .nav-item .nav-icon svg{width:24px!important;height:24px!important}
+.bottom-nav .nav-item small{font-size:10px!important}
+@media(max-width:420px){.forma-editorial-hero{min-height:275px;padding:125px 23px 24px!important;background-position:56% center}.forma-glass-energy{padding:22px 16px 18px!important}.forma-energy-ring{width:178px;height:178px}.forma-energy-ring b{font-size:45px}.forma-glass-macros b{font-size:21px}.forma-plan-banner{min-height:96px;padding:17px 20px}.forma-plan-banner>span:nth-child(2){font-size:23px}.forma-meal-glass{min-height:96px;padding:10px 13px}.forma-meal-thumb{width:68px;height:68px;flex-basis:68px}.bottom-nav{width:calc(100% - 18px)!important}}
