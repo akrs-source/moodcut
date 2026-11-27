@@ -43,7 +43,14 @@ if (app && main) {
     const bmr=10*weight+6.25*height-5*age+sexAdj;
     const factor={lose:.85,gain:1.1,maintain:1,recomposition:.95,healthier:1}[g.goal_type]||1;
     const kcal=Math.round(Math.max(1200,Math.min(6000,bmr*activity*factor))/50)*50;
-    const protein=Math.round(weight*1.6), fat=Math.round(weight*.8), carbs=Math.max(0,Math.round((kcal-protein*4-fat*9)/4));
+    // Распределяем калории между всеми макронутриентами, а не отдаём
+    // весь прирост калорий углеводам. Для белка сохраняем минимум 1.4 г/кг
+    // (при снижении веса ориентируемся на реалистичный целевой вес).
+    const targetWeight=Number(g.target_weight_kg);
+    const proteinWeight=(g.goal_type==='lose'&&targetWeight>0&&targetWeight<weight)?targetWeight:weight;
+    const protein=Math.round(Math.max(proteinWeight*1.4,kcal*0.25/4));
+    const fat=Math.round(kcal*0.30/9);
+    const carbs=Math.max(0,Math.round((kcal-protein*4-fat*9)/4));
     return {daily_kcal:kcal,protein_g:protein,fat_g:fat,carbs_g:carbs};
   };
   applyGoals(state.goals);
