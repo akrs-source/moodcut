@@ -148,7 +148,7 @@ if (app && main) {
     recipeFilter='Все'; recipeSearch='';
     main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p>${state.isAdmin?`<button class="forma-primary" id="forma-catalog-manage" style="margin-top:12px">Управлять каталогом <span>→</span></button>`:''}</section>
     <label class="forma-recipe-search"><span>⌕</span><input id="forma-recipe-search" type="search" placeholder="Найти блюдо или ингредиент..." autocomplete="off"><button type="button" id="forma-recipe-clear" aria-label="Очистить поиск">×</button></label>
-    <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
+    <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Перекусы','Десерты'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
     <div class="forma-recipe-results-head"><span id="forma-recipe-count">${recipeCatalog.length} рецептов</span><span>НА КАЖДЫЙ ДЕНЬ</span></div>
     <div class="forma-cook-grid" id="forma-cook-grid">${recipeCatalog.map(recipeCardHTML).join('')}</div>
     <p class="forma-footnote forma-recipe-note">КБЖУ указано ориентировочно на одну порцию. Фактические значения зависят от продуктов и их веса.</p>`;
@@ -213,7 +213,7 @@ if (app && main) {
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-editor-back">← Каталог</button><p class="eyebrow">FORMA · CONTENT</p><h1>${r.id?'Изменить рецепт':'Новый рецепт'}</h1><p class="muted">Заполни данные блюда. КБЖУ указывай на одну порцию.</p></section>
     <form id="forma-catalog-form" class="forma-card forma-product-form">
       <label>Название<input name="title" maxlength="160" required value="${esc(r.title||'')}"></label>
-      <label>Категория<select name="category">${['Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map(x=>`<option ${(r.category||'Обеды')===x?'selected':''}>${x}</option>`).join('')}</select></label>
+      <label>Категория<select name="category">${['Завтраки','Обеды','Ужины','Перекусы','Десерты'].map(x=>`<option ${(r.category||'Обеды')===x?'selected':''}>${x}</option>`).join('')}</select></label>
       <label>Фотография блюда
         <input id="forma-recipe-photo-file" type="file" accept="image/jpeg,image/png,image/webp">
         <small class="muted">Выбери фото из галереи или сделай снимок. JPG, PNG или WEBP, до 4 МБ.</small>
