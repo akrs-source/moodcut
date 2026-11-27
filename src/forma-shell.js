@@ -101,7 +101,7 @@ if (app && main) {
     ${chosen.length?chosen.map(p=>`<article class="forma-plan-entry"><div><small>${mealLabel(p.meal_type)}</small><b>${esc(p.title)}</b>${p.description?`<p>${esc(p.description)}</p>`:''}<span>${fmt(p.kcal||0)} ккал · Б ${fmt(p.protein_g||0)} · Ж ${fmt(p.fat_g||0)} · У ${fmt(p.carbs_g||0)}</span></div><button data-plan-remove="${esc(p.id)}" aria-label="Удалить">×</button></article>`).join(''):'<div class="forma-empty"><span>✳</span><b>Пока ничего не запланировано</b><p>Добавь блюдо или приём пищи на этот день.</p><button class="forma-primary" data-action="add-plan">Добавить в план</button></div>'}
     </section><section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
   }
-  const recipeCatalog = [
+  const defaultRecipeCatalog = [
     {id:'acai',title:'Асаи-боул',category:'Завтраки',kcal:350,p:12,f:9,c:52,time:'10 минут',image:'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=85',ingredients:[['Асаи-пюре','100 г'],['Банан','½ шт.'],['Греческий йогурт','100 г'],['Гранола','25 г'],['Ягоды','50 г']],steps:['Взбей асаи, банан и йогурт до густой кремовой текстуры.','Переложи в боул и добавь гранолу и ягоды.']},
     {id:'avocado',title:'Тост с авокадо',category:'Завтраки',kcal:410,p:17,f:23,c:35,time:'8 минут',image:'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85',ingredients:[['Цельнозерновой хлеб','2 ломтика'],['Авокадо','½ шт.'],['Яйцо','1 шт.'],['Лимонный сок','1 ч. л.'],['Микрозелень','по вкусу']],steps:['Подсуши хлеб на сухой сковороде или в тостере.','Разомни авокадо с лимонным соком, выложи на хлеб.','Добавь яйцо и микрозелень.']},
     {id:'salmon',title:'Лосось на гриле',category:'Ужины',kcal:480,p:39,f:25,c:24,time:'20 минут',image:'https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=900&q=85',ingredients:[['Филе лосося','140 г'],['Брокколи','150 г'],['Лимон','¼ шт.'],['Оливковое масло','1 ч. л.'],['Специи','по вкусу']],steps:['Приправь лосось и сбрызни лимоном.','Обжарь на гриле по 4–5 минут с каждой стороны.','Подай с приготовленной на пару брокколи.']},
@@ -111,6 +111,7 @@ if (app && main) {
     {id:'chicken',title:'Курица с овощами',category:'Ужины',kcal:420,p:42,f:14,c:31,time:'25 минут',image:'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=85',ingredients:[['Куриное филе','150 г'],['Кабачок','100 г'],['Перец сладкий','80 г'],['Булгур (сухой)','35 г'],['Оливковое масло','1 ч. л.']],steps:['Отвари булгур согласно инструкции.','Нарежь курицу и овощи, обжарь с маслом и специями до готовности.','Подавай курицу с овощами на подушке из булгура.']},
     {id:'yogurt',title:'Йогурт с гранолой',category:'Низкокалорийные',kcal:240,p:18,f:7,c:27,time:'5 минут',image:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=85',ingredients:[['Греческий йогурт','170 г'],['Гранола','20 г'],['Клубника','70 г'],['Семена чиа','5 г']],steps:['Выложи йогурт в небольшую чашу.','Добавь нарезанную клубнику, гранолу и семена чиа.']},
   ];
+  let recipeCatalog = [...defaultRecipeCatalog];
   let recipeFilter = 'Все', recipeSearch = '', activeRecipeId = null;
   const favoriteRecipes = new Set(readJSON('forma-recipe-favorites', []));
   function recipeCardHTML(r) {
@@ -128,6 +129,7 @@ if (app && main) {
     <div class="forma-cook-grid" id="forma-cook-grid">${recipeCatalog.map(recipeCardHTML).join('')}</div>
     <p class="forma-footnote forma-recipe-note">КБЖУ указано ориентировочно на одну порцию. Фактические значения зависят от продуктов и их веса.</p>`;
     bindPage();
+    const manage=main.querySelector('#forma-catalog-manage');if(manage)manage.onclick=()=>catalogAdminPage();
     const search=main.querySelector('#forma-recipe-search');
     search.addEventListener('input',()=>{recipeSearch=search.value.trim().toLocaleLowerCase('ru');updateRecipeGrid();});
     main.querySelector('#forma-recipe-clear').addEventListener('click',()=>{search.value='';recipeSearch='';updateRecipeGrid();search.focus();});
@@ -145,25 +147,67 @@ if (app && main) {
     const count=main.querySelector('#forma-recipe-count');if(count)count.textContent=list.length+' '+(list.length===1?'рецепт':list.length<5?'рецепта':'рецептов');
   }
   function recipeDetail(id) {
-    const r=recipeCatalog.find(x=>x.id===id);if(!r)return;activeRecipeId=id;
+    const r=recipeCatalog.find(x=>String(x.id)===String(id));if(!r)return;activeRecipeId=id;
     main.innerHTML=`<section class="forma-recipe-detail">
       <div class="forma-recipe-detail-hero" style="--recipe-image:url('${r.image}')"><button class="forma-recipe-back" id="forma-recipe-back" aria-label="Назад к рецептам">←</button><button class="forma-cook-fav detail-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" id="forma-detail-fav" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button></div>
-      <div class="forma-recipe-detail-body"><p class="eyebrow">${r.category.toUpperCase()} · ${r.time.toUpperCase()}</p><h1>${esc(r.title)}</h1><div class="forma-recipe-macros"><div><b>${r.kcal}</b><span>Ккал</span></div><div><b>${r.p} г</b><span>Белки</span></div><div><b>${r.f} г</b><span>Жиры</span></div><div><b>${r.c} г</b><span>Углеводы</span></div></div>
-      <section class="forma-recipe-section"><div class="forma-section-head"><div><p class="eyebrow">ПОДГОТОВЬ ЗАРАНЕЕ</p><h2>Ингредиенты</h2></div><span class="forma-tag">${r.ingredients.length} позиций</span></div><div class="forma-recipe-ingredients">${r.ingredients.map((x,i)=>`<label><input type="checkbox" data-recipe-ingredient="${i}"><span>${esc(x[0])}</span><small>${esc(x[1])}</small></label>`).join('')}</div></section>
-      <section class="forma-recipe-section"><p class="eyebrow">ПРОСТО И ПОШАГОВО</p><h2>Приготовление</h2><ol class="forma-recipe-steps">${r.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>
+      <div class="forma-recipe-detail-body"><p class="eyebrow">${r.category.toUpperCase()} · ${String(r.time||r.prep_time||'').toUpperCase()}</p><h1>${esc(r.title)}</h1><div class="forma-recipe-macros"><div><b>${r.kcal}</b><span>Ккал</span></div><div><b>${r.p ?? r.protein_g ?? 0} г</b><span>Белки</span></div><div><b>${r.f ?? r.fat_g ?? 0} г</b><span>Жиры</span></div><div><b>${r.c ?? r.carbs_g ?? 0} г</b><span>Углеводы</span></div></div>
+      <section class="forma-recipe-section"><div class="forma-section-head"><div><p class="eyebrow">ПОДГОТОВЬ ЗАРАНЕЕ</p><h2>Ингредиенты</h2></div><span class="forma-tag">${r.ingredients.length} позиций</span></div><div class="forma-recipe-ingredients">${r.ingredients.map((x,i)=>{const name=Array.isArray(x)?x[0]:x.name,amount=Array.isArray(x)?x[1]:x.amount;return `<label><input type="checkbox" data-recipe-ingredient="${i}"><span>${esc(name)}</span><small>${esc(amount||'')}</small></label>`}).join('')}</div></section>
+      <section class="forma-recipe-section"><p class="eyebrow">ПРОСТО И ПОШАГОВО</p><h2>Приготовление</h2><ol class="forma-recipe-steps">${(r.steps||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>
       <p class="forma-recipe-serving">Пищевая ценность рассчитана на одну порцию.</p></div>
       <div class="forma-recipe-bottom"><button class="forma-primary" id="forma-add-recipe-diary">Добавить в дневник за сегодня <span>→</span></button></div>
     </section>`;
     main.querySelector('#forma-recipe-back').onclick=()=>recipesPage();
     main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
     main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
-      const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':'Обед';
-      const item={name:r.title,type,grams:250,kcal:r.kcal,p:r.p,f:r.f,c:r.c,eaten_at:new Date().toISOString(),date:localDate(new Date())};
+      const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':r.category==='Перекусы'?'Перекус':'Обед';
+      const item={name:r.title,type,grams:250,kcal:r.kcal,p:r.p??r.protein_g??0,f:r.f??r.fat_g??0,c:r.c??r.carbs_g??0,eaten_at:new Date().toISOString(),date:localDate(new Date())};
       state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));
       toast('Добавлено в дневник');
       try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(type),grams:250,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'cooked',source:'recipe',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));}}catch(e){toast('Добавлено на устройстве; синхронизация не удалась');}
     };
   }
+
+  function catalogAdminPage(){
+    const list=Array.isArray(state.catalogRecipes)?state.catalogRecipes:[];
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-catalog-back">← Рецепты</button><p class="eyebrow">FORMA · ADMIN</p><h1>Каталог рецептов</h1><p class="muted">Общие рецепты, которые видят пользователи приложения.</p></section>
+    <button class="forma-primary" id="forma-catalog-new">＋ Добавить рецепт</button>
+    <div class="forma-card" style="margin-top:14px">${list.length?list.map(r=>`<article class="forma-recipe-card"><div><h2>${esc(r.title)}</h2><p>${esc(r.category)} · ${r.is_premium?'Premium':'Бесплатный'} · ${r.is_published?'Опубликован':'Скрыт'}</p><small>${r.kcal} ккал · Б ${r.protein_g} · Ж ${r.fat_g} · У ${r.carbs_g}</small></div><div class="forma-recipe-actions"><button data-catalog-edit="${r.id}">Изменить</button><button data-catalog-delete="${r.id}">×</button></div></article>`).join('<hr style="border:0;border-top:1px solid #e8ded5;margin:13px 0">'):'<p class="muted">Пока нет добавленных рецептов.</p>'}</div>`;
+    main.querySelector('#forma-catalog-back').onclick=()=>recipesPage();
+    main.querySelector('#forma-catalog-new').onclick=()=>catalogEditor();
+    main.querySelectorAll('[data-catalog-edit]').forEach(b=>b.onclick=()=>catalogEditor(list.find(x=>x.id===b.dataset.catalogEdit)));
+    main.querySelectorAll('[data-catalog-delete]').forEach(b=>b.onclick=async()=>{if(!confirm('Удалить рецепт из общего каталога?'))return;try{await api('delete_catalog_recipe',{id:b.dataset.catalogDelete});state.catalogRecipes=state.catalogRecipes.filter(x=>x.id!==b.dataset.catalogDelete);refreshRecipeCatalog();catalogAdminPage();toast('Рецепт удалён');}catch(e){toast('Не удалось удалить рецепт');}});
+  }
+  function catalogEditor(r={}){
+    const ing=(r.ingredients||[]).map(x=>Array.isArray(x)?x[0]+' | '+x[1]:x.name+' | '+(x.amount||'')).join('\\n');
+    const steps=(r.steps||[]).join('\\n');
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-editor-back">← Каталог</button><p class="eyebrow">FORMA · CONTENT</p><h1>${r.id?'Изменить рецепт':'Новый рецепт'}</h1><p class="muted">Заполни данные блюда. КБЖУ указывай на одну порцию.</p></section>
+    <form id="forma-catalog-form" class="forma-card forma-product-form">
+      <label>Название<input name="title" maxlength="160" required value="${esc(r.title||'')}"></label>
+      <label>Категория<select name="category">${['Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map(x=>`<option ${(r.category||'Обеды')===x?'selected':''}>${x}</option>`).join('')}</select></label>
+      <label>Ссылка на фотографию<input name="image_url" type="url" placeholder="https://..." value="${esc(r.image_url||'')}"></label>
+      <label>Время приготовления<input name="prep_time" value="${esc(r.prep_time||'20 минут')}"></label>
+      <label>Количество порций<input name="servings" type="number" min="1" max="50" value="${r.servings||1}"></label>
+      <div class="forma-form-divider">КБЖУ на одну порцию</div><div class="forma-nutrient-grid">
+      <label>Ккал<input name="kcal" type="number" min="0" step="0.1" value="${r.kcal||0}"></label><label>Белки<input name="protein_g" type="number" min="0" step="0.1" value="${r.protein_g||0}"></label><label>Жиры<input name="fat_g" type="number" min="0" step="0.1" value="${r.fat_g||0}"></label><label>Углеводы<input name="carbs_g" type="number" min="0" step="0.1" value="${r.carbs_g||0}"></label></div>
+      <label>Ингредиенты — каждый с новой строки, формат: продукт | количество<textarea name="ingredients" rows="6" required placeholder="Куриное филе | 150 г&#10;Рис | 50 г">${esc(ing)}</textarea></label>
+      <label>Приготовление — каждый шаг с новой строки<textarea name="steps" rows="5" required>${esc(steps)}</textarea></label>
+      <label><input type="checkbox" name="is_premium" ${r.is_premium?'checked':''}> Premium-рецепт (пока без ограничения доступа)</label>
+      <label><input type="checkbox" name="is_published" ${r.is_published!==false?'checked':''}> Опубликован в каталоге</label>
+      <button class="forma-primary">Сохранить рецепт <span>→</span></button>
+    </form>`;
+    main.querySelector('#forma-editor-back').onclick=()=>catalogAdminPage();
+    main.querySelector('#forma-catalog-form').onsubmit=async e=>{
+      e.preventDefault();const d=new FormData(e.currentTarget);
+      const ingredients=String(d.get('ingredients')).split('\\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|');return {name:p[0].trim(),amount:(p.slice(1).join('|')||'').trim()}});
+      const payload={id:r.id||undefined,title:String(d.get('title')).trim(),category:d.get('category'),image_url:d.get('image_url'),prep_time:d.get('prep_time'),servings:Number(d.get('servings')||1),kcal:Number(d.get('kcal')||0),protein_g:Number(d.get('protein_g')||0),fat_g:Number(d.get('fat_g')||0),carbs_g:Number(d.get('carbs_g')||0),ingredients,steps:String(d.get('steps')).split('\\n').map(x=>x.trim()).filter(Boolean),is_premium:d.has('is_premium'),is_published:d.has('is_published')};
+      try{const saved=await api('save_catalog_recipe',payload);if(saved?.recipe){const i=state.catalogRecipes.findIndex(x=>x.id===saved.recipe.id);if(i>=0)state.catalogRecipes[i]=saved.recipe;else state.catalogRecipes.unshift(saved.recipe);refreshRecipeCatalog();catalogAdminPage();toast('Рецепт сохранён в каталоге');}}catch(err){toast('Не удалось сохранить. Проверь обязательные поля.');}
+    };
+  }
+  function refreshRecipeCatalog(){
+    const extra=(state.catalogRecipes||[]).map(r=>({...r,id:String(r.id),time:r.prep_time,p:r.protein_g,f:r.fat_g,c:r.carbs_g,image:r.image_url||'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85'}));
+    recipeCatalog=[...extra,...defaultRecipeCatalog];
+  }
+
   function recipeForm() {
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← Рецепты</button><p class="eyebrow">ЛИЧНАЯ КОЛЛЕКЦИЯ</p><h1>Новый рецепт</h1><p class="muted">Сохрани ингредиенты и пищевую ценность одной порции.</p></section>
     <form id="forma-recipe-form" class="forma-card forma-product-form"><label>Название блюда<input name="title" maxlength="140" placeholder="Например, сырники с ягодами" required></label><label>Ингредиенты<input name="ingredients" maxlength="500" placeholder="Творог, яйцо, мука, ягоды"></label><label>Как готовить<textarea name="instructions" rows="3" placeholder="Коротко опиши приготовление"></textarea></label><div class="forma-form-divider">Пищевая ценность порции</div><div class="forma-nutrient-grid"><label>Ккал<input name="kcal" type="number" min="0" value="0"></label><label>Белки, г<input name="protein_g" type="number" min="0" step="0.1" value="0"></label><label>Жиры, г<input name="fat_g" type="number" min="0" step="0.1" value="0"></label><label>Углеводы, г<input name="carbs_g" type="number" min="0" step="0.1" value="0"></label></div><button class="forma-primary">Сохранить рецепт <span>→</span></button></form>`;
@@ -473,7 +517,7 @@ if (app && main) {
     if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.supportMessages = Array.isArray(data.support_messages) ? data.support_messages : []; if(state.isAdmin) api('admin_setup_support_webhook').catch(()=>{}); state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
+      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.catalogRecipes = Array.isArray(data.catalog)?data.catalog:[]; refreshRecipeCatalog(); state.supportMessages = Array.isArray(data.support_messages) ? data.support_messages : []; if(state.isAdmin) api('admin_setup_support_webhook').catch(()=>{}); state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
       state.meals = (data.entries || []).map(row => ({
         id: row.id, eaten_at: row.eaten_at, date: row.eaten_at ? localDate(row.eaten_at) : localDate(new Date()), name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
