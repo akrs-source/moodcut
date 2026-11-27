@@ -737,8 +737,8 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-recipe-section{margin-top:18px!important}
 .forma-recipe-section h2{font-size:25px!important;margin-bottom:9px!important}
 .forma-recipe-ingredients label{min-height:41px!important;padding:7px 10px!important;font-size:11px!important}
-.forma-recipe-steps{padding-left:20px!important}
-.forma-recipe-steps li{font-size:11px!important;line-height:1.55!important;padding:3px 0!important}
+.forma-recipe-steps{list-style:none!important;padding:0!important;margin:0!important;counter-reset:recipe-step;display:grid!important;gap:10px!important}
+.forma-recipe-steps li{position:relative!important;font-size:12px!important;line-height:1.55!important;padding:12px 14px 12px 48px!important;min-height:44px;box-sizing:border-box}
 .forma-recipe-bottom{padding:8px!important}
 .forma-recipe-bottom .forma-primary{min-height:43px!important;font-size:11px!important}
 @media(max-width:420px){
