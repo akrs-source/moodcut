@@ -407,6 +407,29 @@ Deno.serve(async (req: Request) => {
     }
 
 
+    if (action === "cancel_pro_subscription") {
+      const rows = await db("forma_subscriptions",
+        `telegram_id=eq.${telegram_id}&select=plan_code,status,expires_at,last_charge_id,is_recurring&limit=1`);
+      const current = rows?.[0];
+      if (!current || current.status !== "active" || new Date(current.expires_at).getTime() <= Date.now()) {
+        return json({ error: "active_subscription_not_found" }, 404);
+      }
+      if (!current.last_charge_id || current.is_recurring !== true) {
+        return json({ error: "auto_renew_not_active" }, 409);
+      }
+      const cancelResponse = await fetch(`https://api.telegram.org/bot${token}/editUserStarSubscription`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: Number(telegram_id), telegram_payment_charge_id: current.last_charge_id, is_canceled: true }),
+      });
+      const cancelResult = await cancelResponse.json();
+      if (!cancelResponse.ok || !cancelResult?.ok || cancelResult?.result !== true) {
+        throw new Error(cancelResult?.description || "subscription_cancel_failed");
+      }
+      await db("forma_subscriptions", `telegram_id=eq.${telegram_id}`, "PATCH",
+        { is_recurring: false, updated_at: new Date().toISOString() });
+      return json({ ok: true, auto_renew: false, expires_at: current.expires_at });
+    }
+
     if (action === "create_pro_invoice") {
       const planCode = String(payload.plan_code || "pro");
       const plans: Record<string, { amount: number; title: string; description: string; recurring: boolean }> = {
