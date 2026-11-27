@@ -160,3 +160,11 @@ html body textarea{font-size:16px!important;}
 .forma-subscription-actions button{min-height:28px!important;padding:0 9px!important;border-radius:9px!important;font-size:10px!important}
 .forma-admin-users-card .forma-footnote{font-size:10px!important}
 @media(min-width:560px){.forma-subscription-row{grid-template-columns:minmax(0,1fr) auto auto!important}}
+
+
+.forma-subscription-info{padding:18px!important}
+.forma-subscription-info h2{font-size:22px;margin:6px 0 8px}
+.forma-subscription-info .muted{font-size:13px;line-height:1.45}
+.forma-subscription-info-date{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line,#e9e3d9);font-size:13px}
+.forma-subscription-info-date span{color:var(--muted,#777)}
+.forma-subscription-info-date b{font-weight:600}
