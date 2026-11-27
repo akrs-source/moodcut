@@ -136,6 +136,46 @@ Deno.serve(async (req: Request) => {
         is_admin: isAdmin, catalog: catalog || [] });
     }
 
+    if (action === "upload_catalog_image") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      const mime = String(payload.mime_type || "").toLowerCase();
+      const extByMime: Record<string,string> = { "image/jpeg":"jpg", "image/png":"png", "image/webp":"webp" };
+      if (!extByMime[mime]) return json({ error: "unsupported_image_type" }, 400);
+      const encoded = String(payload.base64 || "");
+      if (!encoded || encoded.length > 5_600_000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(encoded)) {
+        return json({ error: "image_too_large_or_invalid" }, 400);
+      }
+      const binary = atob(encoded);
+      if (binary.length > 4 * 1024 * 1024) return json({ error: "image_too_large" }, 413);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const { url, headers } = getAdminHeaders();
+      const bucket = "forma-recipe-images";
+      const authHeaders = { ...headers, Authorization: headers.Authorization || ("Bearer " + headers.apikey) };
+      const bucketResponse = await fetch(`${url}/storage/v1/bucket`, {
+        method: "POST", headers: authHeaders,
+        body: JSON.stringify({ id: bucket, name: bucket, public: true, file_size_limit: 4194304, allowed_mime_types: ["image/jpeg","image/png","image/webp"] }),
+      });
+      if (!bucketResponse.ok && bucketResponse.status !== 409) {
+        const detail = await bucketResponse.text();
+        if (bucketResponse.status !== 400 || !detail.toLowerCase().includes("already")) {
+          throw new Error("storage_bucket_error_" + bucketResponse.status + ":" + detail.slice(0,200));
+        }
+      }
+      const objectPath = "recipes/" + crypto.randomUUID() + "." + extByMime[mime];
+      const uploadResponse = await fetch(`${url}/storage/v1/object/${bucket}/${objectPath}`, {
+        method: "POST",
+        headers: { ...authHeaders, "Content-Type": mime, "x-upsert": "false" },
+        body: bytes,
+      });
+      if (!uploadResponse.ok) {
+        const detail = await uploadResponse.text();
+        throw new Error("storage_upload_error_" + uploadResponse.status + ":" + detail.slice(0,250));
+      }
+      const imageUrl = `${url}/storage/v1/object/public/${bucket}/${objectPath}`;
+      return json({ ok: true, image_url: imageUrl });
+    }
+
     if (action === "save_catalog_recipe" || action === "delete_catalog_recipe") {
       if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
       if (action === "delete_catalog_recipe") {
