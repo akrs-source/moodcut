@@ -135,3 +135,28 @@ html body textarea{font-size:16px!important;}
 .forma-subscription-actions button{min-height:32px;padding-inline:10px}
 .forma-admin-form-card .forma-product-form{gap:9px}
 .forma-admin-form-card input{min-height:40px}
+
+
+/* Extra compact subscription management screen */
+.forma-admin-subscriptions-intro{margin-bottom:12px!important}
+.forma-admin-subscriptions-intro h1{font-size:27px!important;margin:4px 0!important}
+.forma-admin-subscriptions-intro .muted{margin-top:3px!important}
+.forma-admin-form-card,.forma-admin-users-card{padding:11px!important;margin-bottom:10px!important;border-radius:16px!important}
+.forma-admin-form-card>.eyebrow,.forma-admin-users-card .eyebrow{margin:0 0 7px!important;font-size:10px!important}
+.forma-subscription-form{gap:7px!important}
+.forma-subscription-form label{gap:4px!important;font-size:11px!important}
+.forma-subscription-form input{min-height:36px!important;height:36px!important;padding:0 10px!important;border-radius:10px!important;font-size:13px!important}
+.forma-subscription-fields{gap:7px!important}
+.forma-subscription-form .forma-primary{min-height:39px!important;padding:8px 12px!important;border-radius:11px!important;font-size:12px!important}
+.forma-admin-users-card .forma-card-head{margin-bottom:4px!important}
+.forma-admin-users-card h2{font-size:18px!important;margin:0!important}
+.forma-admin-users-card .muted{font-size:11px!important;margin:3px 0!important}
+.forma-admin-users-card .forma-admin-search-label{margin:6px 0 8px!important}
+.forma-subscription-row{grid-template-columns:minmax(0,1fr) auto;gap:4px 8px!important;padding:7px 0!important}
+.forma-subscription-user b{font-size:12px!important;line-height:1.2}
+.forma-subscription-user small,.forma-subscription-meta small{font-size:10px!important;line-height:1.2}
+.forma-subscription-meta{gap:2px!important}
+.forma-subscription-actions{gap:5px!important}
+.forma-subscription-actions button{min-height:28px!important;padding:0 9px!important;border-radius:9px!important;font-size:10px!important}
+.forma-admin-users-card .forma-footnote{font-size:10px!important}
+@media(min-width:560px){.forma-subscription-row{grid-template-columns:minmax(0,1fr) auto auto!important}}
