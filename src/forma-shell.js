@@ -60,16 +60,19 @@ if (app && main) {
     body: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V14M10 19.5V9M16 19.5V4.5M22 19.5H2"/></svg>',
     profile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-3.5 3.4-5.5 7.5-5.5s6.7 2 7.5 5.5"/></svg>'
   };
-  const navLabels = {home:'Сегодня',diary:'Питание',menu:'План',body:'Прогресс',profile:'Профиль'};
+  const navLabels = {home:'Дневник',diary:'Питание',menu:'План',recipes:'Рецепты',body:'Прогресс',profile:'Профиль'};
   nav.forEach(b=>{const key=b.dataset.tab;if(navIcons[key])b.innerHTML='<span class="nav-icon">'+navIcons[key]+'</span><small>'+navLabels[key]+'</small>';});
   const mealsHTML = () => diaryMeals().length ? diaryMeals().map(m=>`<article class="forma-food-row"><div class="forma-food-icon">✳</div><div class="forma-food-main"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${m.grams} г · ${fmt(m.kcal)} ккал</span><small>Б ${m.p} г · Ж ${m.f} г · У ${m.c} г</small></div><button class="forma-remove" data-remove="${esc(String(m.id || ''))}" aria-label="Удалить">×</button></article>`).join('') : '<div class="forma-empty"><span>＋</span><b>Дневник пока пуст</b><p>Добавь первый продукт или блюдо — показатели обновятся автоматически.</p></div>';
   function home() {
-    const t=totals(todayMeals()), left=Math.max(0,targets.kcal-t.kcal), pct=Math.min(100,t.kcal/targets.kcal*100), today=new Date(), day=today.toLocaleDateString('ru-RU',{weekday:'long'}).toUpperCase(), date=today.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}).toUpperCase();
-    return `<section class="forma-greeting"><div><p class="eyebrow">${day} · ТВОЙ РИТМ</p><h1>День начинается<br>с заботы о себе.</h1><p class="muted">Не идеальный план. Подходящий именно тебе.</p></div><span class="forma-date">${date}</span></section>
-    <section class="forma-home-grid"><article class="forma-card forma-energy"><div class="forma-card-head"><div><p class="eyebrow">ТВОЙ БАЛАНС</p><h2>Питание сегодня</h2></div><span class="forma-tag">ТВОИ ОРИЕНТИРЫ</span></div><div class="forma-energy-line"><div class="forma-donut" style="--pct:${pct}%"><div><b>${fmt(left)}</b><span>ккал осталось</span></div></div><div class="forma-energy-numbers"><span>Уже съедено</span><b>${fmt(t.kcal)} <small>/ ${fmt(targets.kcal)} ккал</small></b><span>Твоя цель на день</span><b>${fmt(targets.kcal)} ккал</b></div></div><div class="forma-macros">${[['Белки','p',targets.protein,'#7c9273'],['Жиры','f',targets.fat,'#c7a783'],['Углеводы','c',targets.carbs,'#9ba9b4']].map(([n,k,g,col])=>`<div><div><span>${n}</span><b>${fmt(t[k])} / ${g} г</b></div><i><em style="width:${Math.min(100,t[k]/g*100)}%;background:${col}"></em></i></div>`).join('')}</div><p class="forma-footnote">Ориентиры рассчитаны по твоим параметрам и могут быть изменены в профиле.</p><button class="forma-primary" data-action="diary">Добавить еду <span>＋</span></button></article>
-    <article class="forma-card forma-insight"><p class="eyebrow">ПОДСКАЗКА FORMA</p><div class="forma-spark">✳</div><h2>Твой день — не гонка.</h2><p>Записывай питание в своём темпе. Мы поможем увидеть общую картину, а не зацикливаться на одной цифре.</p><button class="forma-link" data-action="chat">Обсудить с помощником ↗</button></article></section>
-    <section class="forma-section-head"><div><p class="eyebrow">ТВОЙ ДЕНЬ</p><h2>Приёмы пищи</h2></div><button class="forma-link" data-action="diary">Весь дневник ↗</button></section><section class="forma-meals-preview">${mealsHTML()}</section>
-    <section class="forma-next"><div><span class="forma-next-icon">↗</span><div><b>Следующий шаг</b><p>Добавь то, что уже ел(а), чтобы видеть актуальный баланс.</p></div></div><button data-action="diary">Записать</button></section>`;
+    const t=totals(todayMeals()), pct=Math.min(100,targets.kcal?t.kcal/targets.kcal*100:0);
+    const firstName=(tg?.initDataUnsafe?.user?.first_name || state.profile?.first_name || 'Анджелина').trim();
+    const today=todayMeals(), mealOrder=['Завтрак','Обед','Перекус','Ужин'];
+    const mealCards=today.length?mealOrder.map(type=>{const item=today.find(m=>m.type===type);if(!item)return '';return '<article class="forma-meal-glass"><div class="forma-meal-thumb" role="img" aria-label="Приём пищи"></div><div class="forma-meal-copy"><span>'+type+'</span><b>'+esc(item.name)+'</b><small>'+fmt(item.kcal)+' ккал · '+fmt(item.grams)+' г</small></div><span class="forma-meal-check">✓</span></article>';}).join(''):'<div class="forma-meal-empty">Твои приёмы пищи появятся здесь после первой записи.</div>';
+    return '<section class="forma-greeting forma-editorial-hero"><div class="forma-greeting-copy"><p class="forma-brand-kicker">ТВОЁ ПРОСТРАНСТВО ЗАБОТЫ</p><h1>Доброе утро,<br>'+esc(firstName)+' ♡</h1></div><span class="forma-date">'+new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})+'</span></section>' +
+    '<section class="forma-card forma-glass-energy"><div class="forma-energy-ring" style="--pct:'+pct+'%"><div><b>'+fmt(t.kcal)+'</b><span>из '+fmt(targets.kcal)+' ккал</span></div></div><div class="forma-glass-macros"><div><b>'+fmt(t.p)+' г</b><span>Белки</span></div><div><b>'+fmt(t.f)+' г</b><span>Жиры</span></div><div><b>'+fmt(t.c)+' г</b><span>Углеводы</span></div></div><button class="forma-energy-open" data-action="diary" aria-label="Открыть дневник">→</button></section>' +
+    '<button class="forma-plan-banner" data-action="chat"><span class="forma-banner-star">✧</span><span>Сегодня всё по плану</span><span class="forma-banner-arrow">→</span></button>' +
+    '<section class="forma-editorial-meals"><div class="forma-section-head"><div><p class="eyebrow">ТВОЙ ДЕНЬ</p><h2>Приёмы пищи</h2></div><button class="forma-link" data-action="diary">Все ›</button></div><div class="forma-meal-stack">'+mealCards+'</div></section>' +
+    '<button class="forma-weekly-link" data-action="weekly-plan">Открыть план питания <span>↗</span></button>';
   }
   function diary() {
     const dayMeals=diaryMeals(),t=totals(dayMeals),selectedDate=new Date(state.diaryDate+'T12:00:00'),today=localDate(new Date()),dayTitle=state.diaryDate===today?'Сегодня':selectedDate.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
@@ -251,6 +254,7 @@ if (app && main) {
   function render(tab) {
     state.tab=tab; nav.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
     if(tab==='home' && !state.goals) { onboarding(); return; }
+    if(tab==='recipes'){recipesPage();return;}
     main.innerHTML=tab==='home'?home():tab==='diary'?diary():tab==='menu'?plan():tab==='body'?progress():tab==='profile'?profile():chat();
     bindPage();
   }
@@ -340,7 +344,7 @@ if (app && main) {
     const pfm=main.querySelector('#forma-product-form');if(pfm)pfm.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pfm);const grams=Number(d.get('grams')),factor=grams/100;const item={name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor,weight_state:d.get('state')||'label',eaten_at:new Date(state.diaryDate+'T12:00:00').toISOString(),date:state.diaryDate};state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(item.type),grams:item.grams,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:item.weight_state,source:'manual',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));toast('Запись синхронизирована с аккаунтом');}}catch(err){toast('Запись сохранена на устройстве; синхронизация не удалась');}});
   }
   function action(a) {
-    if(a==='diary'){render('diary');return;} if(a==='chat'){render('chat');return;}
+    if(a==='diary'){render('diary');return;} if(a==='chat'){render('chat');return;} if(a==='weekly-plan'){render('menu');return;}
     if(a==='add-product'){productForm();return;} if(a==='add-plan'){planForm();return;}
     if(a==='settings-goals'){goalsEditor();return;} if(a==='settings-food'){preferencesEditor();return;}
     if(a==='shopping'){shoppingList();return;} if(a==='recipes'){recipesPage();return;} if(a==='add-recipe'){recipeForm();return;} if(a==='shopping-clear'){state.shopping=state.shopping.filter(x=>!x.done);storage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();return;}
