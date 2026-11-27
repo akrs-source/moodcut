@@ -63,7 +63,7 @@ if (app && main) {
   };
   const navLabels = {home:'Дневник',diary:'Питание',menu:'План',recipes:'Рецепты',body:'Прогресс',profile:'Профиль'};
   nav.forEach(b=>{const key=b.dataset.tab;if(navIcons[key])b.innerHTML='<span class="nav-icon">'+navIcons[key]+'</span><small>'+navLabels[key]+'</small>';});
-  const mealsHTML = () => diaryMeals().length ? diaryMeals().map(m=>`<article class="forma-food-row">${m.image_url?`<div class="forma-food-icon forma-food-photo"><img src="${esc(m.image_url)}" alt="${esc(m.name)}"></div>`:'<div class="forma-food-icon">✳</div>'}<div class="forma-food-main"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${m.grams} г · ${fmt(m.kcal)} ккал</span><small>Б ${m.p} г · Ж ${m.f} г · У ${m.c} г</small></div><button class="forma-remove" data-remove="${esc(String(m.id || ''))}" aria-label="Удалить">×</button></article>`).join('') : '<div class="forma-empty"><span>＋</span><b>Дневник пока пуст</b><p>Добавь первый продукт или блюдо — показатели обновятся автоматически.</p></div>';
+  const mealsHTML = () => diaryMeals().length ? diaryMeals().map(m=>`<article class="forma-food-row">${m.image_url?`<div class="forma-food-icon forma-food-photo"><img src="${esc(m.image_url)}" alt="${esc(m.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></div>`:'<div class="forma-food-icon">✳</div>'}<div class="forma-food-main"><b>${esc(m.name)}</b><span>${esc(m.type)} · ${m.grams} г · ${fmt(m.kcal)} ккал</span><small>Б ${m.p} г · Ж ${m.f} г · У ${m.c} г</small></div><button class="forma-remove" data-remove="${esc(String(m.id || ''))}" aria-label="Удалить">×</button></article>`).join('') : '<div class="forma-empty"><span>＋</span><b>Дневник пока пуст</b><p>Добавь первый продукт или блюдо — показатели обновятся автоматически.</p></div>';
   const timeGreeting = () => { const hour = new Date().getHours(); return hour >= 5 && hour < 12 ? 'Доброе утро' : hour >= 12 && hour < 17 ? 'Добрый день' : hour >= 17 && hour < 23 ? 'Добрый вечер' : 'Доброй ночи'; };
   function home() {
     const t=totals(todayMeals()), pct=Math.min(100,targets.kcal?t.kcal/targets.kcal*100:0);
@@ -152,7 +152,7 @@ if (app && main) {
     main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
     main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
       const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':r.category==='Перекусы'?'Перекус':'Обед';
-      const item={name:r.title,type,grams:250,kcal:r.kcal,p:r.p??r.protein_g??0,f:r.f??r.fat_g??0,c:r.c??r.carbs_g??0,eaten_at:new Date().toISOString(),date:localDate(new Date())};
+      const item={name:r.title,type,grams:250,kcal:r.kcal,p:r.p??r.protein_g??0,f:r.f??r.fat_g??0,c:r.c??r.carbs_g??0,image_url:r.image_url||r.image||null,eaten_at:new Date().toISOString(),date:localDate(new Date())};
       state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));
       toast('Добавлено в дневник');
       try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(type),grams:250,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'cooked',source:'recipe',image_url:item.image_url,eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));}}catch(e){toast('Добавлено на устройстве; синхронизация не удалась');}
