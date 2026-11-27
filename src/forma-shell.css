@@ -614,3 +614,16 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-chart-change{font-size:10px!important;margin:5px 0 0!important}
 .forma-measure-delta{padding:8px 0;gap:6px}
 @media(max-width:370px){.forma-progress-tile{padding:10px}.forma-progress-tile>b{font-size:20px}}
+
+/* FORMA support: keep conversation inside its own scroll area */
+.forma-chat-window{
+  height: min(52vh, 430px);
+  min-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  align-content: start;
+  padding: 2px 3px 10px;
+  scrollbar-width: thin;
+}
+.forma-chat-message{flex: 0 0 auto;overflow-wrap:anywhere;}
