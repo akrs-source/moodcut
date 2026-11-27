@@ -618,11 +618,9 @@ if (app && main) {
       try {
         const result=await api('send_support_message',{message:v});
         if(!result?.message)throw new Error('support_message_missing');
-        state.supportMessages.push(result.message);
         cf.reset();
-        const box=main.querySelector('#forma-chat-messages');
-        if(box){box.innerHTML=supportChatMessages();box.scrollTop=box.scrollHeight;}
-      } catch(err) { toast('Не удалось отправить вопрос. Открой FORMA через Telegram и попробуй ещё раз.'); }
+        await hydrate();
+      } catch(err) { const reason=String(err?.message||''); toast(reason.includes('quota_exhausted')?'Лимит обращений закончился. Можно добавить вопрос за 150 ⭐.':reason.includes('support_plan_required')?'Для личных обращений нужен тариф PRO + поддержка.':'Не удалось отправить вопрос. Открой FORMA через Telegram и попробуй ещё раз.'); }
       finally { if(button)button.disabled=false; }
     });
     const foodSearch=main.querySelector('#forma-food-search');
