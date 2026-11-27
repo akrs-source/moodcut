@@ -471,13 +471,13 @@ if (app && main) {
           toast('Подписка PRO выдана');
           await adminSubscriptionsPage();
         } catch(err) {
-          toast('Не удалось выдать подписку');
+          toast('Ошибка: '+String(err?.message||'неизвестная ошибка').slice(0,110));
           if(button)button.disabled=false;
         }
       });
       main.querySelectorAll('[data-sub-grant]').forEach(button=>button.addEventListener('click',async()=>{
         try { await api('admin_set_subscription',{operation:'grant',telegram_id:button.dataset.subGrant,days:30}); toast('Добавлено 30 дней PRO'); await adminSubscriptionsPage(); }
-        catch(e){toast('Не удалось продлить подписку');}
+        catch(e){toast('Ошибка: '+String(e?.message||'неизвестная ошибка').slice(0,110));}
       }));
       main.querySelectorAll('[data-sub-revoke]').forEach(button=>button.addEventListener('click',async()=>{
         if(!confirm('Отключить подписку PRO для этого пользователя?'))return;
