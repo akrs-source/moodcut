@@ -148,10 +148,6 @@ if (app && main) {
     </article>`;
   }
   function recipesPage() {
-    if (!hasPro()) {
-      main.innerHTML = '<section class="forma-page-intro"><p class="eyebrow">FORMA · PRO</p><h1>Книга рецептов</h1><p class="muted">Полный каталог блюд, подборки и поиск по ингредиентам доступны по подписке.</p></section><section class="forma-card forma-pro-lock"><p class="eyebrow">ВХОДИТ В PRO</p><h2>Рецепты на каждый день</h2><p>Открывай весь каталог рецептов, ищи блюда по ингредиентам и сохраняй любимые варианты.</p><button class="forma-primary" data-action="setting-subscription">Посмотреть PRO <span>→</span></button></section>';
-      bindPage(); return;
-    }
     recipeFilter='Все'; recipeSearch='';
     main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p>${state.isAdmin?`<button class="forma-primary" id="forma-catalog-manage" style="margin-top:12px">Управлять каталогом <span>→</span></button>`:''}</section>
     <label class="forma-recipe-search"><span>⌕</span><input id="forma-recipe-search" type="search" placeholder="Найти блюдо или ингредиент..." autocomplete="off"><button type="button" id="forma-recipe-clear" aria-label="Очистить поиск">×</button></label>
