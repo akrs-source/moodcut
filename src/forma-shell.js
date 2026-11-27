@@ -124,8 +124,8 @@ if (app && main) {
     recipeFilter='Все'; recipeSearch='';
     main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p>${state.isAdmin?`<button class="forma-primary" id="forma-catalog-manage" style="margin-top:12px">Управлять каталогом <span>→</span></button>`:''}</section>
     <label class="forma-recipe-search"><span>⌕</span><input id="forma-recipe-search" type="search" placeholder="Найти блюдо или ингредиент..." autocomplete="off"><button type="button" id="forma-recipe-clear" aria-label="Очистить поиск">×</button></label>
-    <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Низкокалорийные'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
-    <div class="forma-recipe-results-head"><span id="forma-recipe-count">8 рецептов</span><span>НА КАЖДЫЙ ДЕНЬ</span></div>
+    <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
+    <div class="forma-recipe-results-head"><span id="forma-recipe-count">${recipeCatalog.length} рецептов</span><span>НА КАЖДЫЙ ДЕНЬ</span></div>
     <div class="forma-cook-grid" id="forma-cook-grid">${recipeCatalog.map(recipeCardHTML).join('')}</div>
     <p class="forma-footnote forma-recipe-note">КБЖУ указано ориентировочно на одну порцию. Фактические значения зависят от продуктов и их веса.</p>`;
     bindPage();
