@@ -184,7 +184,13 @@ if (app && main) {
     <form id="forma-catalog-form" class="forma-card forma-product-form">
       <label>Название<input name="title" maxlength="160" required value="${esc(r.title||'')}"></label>
       <label>Категория<select name="category">${['Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map(x=>`<option ${(r.category||'Обеды')===x?'selected':''}>${x}</option>`).join('')}</select></label>
-      <label>Ссылка на фотографию<input name="image_url" type="url" placeholder="https://..." value="${esc(r.image_url||'')}"></label>
+      <label>Фотография блюда
+        <input id="forma-recipe-photo-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+        <small class="muted">Выбери фото из галереи или сделай снимок. JPG, PNG или WEBP, до 4 МБ.</small>
+        <span id="forma-recipe-photo-status" class="muted">${r.image_url?'Фото уже добавлено. Можно заменить.':'Фото пока не выбрано.'}</span>
+        <img id="forma-recipe-photo-preview" src="${esc(r.image_url||'')}" alt="Предпросмотр фото" style="display:${r.image_url?'block':'none'};width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-top:8px">
+        <input name="image_url" type="url" placeholder="Ссылка появится после загрузки фото" value="${esc(r.image_url||'')}">
+      </label>
       <label>Время приготовления<input name="prep_time" value="${esc(r.prep_time||'20 минут')}"></label>
       <label>Количество порций<input name="servings" type="number" min="1" max="50" value="${r.servings||1}"></label>
       <div class="forma-form-divider">КБЖУ на одну порцию</div><div class="forma-nutrient-grid">
@@ -196,6 +202,32 @@ if (app && main) {
       <button class="forma-primary">Сохранить рецепт <span>→</span></button>
     </form>`;
     main.querySelector('#forma-editor-back').onclick=()=>catalogAdminPage();
+    const photoInput=main.querySelector('#forma-recipe-photo-file');
+    const photoUrlInput=main.querySelector('[name="image_url"]');
+    const photoStatus=main.querySelector('#forma-recipe-photo-status');
+    const photoPreview=main.querySelector('#forma-recipe-photo-preview');
+    photoInput.onchange=async()=>{
+      const file=photoInput.files?.[0];
+      if(!file)return;
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)){toast('Выбери JPG, PNG или WEBP');photoInput.value='';return;}
+      if(file.size>4*1024*1024){toast('Фото должно быть не больше 4 МБ');photoInput.value='';return;}
+      photoStatus.textContent='Загружаю фотографию…';
+      photoInput.disabled=true;
+      try{
+        const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('Не удалось прочитать фото'));reader.readAsDataURL(file);});
+        const base64=String(dataUrl).split(',')[1]||'';
+        const uploaded=await api('upload_catalog_image',{mime_type:file.type,base64});
+        if(!uploaded?.image_url)throw new Error('Не получена ссылка на фото');
+        photoUrlInput.value=uploaded.image_url;
+        photoPreview.src=uploaded.image_url;
+        photoPreview.style.display='block';
+        photoStatus.textContent='Фото загружено. Оно будет добавлено к рецепту после сохранения.';
+        toast('Фотография загружена');
+      }catch(err){
+        photoStatus.textContent='Не удалось загрузить фото. Попробуй ещё раз.';
+        toast(err?.message||'Ошибка загрузки фотографии');
+      }finally{photoInput.disabled=false;}
+    };
     main.querySelector('#forma-catalog-form').onsubmit=async e=>{
       e.preventDefault();const d=new FormData(e.currentTarget);
       const ingredients=String(d.get('ingredients')).split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|');return {name:p[0].trim(),amount:(p.slice(1).join('|')||'').trim()}});
