@@ -759,3 +759,11 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
   backdrop-filter:none!important;
 }
 .avatar{font-size:15px!important;color:#51463e!important}
+
+
+/* Food search: clearer distinction between staple foods and branded products */
+.forma-food-kind{display:inline-flex;width:max-content;max-width:100%;font:600 9px 'DM Sans',sans-serif;font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:#7d725f;background:#f1ece5;border-radius:6px;padding:4px 7px}
+.forma-food-result .forma-food-macros{color:#4c463e;font-size:10px;font-weight:600}
+.forma-food-result>span{gap:6px}
+.forma-food-result i{align-self:center}
+.forma-food-result:active{transform:scale(.99)}
