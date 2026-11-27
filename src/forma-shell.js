@@ -100,7 +100,7 @@ if (app && main) {
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← План</button><p class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</p><h1>Книга рецептов</h1><p class="muted">Сохраняй любимые блюда и добавляй их в недельный план.</p></section>
     <div class="forma-section-head"><div><p class="eyebrow">СОХРАНЁННОЕ</p><h2>Мои рецепты</h2></div><button class="forma-link" data-action="add-recipe">＋ Добавить</button></div>
     ${state.recipes.length?state.recipes.map(r=>`<article class="forma-card forma-recipe-card"><div><h2>${esc(r.title)}</h2><p>${esc(r.ingredients||'Состав не указан')}</p><small>${fmt(r.kcal||0)} ккал · Б ${fmt(r.protein_g||0)} · Ж ${fmt(r.fat_g||0)} · У ${fmt(r.carbs_g||0)}</small></div><div class="forma-recipe-actions"><button data-recipe-plan="${r.id}">В план <span>↗</span></button><button data-recipe-remove="${r.id}" aria-label="Удалить">×</button></div></article>`).join(''):'<div class="forma-card forma-empty"><span>✳</span><b>Здесь пока нет рецептов</b><p>Добавь блюдо, которое хочешь сохранить и использовать в меню.</p><button class="forma-primary" data-action="add-recipe">Добавить рецепт</button></div>'}
-    <p class="forma-footnote">Твои рецепты пока хранятся на этом устройстве.</p>`;
+    <p class="forma-footnote">Рецепты сохраняются в твоём аккаунте и доступны на других устройствах.</p>`;
     main.querySelector('#forma-back').onclick=()=>render('menu');bindPage();
   }
   function recipeForm() {
@@ -115,7 +115,7 @@ if (app && main) {
     <section class="forma-card forma-shopping-list"><div class="forma-section-head"><div><p class="eyebrow">НУЖНО КУПИТЬ</p><h2>Список</h2></div><span class="forma-tag">${active.length} осталось</span></div>
     ${active.length?active.map(x=>`<div class="forma-shopping-row"><label><input type="checkbox" data-shopping-toggle="${x.id}"><span>${esc(x.name)}</span></label><button data-shopping-remove="${x.id}" aria-label="Удалить">×</button></div>`).join(''):'<div class="forma-empty"><span>✓</span><b>Пока всё куплено</b><p>Добавь продукты, которые понадобятся.</p></div>'}
     ${done.length?`<div class="forma-shopping-done-head"><span>УЖЕ КУПЛЕНО · ${done.length}</span><button data-action="shopping-clear">Очистить</button></div>${done.map(x=>`<div class="forma-shopping-row is-done"><label><input type="checkbox" checked data-shopping-toggle="${x.id}"><span>${esc(x.name)}</span></label><button data-shopping-remove="${x.id}" aria-label="Удалить">×</button></div>`).join('')}`:''}
-    </section><p class="forma-footnote">Список пока хранится на этом устройстве.</p>`;
+    </section><p class="forma-footnote">Список покупок синхронизируется с твоим аккаунтом.</p>`;
     main.querySelector('#forma-back').onclick=()=>render('menu');bindPage();
   }
   function progress() {
