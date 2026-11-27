@@ -184,6 +184,10 @@ Deno.serve(async (req) => {
             ? new Date(Number(payment.subscription_expiration_date) * 1000).toISOString()
             : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
         );
+        if (planCode === "extra_question" && (!currentSub || currentSub.plan_code !== "pro_support"
+          || currentSub.status !== "active" || new Date(currentSub.expires_at).getTime() <= Date.now())) {
+          return json({ error: "forma_support_subscription_missing" }, 409);
+        }
         const { error: eventError } = await db.from("forma_payment_events").insert({
           telegram_payment_charge_id: chargeId, telegram_id: payerId,
           invoice_payload: payload, plan_code: planCode, total_amount: Number(payment.total_amount),
@@ -195,10 +199,6 @@ Deno.serve(async (req) => {
           throw eventError;
         }
         if (planCode === "extra_question") {
-          if (!currentSub || currentSub.plan_code !== "pro_support" || currentSub.status !== "active"
-            || new Date(currentSub.expires_at).getTime() <= Date.now()) {
-            return json({ error: "forma_support_subscription_missing" }, 409);
-          }
           const { data: quotaRow, error: quotaError } = await db.from("forma_subscriptions")
             .select("support_questions_bonus").eq("telegram_id", payerId).single();
           if (quotaError) throw quotaError;
