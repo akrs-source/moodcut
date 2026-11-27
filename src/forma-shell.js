@@ -100,12 +100,68 @@ if (app && main) {
     ${chosen.length?chosen.map(p=>`<article class="forma-plan-entry"><div><small>${mealLabel(p.meal_type)}</small><b>${esc(p.title)}</b>${p.description?`<p>${esc(p.description)}</p>`:''}<span>${fmt(p.kcal||0)} ккал · Б ${fmt(p.protein_g||0)} · Ж ${fmt(p.fat_g||0)} · У ${fmt(p.carbs_g||0)}</span></div><button data-plan-remove="${esc(p.id)}" aria-label="Удалить">×</button></article>`).join(''):'<div class="forma-empty"><span>✳</span><b>Пока ничего не запланировано</b><p>Добавь блюдо или приём пищи на этот день.</p><button class="forma-primary" data-action="add-plan">Добавить в план</button></div>'}
     </section><section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
   }
+  const recipeCatalog = [
+    {id:'acai',title:'Асаи-боул',category:'Завтраки',kcal:350,p:12,f:9,c:52,time:'10 минут',image:'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=85',ingredients:[['Асаи-пюре','100 г'],['Банан','½ шт.'],['Греческий йогурт','100 г'],['Гранола','25 г'],['Ягоды','50 г']],steps:['Взбей асаи, банан и йогурт до густой кремовой текстуры.','Переложи в боул и добавь гранолу и ягоды.']},
+    {id:'avocado',title:'Тост с авокадо',category:'Завтраки',kcal:410,p:17,f:23,c:35,time:'8 минут',image:'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85',ingredients:[['Цельнозерновой хлеб','2 ломтика'],['Авокадо','½ шт.'],['Яйцо','1 шт.'],['Лимонный сок','1 ч. л.'],['Микрозелень','по вкусу']],steps:['Подсуши хлеб на сухой сковороде или в тостере.','Разомни авокадо с лимонным соком, выложи на хлеб.','Добавь яйцо и микрозелень.']},
+    {id:'salmon',title:'Лосось на гриле',category:'Ужины',kcal:480,p:39,f:25,c:24,time:'20 минут',image:'https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=900&q=85',ingredients:[['Филе лосося','140 г'],['Брокколи','150 г'],['Лимон','¼ шт.'],['Оливковое масло','1 ч. л.'],['Специи','по вкусу']],steps:['Приправь лосось и сбрызни лимоном.','Обжарь на гриле по 4–5 минут с каждой стороны.','Подай с приготовленной на пару брокколи.']},
+    {id:'quinoa',title:'Киноа-боул',category:'Обеды',kcal:370,p:18,f:13,c:46,time:'25 минут',image:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=85',ingredients:[['Киноа (сухая)','50 г'],['Нут','70 г'],['Огурец','70 г'],['Томаты черри','80 г'],['Фета','25 г']],steps:['Промой киноа и отвари до готовности.','Нарежь овощи, нут промой и обсуши.','Собери боул, добавь фету и заправку по вкусу.']},
+    {id:'syrniki',title:'Сырники с ягодами',category:'Завтраки',kcal:390,p:27,f:12,c:40,time:'20 минут',image:'https://images.unsplash.com/photo-1560008581-09826d1de69e?auto=format&fit=crop&w=900&q=85',ingredients:[['Творог 5%','180 г'],['Яйцо','1 шт.'],['Рисовая мука','20 г'],['Йогурт','40 г'],['Ягоды','50 г']],steps:['Смешай творог, яйцо и муку до однородности.','Сформируй сырники влажными руками.','Обжарь на антипригарной сковороде или запеки до золотистости. Подавай с йогуртом и ягодами.']},
+    {id:'salad',title:'Салат с яйцом пашот',category:'Обеды',kcal:290,p:19,f:17,c:16,time:'15 минут',image:'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=85',ingredients:[['Микс салата','70 г'],['Яйцо','1 шт.'],['Авокадо','40 г'],['Огурец','80 г'],['Оливковое масло','1 ч. л.']],steps:['Выложи салат, огурец и авокадо в тарелку.','Приготовь яйцо пашот в слабо кипящей воде 3 минуты.','Добавь яйцо и заправь оливковым маслом.']},
+    {id:'chicken',title:'Курица с овощами',category:'Ужины',kcal:420,p:42,f:14,c:31,time:'25 минут',image:'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=85',ingredients:[['Куриное филе','150 г'],['Кабачок','100 г'],['Перец сладкий','80 г'],['Булгур (сухой)','35 г'],['Оливковое масло','1 ч. л.']],steps:['Отвари булгур согласно инструкции.','Нарежь курицу и овощи, обжарь с маслом и специями до готовности.','Подавай курицу с овощами на подушке из булгура.']},
+    {id:'yogurt',title:'Йогурт с гранолой',category:'Низкокалорийные',kcal:240,p:18,f:7,c:27,time:'5 минут',image:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=85',ingredients:[['Греческий йогурт','170 г'],['Гранола','20 г'],['Клубника','70 г'],['Семена чиа','5 г']],steps:['Выложи йогурт в небольшую чашу.','Добавь нарезанную клубнику, гранолу и семена чиа.']},
+  ];
+  let recipeFilter = 'Все', recipeSearch = '', activeRecipeId = null;
+  const favoriteRecipes = new Set(readJSON('forma-recipe-favorites', []));
+  function recipeCardHTML(r) {
+    return `<article class="forma-cook-card" data-recipe-open="${r.id}" role="button" tabindex="0" aria-label="Открыть рецепт ${esc(r.title)}" style="--recipe-image:url('${r.image}')">
+      <button class="forma-cook-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" data-recipe-fav="${r.id}" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button>
+      <div class="forma-cook-overlay"><span>${r.category} · ${r.time}</span><h2>${esc(r.title)}</h2><b>${r.kcal} ккал</b></div>
+    </article>`;
+  }
   function recipesPage() {
-    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← План</button><p class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</p><h1>Книга рецептов</h1><p class="muted">Сохраняй любимые блюда и добавляй их в недельный план.</p></section>
-    <div class="forma-section-head"><div><p class="eyebrow">СОХРАНЁННОЕ</p><h2>Мои рецепты</h2></div><button class="forma-link" data-action="add-recipe">＋ Добавить</button></div>
-    ${state.recipes.length?state.recipes.map(r=>`<article class="forma-card forma-recipe-card"><div><h2>${esc(r.title)}</h2><p>${esc(r.ingredients||'Состав не указан')}</p><small>${fmt(r.kcal||0)} ккал · Б ${fmt(r.protein_g||0)} · Ж ${fmt(r.fat_g||0)} · У ${fmt(r.carbs_g||0)}</small></div><div class="forma-recipe-actions"><button data-recipe-plan="${r.id}">В план <span>↗</span></button><button data-recipe-remove="${r.id}" aria-label="Удалить">×</button></div></article>`).join(''):'<div class="forma-card forma-empty"><span>✳</span><b>Здесь пока нет рецептов</b><p>Добавь блюдо, которое хочешь сохранить и использовать в меню.</p><button class="forma-primary" data-action="add-recipe">Добавить рецепт</button></div>'}
-    <p class="forma-footnote">Рецепты сохраняются в твоём аккаунте и доступны на других устройствах.</p>`;
-    main.querySelector('#forma-back').onclick=()=>render('menu');bindPage();
+    recipeFilter='Все'; recipeSearch='';
+    main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p></section>
+    <label class="forma-recipe-search"><span>⌕</span><input id="forma-recipe-search" type="search" placeholder="Найти блюдо или ингредиент..." autocomplete="off"><button type="button" id="forma-recipe-clear" aria-label="Очистить поиск">×</button></label>
+    <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Низкокалорийные'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
+    <div class="forma-recipe-results-head"><span id="forma-recipe-count">8 рецептов</span><span>НА КАЖДЫЙ ДЕНЬ</span></div>
+    <div class="forma-cook-grid" id="forma-cook-grid">${recipeCatalog.map(recipeCardHTML).join('')}</div>
+    <p class="forma-footnote forma-recipe-note">КБЖУ указано ориентировочно на одну порцию. Фактические значения зависят от продуктов и их веса.</p>`;
+    bindPage();
+    const search=main.querySelector('#forma-recipe-search');
+    search.addEventListener('input',()=>{recipeSearch=search.value.trim().toLocaleLowerCase('ru');updateRecipeGrid();});
+    main.querySelector('#forma-recipe-clear').addEventListener('click',()=>{search.value='';recipeSearch='';updateRecipeGrid();search.focus();});
+    main.querySelectorAll('[data-recipe-filter]').forEach(b=>b.addEventListener('click',()=>{recipeFilter=b.dataset.recipeFilter;main.querySelectorAll('[data-recipe-filter]').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-selected',String(on));});updateRecipeGrid();}));
+    main.querySelector('#forma-cook-grid').addEventListener('click',e=>{
+      const fav=e.target.closest('[data-recipe-fav]'); if(fav){e.stopPropagation();const id=fav.dataset.recipeFav;favoriteRecipes.has(id)?favoriteRecipes.delete(id):favoriteRecipes.add(id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));fav.classList.toggle('is-favorite',favoriteRecipes.has(id));fav.textContent=favoriteRecipes.has(id)?'♥':'♡';return;}
+      const card=e.target.closest('[data-recipe-open]');if(card)recipeDetail(card.dataset.recipeOpen);
+    });
+    main.querySelector('#forma-cook-grid').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-recipe-open]')){e.preventDefault();recipeDetail(e.target.dataset.recipeOpen);}});
+  }
+  function updateRecipeGrid() {
+    const grid=main.querySelector('#forma-cook-grid');if(!grid)return;
+    const list=recipeCatalog.filter(r=>(recipeFilter==='Все'||r.category===recipeFilter)&&( !recipeSearch||[r.title,r.category,...r.ingredients.map(x=>x.join(' '))].join(' ').toLocaleLowerCase('ru').includes(recipeSearch)));
+    grid.innerHTML=list.map(recipeCardHTML).join('')||'<div class="forma-recipe-no-results"><span>⌕</span><b>Ничего не нашлось</b><p>Попробуй другое название или ингредиент.</p></div>';
+    const count=main.querySelector('#forma-recipe-count');if(count)count.textContent=list.length+' '+(list.length===1?'рецепт':list.length<5?'рецепта':'рецептов');
+  }
+  function recipeDetail(id) {
+    const r=recipeCatalog.find(x=>x.id===id);if(!r)return;activeRecipeId=id;
+    main.innerHTML=`<section class="forma-recipe-detail">
+      <div class="forma-recipe-detail-hero" style="--recipe-image:url('${r.image}')"><button class="forma-recipe-back" id="forma-recipe-back" aria-label="Назад к рецептам">←</button><button class="forma-cook-fav detail-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" id="forma-detail-fav" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button></div>
+      <div class="forma-recipe-detail-body"><p class="eyebrow">${r.category.toUpperCase()} · ${r.time.toUpperCase()}</p><h1>${esc(r.title)}</h1><div class="forma-recipe-macros"><div><b>${r.kcal}</b><span>Ккал</span></div><div><b>${r.p} г</b><span>Белки</span></div><div><b>${r.f} г</b><span>Жиры</span></div><div><b>${r.c} г</b><span>Углеводы</span></div></div>
+      <section class="forma-recipe-section"><div class="forma-section-head"><div><p class="eyebrow">ПОДГОТОВЬ ЗАРАНЕЕ</p><h2>Ингредиенты</h2></div><span class="forma-tag">${r.ingredients.length} позиций</span></div><div class="forma-recipe-ingredients">${r.ingredients.map((x,i)=>`<label><input type="checkbox" data-recipe-ingredient="${i}"><span>${esc(x[0])}</span><small>${esc(x[1])}</small></label>`).join('')}</div></section>
+      <section class="forma-recipe-section"><p class="eyebrow">ПРОСТО И ПОШАГОВО</p><h2>Приготовление</h2><ol class="forma-recipe-steps">${r.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>
+      <p class="forma-recipe-serving">Пищевая ценность рассчитана на одну порцию.</p></div>
+      <div class="forma-recipe-bottom"><button class="forma-primary" id="forma-add-recipe-diary">Добавить в дневник за сегодня <span>→</span></button></div>
+    </section>`;
+    main.querySelector('#forma-recipe-back').onclick=()=>recipesPage();
+    main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
+    main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
+      const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':'Обед';
+      const item={name:r.title,type,grams:1,kcal:r.kcal,p:r.p,f:r.f,c:r.c,eaten_at:new Date().toISOString(),date:localDate(new Date())};
+      state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));
+      toast('Добавлено в дневник');
+      try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(type),grams:1,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:'cooked',source:'recipe',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));}}catch(e){toast('Добавлено на устройстве; синхронизация не удалась');}
+    };
   }
   function recipeForm() {
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-back">← Рецепты</button><p class="eyebrow">ЛИЧНАЯ КОЛЛЕКЦИЯ</p><h1>Новый рецепт</h1><p class="muted">Сохрани ингредиенты и пищевую ценность одной порции.</p></section>
