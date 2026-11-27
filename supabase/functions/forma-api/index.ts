@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString(),
       }, "resolution=merge-duplicates,return=minimal");
       const isAdmin = ADMIN_TELEGRAM_IDS.has(telegram_id);
-      const [profile, goals, preferences, entries, weights, measurements, plans, catalog] = await Promise.all([
+      const [profile, goals, preferences, entries, weights, measurements, plans, catalog, supportMessages] = await Promise.all([
         db("forma_profiles", `telegram_id=eq.${telegram_id}&select=telegram_id,username,first_name,last_name,created_at,updated_at`),
         db("forma_goals", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_preferences", `telegram_id=eq.${telegram_id}&select=*`),
@@ -131,10 +131,11 @@ Deno.serve(async (req: Request) => {
         db("forma_body_measurements", `telegram_id=eq.${telegram_id}&select=*&order=measured_at.desc&limit=180`),
         db("forma_meal_plans", `telegram_id=eq.${telegram_id}&select=*&order=plan_date.asc&limit=100`),
         db("forma_recipe_catalog", `select=*&${isAdmin ? "" : "is_published=eq.true&"}order=created_at.desc&limit=300`),
+        db("forma_support_messages", `telegram_id=eq.${telegram_id}&select=id,message,status,admin_reply,created_at,replied_at&order=created_at.asc&limit=100`),
       ]);
       return json({ ok: true, user, profile: profile?.[0] || null, goals: goals?.[0] || null,
         preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], measurements: measurements || [], plans: plans || [],
-        is_admin: isAdmin, catalog: catalog || [] });
+        is_admin: isAdmin, catalog: catalog || [], support_messages: supportMessages || [] });
     }
 
     if (action === "upload_catalog_image") {
@@ -397,6 +398,63 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+
+    if (action === "get_support_messages") {
+      const messages = await db("forma_support_messages",
+        `telegram_id=eq.${telegram_id}&select=id,message,status,admin_reply,created_at,replied_at&order=created_at.asc&limit=100`);
+      return json({ ok: true, messages: messages || [] });
+    }
+
+    if (action === "send_support_message") {
+      const message = String(payload.message || "").trim();
+      if (!message || message.length > 3500) return json({ error: "invalid_support_message" }, 400);
+      const settings = await db("forma_support_settings", "id=eq.1&select=group_chat_id&limit=1");
+      const groupChatId = String(settings?.[0]?.group_chat_id || "");
+      if (!groupChatId) return json({ error: "support_not_configured" }, 503);
+      const rows = await db("forma_support_messages", "", "POST", {
+        telegram_id, username: user.username, first_name: user.first_name,
+        message, status: "sent",
+      }, "return=representation");
+      const saved = rows?.[0];
+      if (!saved?.id) throw new Error("support_message_save_failed");
+      try {
+        const telegramResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: groupChatId,
+            text: `Новый вопрос FORMA\\nОт: ${user.first_name || "Пользователь"}${user.username ? " (@" + user.username + ")" : ""}\\nTelegram ID: ${telegram_id}\\n\\n${message}`,
+            disable_web_page_preview: true,
+          }),
+        });
+        const telegramResult = await telegramResponse.json();
+        if (!telegramResponse.ok || !telegramResult?.ok) throw new Error(telegramResult?.description || "telegram_send_failed");
+        const groupMessageId = telegramResult.result?.message_id;
+        const updated = await db("forma_support_messages", `id=eq.${encodeURIComponent(saved.id)}`, "PATCH",
+          { status: "sent", group_message_id: groupMessageId }, "return=representation");
+        return json({ ok: true, message: updated?.[0] || { ...saved, status: "sent", group_message_id: groupMessageId } });
+      } catch (error) {
+        await db("forma_support_messages", `id=eq.${encodeURIComponent(saved.id)}`, "PATCH", { status: "failed" });
+        throw error;
+      }
+    }
+
+    if (action === "admin_setup_support_webhook") {
+      if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
+      const settings = await db("forma_support_settings", "id=eq.1&select=group_chat_id,webhook_secret&limit=1");
+      const webhookSecret = String(settings?.[0]?.webhook_secret || "");
+      if (!webhookSecret) return json({ error: "support_webhook_secret_missing" }, 500);
+      const { url } = getAdminHeaders();
+      const webhookUrl = `${url}/functions/v1/quick-worker`;
+      const telegramResponse = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: webhookUrl, secret_token: webhookSecret,
+          allowed_updates: ["message", "pre_checkout_query"], drop_pending_updates: false }),
+      });
+      const telegramResult = await telegramResponse.json();
+      if (!telegramResponse.ok || !telegramResult?.ok) throw new Error(telegramResult?.description || "telegram_webhook_setup_failed");
+      return json({ ok: true, webhook_url: webhookUrl });
+    }
 
     if (action === "admin_overview") {
       if (!ADMIN_TELEGRAM_IDS.has(telegram_id)) return json({ error: "admin_required" }, 403);
