@@ -185,7 +185,7 @@ if (app && main) {
       <label>Название<input name="title" maxlength="160" required value="${esc(r.title||'')}"></label>
       <label>Категория<select name="category">${['Завтраки','Обеды','Ужины','Перекусы','Низкокалорийные'].map(x=>`<option ${(r.category||'Обеды')===x?'selected':''}>${x}</option>`).join('')}</select></label>
       <label>Фотография блюда
-        <input id="forma-recipe-photo-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+        <input id="forma-recipe-photo-file" type="file" accept="image/jpeg,image/png,image/webp">
         <small class="muted">Выбери фото из галереи или сделай снимок. JPG, PNG или WEBP, до 4 МБ.</small>
         <span id="forma-recipe-photo-status" class="muted">${r.image_url?'Фото уже добавлено. Можно заменить.':'Фото пока не выбрано.'}</span>
         <img id="forma-recipe-photo-preview" src="${esc(r.image_url||'')}" alt="Предпросмотр фото" style="display:${r.image_url?'block':'none'};width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-top:8px">
