@@ -151,7 +151,8 @@ Deno.serve(async (req: Request) => {
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       const { url, headers } = getAdminHeaders();
       const bucket = "forma-recipe-images";
-      const authHeaders = { ...headers, Authorization: headers.Authorization || ("Bearer " + headers.apikey) };
+      const storageServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || headers.apikey;
+      const authHeaders = { ...headers, Authorization: "Bearer " + storageServiceKey };
       const bucketResponse = await fetch(`${url}/storage/v1/bucket`, {
         method: "POST", headers: authHeaders,
         body: JSON.stringify({ id: bucket, name: bucket, public: true, file_size_limit: 4194304, allowed_mime_types: ["image/jpeg","image/png","image/webp"] }),
