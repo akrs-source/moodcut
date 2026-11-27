@@ -178,8 +178,8 @@ if (app && main) {
     main.querySelectorAll('[data-catalog-delete]').forEach(b=>b.onclick=async()=>{if(!confirm('Удалить рецепт из общего каталога?'))return;try{await api('delete_catalog_recipe',{id:b.dataset.catalogDelete});state.catalogRecipes=state.catalogRecipes.filter(x=>x.id!==b.dataset.catalogDelete);refreshRecipeCatalog();catalogAdminPage();toast('Рецепт удалён');}catch(e){toast('Не удалось удалить рецепт');}});
   }
   function catalogEditor(r={}){
-    const ing=(r.ingredients||[]).map(x=>Array.isArray(x)?x[0]+' | '+x[1]:x.name+' | '+(x.amount||'')).join('\\n');
-    const steps=(r.steps||[]).join('\\n');
+    const ing=(r.ingredients||[]).map(x=>Array.isArray(x)?x[0]+' | '+x[1]:x.name+' | '+(x.amount||'')).join('\n');
+    const steps=(r.steps||[]).join('\n');
     main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-editor-back">← Каталог</button><p class="eyebrow">FORMA · CONTENT</p><h1>${r.id?'Изменить рецепт':'Новый рецепт'}</h1><p class="muted">Заполни данные блюда. КБЖУ указывай на одну порцию.</p></section>
     <form id="forma-catalog-form" class="forma-card forma-product-form">
       <label>Название<input name="title" maxlength="160" required value="${esc(r.title||'')}"></label>
@@ -198,8 +198,8 @@ if (app && main) {
     main.querySelector('#forma-editor-back').onclick=()=>catalogAdminPage();
     main.querySelector('#forma-catalog-form').onsubmit=async e=>{
       e.preventDefault();const d=new FormData(e.currentTarget);
-      const ingredients=String(d.get('ingredients')).split('\\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|');return {name:p[0].trim(),amount:(p.slice(1).join('|')||'').trim()}});
-      const payload={id:r.id||undefined,title:String(d.get('title')).trim(),category:d.get('category'),image_url:d.get('image_url'),prep_time:d.get('prep_time'),servings:Number(d.get('servings')||1),kcal:Number(d.get('kcal')||0),protein_g:Number(d.get('protein_g')||0),fat_g:Number(d.get('fat_g')||0),carbs_g:Number(d.get('carbs_g')||0),ingredients,steps:String(d.get('steps')).split('\\n').map(x=>x.trim()).filter(Boolean),is_premium:d.has('is_premium'),is_published:d.has('is_published')};
+      const ingredients=String(d.get('ingredients')).split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split('|');return {name:p[0].trim(),amount:(p.slice(1).join('|')||'').trim()}});
+      const payload={id:r.id||undefined,title:String(d.get('title')).trim(),category:d.get('category'),image_url:d.get('image_url'),prep_time:d.get('prep_time'),servings:Number(d.get('servings')||1),kcal:Number(d.get('kcal')||0),protein_g:Number(d.get('protein_g')||0),fat_g:Number(d.get('fat_g')||0),carbs_g:Number(d.get('carbs_g')||0),ingredients,steps:String(d.get('steps')).split('\n').map(x=>x.trim()).filter(Boolean),is_premium:d.has('is_premium'),is_published:d.has('is_published')};
       try{const saved=await api('save_catalog_recipe',payload);if(saved?.recipe){const i=state.catalogRecipes.findIndex(x=>x.id===saved.recipe.id);if(i>=0)state.catalogRecipes[i]=saved.recipe;else state.catalogRecipes.unshift(saved.recipe);refreshRecipeCatalog();catalogAdminPage();toast('Рецепт сохранён в каталоге');}}catch(err){toast('Не удалось сохранить. Проверь обязательные поля.');}
     };
   }
