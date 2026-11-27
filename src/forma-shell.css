@@ -748,15 +748,3 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
  .forma-cook-overlay h2{font-size:16px!important}
  .forma-recipe-detail-hero{height:235px!important}
 }
-
-
-/* FORMA Recipe Portion Selector */
-.forma-recipe-portions{margin-top:17px!important;margin-bottom:13px!important}
-.forma-recipe-portions .forma-section-head{margin-bottom:9px!important}
-.forma-recipe-portions .forma-section-head h2{margin-bottom:0!important}
-.forma-recipe-portion-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-.forma-recipe-portion-options button{min-height:38px;border:1px solid rgba(255,255,255,.8);border-radius:12px;background:rgba(255,250,246,.68);color:#75695f;font:600 13px 'DM Sans',sans-serif}
-.forma-recipe-portion-options button.active{background:#29231f;color:#fff;border-color:#29231f}
-.forma-recipe-portion-hint{margin:7px 1px 0!important;font:400 10px/1.45 'DM Sans',sans-serif!important;color:#8a7e74!important}
-#forma-recipe-macros{margin-top:12px}
-#forma-recipe-macros>div:first-child span{font-size:8px}
