@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString(),
       }, "resolution=merge-duplicates,return=minimal");
       const isAdmin = ADMIN_TELEGRAM_IDS.has(telegram_id);
-      const [profile, goals, preferences, entries, weights, measurements, plans, catalog, supportMessages] = await Promise.all([
+      const [profile, goals, preferences, entries, weights, measurements, plans, catalog, supportMessages, subscriptions] = await Promise.all([
         db("forma_profiles", `telegram_id=eq.${telegram_id}&select=telegram_id,username,first_name,last_name,created_at,updated_at`),
         db("forma_goals", `telegram_id=eq.${telegram_id}&select=*`),
         db("forma_preferences", `telegram_id=eq.${telegram_id}&select=*`),
@@ -132,10 +132,18 @@ Deno.serve(async (req: Request) => {
         db("forma_meal_plans", `telegram_id=eq.${telegram_id}&select=*&order=plan_date.asc&limit=100`),
         db("forma_recipe_catalog", `select=*&${isAdmin ? "" : "is_published=eq.true&"}order=created_at.desc&limit=300`),
         db("forma_support_messages", `telegram_id=eq.${telegram_id}&select=id,message,status,admin_reply,created_at,replied_at&order=created_at.asc&limit=100`),
+        db("forma_subscriptions", `telegram_id=eq.${telegram_id}&select=plan_code,status,starts_at,expires_at,support_questions_used,support_questions_bonus,is_recurring,last_charge_id&limit=1`),
       ]);
+      const subscriptionRow = subscriptions?.[0] || null;
+      const subscriptionActive = !!subscriptionRow && subscriptionRow.status === "active" && new Date(subscriptionRow.expires_at).getTime() > Date.now();
+      const subscription = subscriptionActive ? {
+        ...subscriptionRow, active: true,
+        support_questions_remaining: subscriptionRow.plan_code === "pro_support"
+          ? Math.max(0, 4 - Number(subscriptionRow.support_questions_used || 0)) + Number(subscriptionRow.support_questions_bonus || 0) : 0,
+      } : { active: false, plan_code: null, expires_at: subscriptionRow?.expires_at || null, support_questions_remaining: 0 };
       return json({ ok: true, user, profile: profile?.[0] || null, goals: goals?.[0] || null,
         preferences: preferences?.[0] || null, entries: entries || [], weights: weights || [], measurements: measurements || [], plans: plans || [],
-        is_admin: isAdmin, catalog: catalog || [], support_messages: supportMessages || [] });
+        is_admin: isAdmin, catalog: catalog || [], support_messages: supportMessages || [], subscription });
     }
 
     if (action === "upload_catalog_image") {
@@ -399,6 +407,65 @@ Deno.serve(async (req: Request) => {
     }
 
 
+    if (action === "create_pro_invoice") {
+      const planCode = String(payload.plan_code || "pro");
+      const plans: Record<string, { amount: number; title: string; description: string; recurring: boolean }> = {
+        pro: { amount: 450, title: "FORMA PRO", description: "Анализ прогресса, рекомендации по КБЖУ и полный каталог рецептов на 30 дней.", recurring: true },
+        pro_support: { amount: 700, title: "FORMA PRO + поддержка", description: "Все возможности PRO и 4 личных обращения к специалисту на 30 дней.", recurring: true },
+        extra_question: { amount: 150, title: "Дополнительное обращение", description: "Одно дополнительное личное обращение к специалисту FORMA.", recurring: false },
+      };
+      const selected = plans[planCode];
+      if (!selected) return json({ error: "invalid_plan" }, 400);
+      const currentRows = await db("forma_subscriptions",
+        `telegram_id=eq.${telegram_id}&select=plan_code,status,expires_at&limit=1`);
+      const current = currentRows?.[0];
+      const active = !!current && current.status === "active" && new Date(current.expires_at).getTime() > Date.now();
+      if (planCode === "extra_question" && (!active || current.plan_code !== "pro_support")) {
+        return json({ error: "support_plan_required" }, 403);
+      }
+      if (planCode !== "extra_question" && active) {
+        return json({ error: "pro_already_active", subscription_expires_at: current.expires_at }, 409);
+      }
+      const settings = await db("forma_support_settings", "id=eq.1&select=webhook_secret&limit=1");
+      const webhookSecret = String(settings?.[0]?.webhook_secret || Deno.env.get("TELEGRAM_WEBHOOK_SECRET") || "");
+      if (!webhookSecret) return json({ error: "payment_webhook_not_configured" }, 503);
+      const { url } = getAdminHeaders();
+      const webhookUrl = `${url}/functions/v1/quick-worker`;
+      const webhookResponse = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: webhookUrl, secret_token: webhookSecret,
+          allowed_updates: ["message", "pre_checkout_query"], drop_pending_updates: false }),
+      });
+      const webhookResult = await webhookResponse.json();
+      if (!webhookResponse.ok || !webhookResult?.ok) throw new Error(webhookResult?.description || "payment_webhook_setup_failed");
+      const nonce = [...crypto.getRandomValues(new Uint8Array(18))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const invoicePayload = `forma_${planCode}_${telegram_id}_${nonce}`;
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      await db("forma_pending_payments", "", "POST", {
+        invoice_payload: invoicePayload, telegram_id, plan_code: planCode,
+        total_amount: selected.amount, expires_at: expiresAt,
+      });
+      try {
+        const invoiceBody: Record<string, unknown> = {
+          title: selected.title, description: selected.description, payload: invoicePayload,
+          provider_token: "", currency: "XTR",
+          prices: [{ label: selected.title, amount: selected.amount }],
+        };
+        if (selected.recurring) invoiceBody.subscription_period = 2592000;
+        const invoiceResponse = await fetch(`https://api.telegram.org/bot${token}/createInvoiceLink`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(invoiceBody),
+        });
+        const invoiceResult = await invoiceResponse.json();
+        if (!invoiceResponse.ok || !invoiceResult?.ok || !invoiceResult?.result) {
+          throw new Error(invoiceResult?.description || "invoice_creation_failed");
+        }
+        return json({ ok: true, invoice_url: invoiceResult.result, price_stars: selected.amount, plan_code: planCode });
+      } catch (error) {
+        await db("forma_pending_payments", `invoice_payload=eq.${encodeURIComponent(invoicePayload)}`, "DELETE");
+        throw error;
+      }
+    }
+
     if (action === "get_support_messages") {
       const messages = await db("forma_support_messages",
         `telegram_id=eq.${telegram_id}&select=id,message,status,admin_reply,created_at,replied_at&order=created_at.asc&limit=100`);
@@ -411,10 +478,18 @@ Deno.serve(async (req: Request) => {
       const settings = await db("forma_support_settings", "id=eq.1&select=group_chat_id&limit=1");
       const groupChatId = String(settings?.[0]?.group_chat_id || "");
       if (!groupChatId) return json({ error: "support_not_configured" }, 503);
-      const rows = await db("forma_support_messages", "", "POST", {
-        telegram_id, username: user.username, first_name: user.first_name,
-        message, status: "sent",
-      }, "return=representation");
+      const quota = await db("rpc/forma_consume_support_question", "", "POST", { p_telegram_id: telegram_id });
+      if (!quota?.ok) return json({ error: quota?.reason || "support_plan_required" }, 402);
+      let rows;
+      try {
+        rows = await db("forma_support_messages", "", "POST", {
+          telegram_id, username: user.username, first_name: user.first_name,
+          message, status: "sent",
+        }, "return=representation");
+      } catch (error) {
+        await db("rpc/forma_refund_support_question", "", "POST", { p_telegram_id: telegram_id, p_bonus: quota?.bonus_used === true });
+        throw error;
+      }
       const saved = rows?.[0];
       if (!saved?.id) throw new Error("support_message_save_failed");
       try {
@@ -432,9 +507,10 @@ Deno.serve(async (req: Request) => {
         const groupMessageId = telegramResult.result?.message_id;
         const updated = await db("forma_support_messages", `id=eq.${encodeURIComponent(saved.id)}`, "PATCH",
           { status: "sent", group_message_id: groupMessageId }, "return=representation");
-        return json({ ok: true, message: updated?.[0] || { ...saved, status: "sent", group_message_id: groupMessageId } });
+        return json({ ok: true, message: updated?.[0] || { ...saved, status: "sent", group_message_id: groupMessageId }, support_questions_remaining: quota.remaining });
       } catch (error) {
         await db("forma_support_messages", `id=eq.${encodeURIComponent(saved.id)}`, "PATCH", { status: "failed" });
+        await db("rpc/forma_refund_support_question", "", "POST", { p_telegram_id: telegram_id, p_bonus: quota?.bonus_used === true });
         throw error;
       }
     }
