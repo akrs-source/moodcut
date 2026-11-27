@@ -333,6 +333,29 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true, measurement: rows?.[0] || row });
     }
 
+    if (action === "update_body_measurement") {
+      const id = String(payload.id || "");
+      const date = String(payload.measured_at || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return json({ error: "invalid_date" }, 400);
+      const fields = ["waist_cm", "abdomen_cm", "hips_cm", "chest_cm", "under_bust_cm", "thigh_cm", "arm_cm"];
+      const row: Record<string, unknown> = { measured_at: date, updated_at: new Date().toISOString() };
+      let count = 0;
+      for (const field of fields) {
+        const raw = payload[field];
+        if (raw === "" || raw === null || raw === undefined) { row[field] = null; continue; }
+        const value = Number(raw);
+        const min = field === "thigh_cm" || field === "arm_cm" ? 10 : 20;
+        const max = field === "arm_cm" ? 100 : field === "thigh_cm" ? 150 : 250;
+        if (!Number.isFinite(value) || value < min || value > max) return json({ error: "invalid_" + field }, 400);
+        row[field] = value;
+        count++;
+      }
+      if (!count) return json({ error: "empty_measurement" }, 400);
+      const rows = await db("forma_body_measurements", `id=eq.${encodeURIComponent(id)}&telegram_id=eq.${telegram_id}`, "PATCH", row, "return=representation");
+      return json({ ok: true, measurement: rows?.[0] || null });
+    }
+
     if (action === "delete_body_measurement") {
       const id = String(payload.id || "");
       if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "invalid_id" }, 400);
