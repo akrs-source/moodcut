@@ -715,7 +715,8 @@ if (app && main) {
       if (state.weight) storage.setItem('forma-weight', state.weight);
       render(state.tab);
     } catch (err) {
-      toast('Не удалось подключиться к аккаунту. Проверь запуск через Telegram.');
+      const reason = String(err?.message || 'unknown_error').slice(0, 90);
+      toast('Ошибка подключения: ' + reason);
     }
   }
   render('home');
