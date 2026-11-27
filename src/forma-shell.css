@@ -574,3 +574,21 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
  .forma-selected-heading h2{font-size:23px!important}
  .forma-selected-heading .forma-primary{padding:10px 11px;font-size:9px}
 }
+
+/* Progress dashboard: focused weight and measurements entry points */
+.forma-progress-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
+.forma-progress-tile{appearance:none;text-align:left;border:1px solid #eee4d9;border-radius:19px;background:linear-gradient(150deg,#fffdf9,#f7f0e8);padding:16px 14px;min-width:0;color:#302923;display:flex;flex-direction:column;align-items:flex-start;gap:7px;box-shadow:0 5px 18px rgba(83,60,40,.045)}
+.forma-progress-tile-icon{width:34px;height:34px;border-radius:12px;background:#eee3d7;color:#987653;display:grid;place-items:center;font-size:22px;margin-bottom:4px}
+.forma-progress-tile .eyebrow{margin:0;font-size:9px;letter-spacing:1px;color:#a18c79}
+.forma-progress-tile>b{font:600 25px 'Cormorant Garamond',Georgia,serif}
+.forma-progress-tile>strong{font:600 13px 'DM Sans',sans-serif;line-height:1.4;min-height:36px;overflow-wrap:anywhere}
+.forma-progress-tile>small{font:10px/1.45 'DM Sans',sans-serif;color:#938679;min-height:28px}
+.forma-progress-tile>i{font:600 10px 'DM Sans',sans-serif;color:#9b7654;font-style:normal;margin-top:4px}
+.forma-progress-detail .forma-product-form{margin:0}
+.forma-progress-detail .forma-product-form>label{margin-bottom:12px}
+.forma-measure-delta{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid #f0e9e1;font:11px 'DM Sans',sans-serif}
+.forma-measure-delta:last-child{border-bottom:0}
+.forma-measure-delta>span{color:#82766b}
+.forma-measure-delta>b{font-size:11px;color:#302923}
+.forma-measure-delta>small{font-size:10px;color:#9a795d;white-space:nowrap}
+@media(max-width:370px){.forma-progress-shortcuts{gap:8px}.forma-progress-tile{padding:13px 11px}.forma-progress-tile>b{font-size:22px}.forma-measure-delta{grid-template-columns:1fr auto;gap:5px}.forma-measure-delta>small{grid-column:2}}
