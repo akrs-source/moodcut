@@ -749,5 +749,12 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
  .forma-recipe-detail-hero{height:235px!important}
 }
 
-/* Keep the Telegram username initial visible above legacy avatar styles. */
+/* FORMA — visible frosted-glass header */
+.topbar{
+  background:rgba(255,250,246,.58)!important;
+  border-bottom:1px solid rgba(255,255,255,.72)!important;
+  box-shadow:0 5px 22px rgba(65,49,39,.045)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(155%)!important;
+  backdrop-filter:blur(24px) saturate(155%)!important;
+}
 .avatar{font-size:15px!important;color:#51463e!important}
