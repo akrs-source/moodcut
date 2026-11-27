@@ -117,12 +117,12 @@ if (app && main) {
   function recipeCardHTML(r) {
     return `<article class="forma-cook-card" data-recipe-open="${r.id}" role="button" tabindex="0" aria-label="Открыть рецепт ${esc(r.title)}" style="--recipe-image:url('${r.image}')">
       <button class="forma-cook-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" data-recipe-fav="${r.id}" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button>
-      <div class="forma-cook-overlay"><span>${r.category} · ${r.time}</span><h2>${esc(r.title)}</h2><b>${r.kcal} ккал</b></div>
+      <div class="forma-cook-overlay"><span>${r.category} · ${r.time}</span><h2>${esc(r.title)}</h2><b>${r.kcal} ккал</b>${r.is_premium?'<small class="forma-tag">PREMIUM</small>':''}</div>
     </article>`;
   }
   function recipesPage() {
     recipeFilter='Все'; recipeSearch='';
-    main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p></section>
+    main.innerHTML=`<section class="forma-page-intro forma-recipes-intro"><p class="eyebrow">ИДЕИ ДЛЯ ТВОЕГО СТОЛА</p><h1>Рецепты</h1><p class="muted">Вкусная еда, которая вписывается в твой день.</p>${state.isAdmin?`<button class="forma-primary" id="forma-catalog-manage" style="margin-top:12px">Управлять каталогом <span>→</span></button>`:''}</section>
     <label class="forma-recipe-search"><span>⌕</span><input id="forma-recipe-search" type="search" placeholder="Найти блюдо или ингредиент..." autocomplete="off"><button type="button" id="forma-recipe-clear" aria-label="Очистить поиск">×</button></label>
     <div class="forma-recipe-filters" role="tablist" aria-label="Категории рецептов">${['Все','Завтраки','Обеды','Ужины','Низкокалорийные'].map((x,i)=>`<button type="button" role="tab" aria-selected="${i===0}" class="${i===0?'active':''}" data-recipe-filter="${x}">${x}</button>`).join('')}</div>
     <div class="forma-recipe-results-head"><span id="forma-recipe-count">8 рецептов</span><span>НА КАЖДЫЙ ДЕНЬ</span></div>
@@ -142,7 +142,7 @@ if (app && main) {
   }
   function updateRecipeGrid() {
     const grid=main.querySelector('#forma-cook-grid');if(!grid)return;
-    const list=recipeCatalog.filter(r=>(recipeFilter==='Все'||r.category===recipeFilter)&&( !recipeSearch||[r.title,r.category,...r.ingredients.map(x=>x.join(' '))].join(' ').toLocaleLowerCase('ru').includes(recipeSearch)));
+    const list=recipeCatalog.filter(r=>(recipeFilter==='Все'||r.category===recipeFilter)&&( !recipeSearch||[r.title,r.category,...r.ingredients.map(x=>Array.isArray(x)?x.join(' '):(x.name+' '+(x.amount||'')))].join(' ').toLocaleLowerCase('ru').includes(recipeSearch)));
     grid.innerHTML=list.map(recipeCardHTML).join('')||'<div class="forma-recipe-no-results"><span>⌕</span><b>Ничего не нашлось</b><p>Попробуй другое название или ингредиент.</p></div>';
     const count=main.querySelector('#forma-recipe-count');if(count)count.textContent=list.length+' '+(list.length===1?'рецепт':list.length<5?'рецепта':'рецептов');
   }
