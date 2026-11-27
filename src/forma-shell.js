@@ -325,7 +325,8 @@ if (app && main) {
         const data=await api('search_food',{query});
         if(!data?.products){results.innerHTML='<p class="forma-footnote">Поиск доступен при запуске приложения через Telegram. Ниже можно внести продукт вручную.</p>';return;}
         state.foodSearchResults=data.products;
-        results.innerHTML=data.products.length?'<div class="forma-food-results">'+data.products.map((p,i)=>`<button type="button" class="forma-food-result" data-food-pick="${i}"><span><b>${esc(p.name)}</b>${p.brand?`<small>${esc(p.brand)}</small>`:''}<small>На 100 г · ${fmt(p.kcal)} ккал · Б ${fmt(p.p)} · Ж ${fmt(p.f)} · У ${fmt(p.c)}</small></span><i>Выбрать</i></button>`).join('')+'</div>':'<p class="forma-footnote">Ничего не найдено с заполненными КБЖУ. Попробуй другое название или внеси данные вручную.</p>';
+        const nutrient=value=>value==null||!Number.isFinite(Number(value))?'—':fmt(Number(value));
+        results.innerHTML=data.products.length?'<div class="forma-food-results">'+data.products.map((p,i)=>{const incomplete=[p.p,p.f,p.c].some(v=>v==null);return `<button type="button" class="forma-food-result" data-food-pick="${i}"><span><b>${esc(p.name)}</b>${p.brand?`<small>${esc(p.brand)}</small>`:''}${p.quantity?`<small>${esc(p.quantity)}</small>`:''}<small>На 100 г · ${nutrient(p.kcal)} ккал · Б ${nutrient(p.p)} · Ж ${nutrient(p.f)} · У ${nutrient(p.c)}</small>${incomplete?'<small>Не все значения указаны — проверь данные на упаковке</small>':''}</span><i>Выбрать</i></button>`;}).join('')+'</div>':'<p class="forma-footnote">По этому запросу ничего не нашлось. Попробуй другое название или внеси продукт вручную.</p>';
       }catch(err){results.innerHTML='<p class="forma-footnote">Не удалось выполнить поиск. Попробуй ещё раз или заполни форму вручную.</p>';}
       finally{button.disabled=false;button.textContent='Найти';}
     });
@@ -333,8 +334,8 @@ if (app && main) {
     if(foodResults)foodResults.addEventListener('click',e=>{
       const b=e.target.closest?.('[data-food-pick]');if(!b)return;
       const p=state.foodSearchResults[Number(b.dataset.foodPick)],form=main.querySelector('#forma-product-form');if(!p||!form)return;
-      form.elements.name.value=p.name+(p.brand?' — '+p.brand:'');form.elements.kcal.value=p.kcal;form.elements.p.value=p.p;form.elements.f.value=p.f;form.elements.c.value=p.c;form.elements.state.value='label';
-      form.scrollIntoView({behavior:'smooth',block:'start'});toast('Данные перенесены в форму. Проверь их перед сохранением.');
+      form.elements.name.value=p.name+(p.brand?' — '+p.brand:'');form.elements.kcal.value=p.kcal??'';form.elements.p.value=p.p??'';form.elements.f.value=p.f??'';form.elements.c.value=p.c??'';form.elements.state.value='label';
+      form.scrollIntoView({behavior:'smooth',block:'start'});toast([p.p,p.f,p.c].some(v=>v==null)?'Данные перенесены. Заполни пропущенные значения по упаковке.':'Данные перенесены в форму. Проверь их перед сохранением.');
     });
     const pfm=main.querySelector('#forma-product-form');if(pfm)pfm.addEventListener('submit',async e=>{e.preventDefault();const d=new FormData(pfm);const grams=Number(d.get('grams')),factor=grams/100;const item={name:d.get('name'),type:d.get('type'),grams,kcal:Number(d.get('kcal'))*factor,p:Number(d.get('p'))*factor,f:Number(d.get('f'))*factor,c:Number(d.get('c'))*factor,weight_state:d.get('state')||'label',eaten_at:new Date(state.diaryDate+'T12:00:00').toISOString(),date:state.diaryDate};state.meals.push(item);storage.setItem('forma-meals',JSON.stringify(state.meals));render('diary');toast('Продукт добавлен в дневник');try{const saved=await api('save_entry',{food_name:item.name,meal_type:mealTypeToDb(item.type),grams:item.grams,kcal:item.kcal,protein_g:item.p,fat_g:item.f,carbs_g:item.c,weight_state:item.weight_state,source:'manual',eaten_at:item.eaten_at});if(saved?.entry){item.id=saved.entry.id;storage.setItem('forma-meals',JSON.stringify(state.meals));toast('Запись синхронизирована с аккаунтом');}}catch(err){toast('Запись сохранена на устройстве; синхронизация не удалась');}});
   }
