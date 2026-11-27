@@ -592,3 +592,25 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-measure-delta>b{font-size:11px;color:#302923}
 .forma-measure-delta>small{font-size:10px;color:#9a795d;white-space:nowrap}
 @media(max-width:370px){.forma-progress-shortcuts{gap:8px}.forma-progress-tile{padding:13px 11px}.forma-progress-tile>b{font-size:22px}.forma-measure-delta{grid-template-columns:1fr auto;gap:5px}.forma-measure-delta>small{grid-column:2}}
+
+/* Compact, restrained progress layout */
+.forma-progress-shortcuts{gap:9px;margin-bottom:12px}
+.forma-progress-tile{border-radius:14px;padding:12px 12px 11px;gap:5px;box-shadow:none;background:#fbf8f4}
+.forma-progress-tile-unit{font:600 9px 'DM Sans',sans-serif;letter-spacing:1px;color:#9a795d;border:1px solid #e8ddd1;border-radius:6px;padding:4px 6px;margin-bottom:2px}
+.forma-progress-tile>b{font-size:22px;line-height:1.05}
+.forma-progress-tile>strong{font-size:12px;min-height:28px}
+.forma-progress-tile>small{font-size:9px;min-height:22px}
+.forma-progress-tile>i{font-size:9px;margin-top:2px}
+.forma-measure-guide{padding:12px 14px!important;border-radius:13px!important;margin-bottom:12px!important}
+.forma-measure-guide>b{font-size:12px!important}
+.forma-measure-guide>p:not(.eyebrow){font-size:10px!important;line-height:1.45!important;margin:4px 0 0!important}
+.forma-progress-chart{padding:13px 14px!important;border-radius:14px!important;margin-bottom:12px!important}
+.forma-progress-chart .forma-card-head{margin-bottom:8px!important}
+.forma-progress-chart .forma-card-head h2{font-size:20px!important}
+.forma-progress-chart svg{height:76px;display:block;width:100%}
+.forma-chart-empty{min-height:0!important;padding:12px 0!important;gap:4px!important}
+.forma-chart-empty>b{font:600 16px 'Cormorant Garamond',Georgia,serif!important}
+.forma-chart-empty>small{font-size:10px!important;line-height:1.4!important}
+.forma-chart-change{font-size:10px!important;margin:5px 0 0!important}
+.forma-measure-delta{padding:8px 0;gap:6px}
+@media(max-width:370px){.forma-progress-tile{padding:10px}.forma-progress-tile>b{font-size:20px}}
