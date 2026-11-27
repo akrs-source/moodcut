@@ -767,3 +767,23 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-food-result>span{gap:6px}
 .forma-food-result i{align-self:center}
 .forma-food-result:active{transform:scale(.99)}
+
+
+/* Keep the support message composer visible above the floating navigation. */
+#forma-chat-form{
+  position:sticky!important;
+  bottom:calc(72px + env(safe-area-inset-bottom))!important;
+  z-index:8!important;
+  margin:10px 0 0!important;
+  box-shadow:0 8px 24px rgba(50,38,28,.08);
+  scroll-margin-bottom:calc(86px + env(safe-area-inset-bottom));
+}
+#forma-chat-form + .forma-footnote{
+  margin:7px 0 0!important;
+  padding-bottom:8px;
+}
+@media(max-width:420px){
+  #forma-chat-form{
+    bottom:calc(66px + env(safe-area-inset-bottom))!important;
+  }
+}
