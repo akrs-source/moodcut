@@ -32,7 +32,7 @@ if (app && main) {
   };
   const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
   const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
-  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], profile: null, subscription: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
+  const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], profile: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()) };
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
   const applyGoals = g => { if(g?.daily_kcal) targets = { kcal:Number(g.daily_kcal), protein:Number(g.protein_g||0), fat:Number(g.fat_g||0), carbs:Number(g.carbs_g||0) }; };
   const calculateTargets = g => {
@@ -132,25 +132,15 @@ if (app && main) {
     </section><section class="forma-card forma-history"><div class="forma-section-head"><div><p class="eyebrow">ИСТОРИЯ</p><h2>Последние измерения</h2></div></div>${history.length?history.slice(-8).reverse().map(x=>`<div class="forma-history-row"><span>${dateLabel(x.measured_at)}</span><b>${Number(x.weight_kg).toFixed(1).replace('.',',')} кг</b></div>`).join(''):'<p class="muted">Пока нет сохранённых измерений.</p>'}</section>`;
   }
   function profile() {
-    const g=state.goals||{},p=state.preferences||{},sub=state.subscription||{};
-    const proActive=sub.is_active===true;
-    const subText=proActive?'Активна до '+new Date(sub.expires_at).toLocaleDateString('ru-RU'):sub.status==='cancelled'?'Отключена':sub.expires_at?'Срок действия истёк':'Базовый доступ';
+    const g=state.goals||{},p=state.preferences||{};
     return `<section class="forma-page-intro"><p class="eyebrow">ТВОИ НАСТРОЙКИ</p><h1>Профиль</h1><p class="muted">FORMA подстраивается под твою жизнь.</p></section>
     <section class="forma-card forma-profile-head"><div class="forma-profile-avatar">F</div><div><b>${esc(state.profile?.first_name||'Мой профиль')}</b><span>${g.daily_kcal?`Ориентир ${fmt(g.daily_kcal)} ккал в день`:'Заполни данные, чтобы настроить FORMA'}</span></div></section>
     <section class="forma-card forma-settings">
       <button data-action="settings-goals"><span><b>Личные данные и цель</b><small>${g.age?`${g.age} лет · ${g.height_cm} см · ${g.current_weight_kg} кг`:'Добавить возраст, рост и вес'}</small></span><i>›</i></button>
       <button data-action="settings-food"><span><b>Питание и предпочтения</b><small>${p.meals_per_day?`${p.meals_per_day} приёма пищи · ${(p.excluded_foods||[]).length} исключений`:'Вкусы, аллергии, бюджет и время готовки'}</small></span><i>›</i></button>
       <button data-action="settings-goals"><span><b>Мои нормы КБЖУ</b><small>${g.daily_kcal?`${g.daily_kcal} ккал · Б ${g.protein_g} · Ж ${g.fat_g} · У ${g.carbs_g}`:'Рассчитать после заполнения параметров'}</small></span><i>›</i></button>
-      <button data-action="setting-subscription"><span><b>${proActive?"FORMA PRO":"Подписка FORMA"}</b><small>${subText}</small></span><i>›</i></button>
+      <button data-action="setting-subscription"><span><b>Подписка FORMA</b><small>Дополнительные возможности появятся позже</small></span><i>›</i></button>
     </section>${state.isAdmin?`<section class="forma-card forma-settings"><button data-action="admin"><span><b>Панель администратора</b><small>Пользователи и статистика FORMA</small></span><i>›</i></button></section>`:''}<p class="forma-footnote">Данные и ориентиры можно изменить в любой момент. Расчёт носит справочный характер.</p>`;
-  }
-  function subscriptionPage() {
-    const sub=state.subscription||{};
-    const active=sub.is_active===true;
-    const status=active?'PRO активен':sub.status==='cancelled'?'Подписка отключена':sub.expires_at?'Срок PRO истёк':'Базовый доступ';
-    const expiry=sub.expires_at?new Date(sub.expires_at).toLocaleDateString('ru-RU'):'—';
-    main.innerHTML='<section class="forma-page-intro"><button class="forma-back" id="forma-subscription-back">← Профиль</button><p class="eyebrow">ТВОЙ ДОСТУП</p><h1>Подписка FORMA</h1><p class="muted">Информация о текущем статусе аккаунта.</p></section><section class="forma-card forma-subscription-info"><p class="eyebrow">ТЕКУЩИЙ ТАРИФ</p><h2>'+esc(status)+'</h2><p class="muted">'+(active?'Доступ PRO активен до указанной даты.':'Сейчас на аккаунте действует базовый доступ.')+'</p><div class="forma-subscription-info-date"><span>Действует до</span><b>'+esc(expiry)+'</b></div></section><p class="forma-footnote">Платёжное подключение и дополнительные PRO-функции пока находятся в разработке. Если доступ выдан администратором, статус обновится при следующем открытии приложения.</p>';
-    main.querySelector('#forma-subscription-back').onclick=()=>render('profile');
   }
   async function adminPage() {
     main.innerHTML = '<section class="forma-page-intro"><button class="forma-back" id="forma-admin-back">← Профиль</button><p class="eyebrow">FORMA · УПРАВЛЕНИЕ</p><h1>Администрирование</h1><p class="muted">Загружаем статистику и пользователей…</p></section>';
@@ -355,7 +345,7 @@ if (app && main) {
     if(a==='shopping'){shoppingList();return;} if(a==='recipes'){recipesPage();return;} if(a==='add-recipe'){recipeForm();return;} if(a==='shopping-clear'){state.shopping=state.shopping.filter(x=>!x.done);storage.setItem('forma-shopping',JSON.stringify(state.shopping));shoppingList();return;}
     if(a==='admin'){adminPage();return;}
     if(a==='admin-subscriptions'){adminSubscriptionsPage();return;}
-    if(a==='setting-subscription'){subscriptionPage();return;}
+    if(a==='setting-subscription'){toast('К подписке вернёмся после завершения основных функций');return;}
     if(a==='photo'||a==='barcode'){toast('Эта функция запланирована для следующего этапа');return;}
     toast('Этот экран добавим следующим этапом');
   }
@@ -377,7 +367,7 @@ if (app && main) {
     if (!initData) { render(state.tab); return; }
     try {
       const data = await api('bootstrap');
-      state.profile = data.profile; state.subscription = data.subscription || null; state.isAdmin = data.is_admin === true; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
+      state.profile = data.profile; state.isAdmin = data.is_admin === true; state.goals = data.goals || state.goals; state.preferences = data.preferences || state.preferences; state.weights = (data.weights && data.weights.length) ? data.weights : state.weights; storage.setItem('forma-weights',JSON.stringify(state.weights)); state.plans = (data.plans && data.plans.length) ? data.plans : state.plans; if(Array.isArray(data.recipes)){if(data.recipes.length){state.recipes=data.recipes;}else if(state.recipes.length){for(const r of [...state.recipes]){try{const saved=await api('save_recipe',r);if(saved?.recipe)r.id=saved.recipe.id;}catch(e){}}}} if(Array.isArray(data.shopping)){if(data.shopping.length){state.shopping=data.shopping;}else if(state.shopping.length){for(const item of [...state.shopping]){try{const saved=await api('save_shopping_item',item);if(saved?.item)item.id=saved.item.id;}catch(e){}}}} storage.setItem('forma-recipes',JSON.stringify(state.recipes)); storage.setItem('forma-shopping',JSON.stringify(state.shopping)); if(state.goals){applyGoals(state.goals);storage.setItem('forma-goals',JSON.stringify(state.goals));} if(state.preferences)storage.setItem('forma-preferences',JSON.stringify(state.preferences)); storage.setItem('forma-plans',JSON.stringify(state.plans));
       state.meals = (data.entries || []).map(row => ({
         id: row.id, eaten_at: row.eaten_at, date: row.eaten_at ? localDate(row.eaten_at) : localDate(new Date()), name: row.food_name, type: mealTypeFromDb(row.meal_type), grams: Number(row.grams),
         kcal: Number(row.kcal), p: Number(row.protein_g), f: Number(row.fat_g), c: Number(row.carbs_g)
