@@ -101,17 +101,9 @@ if (app && main) {
     ${chosen.length?chosen.map(p=>`<article class="forma-plan-entry"><div><small>${mealLabel(p.meal_type)}</small><b>${esc(p.title)}</b>${p.description?`<p>${esc(p.description)}</p>`:''}<span>${fmt(p.kcal||0)} ккал · Б ${fmt(p.protein_g||0)} · Ж ${fmt(p.fat_g||0)} · У ${fmt(p.carbs_g||0)}</span></div><button data-plan-remove="${esc(p.id)}" aria-label="Удалить">×</button></article>`).join(''):'<div class="forma-empty"><span>✳</span><b>Пока ничего не запланировано</b><p>Добавь блюдо или приём пищи на этот день.</p><button class="forma-primary" data-action="add-plan">Добавить в план</button></div>'}
     </section><section class="forma-card forma-plan-tools"><button data-action="recipes">Книга рецептов <span>↗</span></button><button data-action="shopping">Список покупок <span>↗</span></button></section>`;
   }
-  const defaultRecipeCatalog = [
-    {id:'acai',title:'Асаи-боул',category:'Завтраки',kcal:350,p:12,f:9,c:52,time:'10 минут',image:'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=85',ingredients:[['Асаи-пюре','100 г'],['Банан','½ шт.'],['Греческий йогурт','100 г'],['Гранола','25 г'],['Ягоды','50 г']],steps:['Взбей асаи, банан и йогурт до густой кремовой текстуры.','Переложи в боул и добавь гранолу и ягоды.']},
-    {id:'avocado',title:'Тост с авокадо',category:'Завтраки',kcal:410,p:17,f:23,c:35,time:'8 минут',image:'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85',ingredients:[['Цельнозерновой хлеб','2 ломтика'],['Авокадо','½ шт.'],['Яйцо','1 шт.'],['Лимонный сок','1 ч. л.'],['Микрозелень','по вкусу']],steps:['Подсуши хлеб на сухой сковороде или в тостере.','Разомни авокадо с лимонным соком, выложи на хлеб.','Добавь яйцо и микрозелень.']},
-    {id:'salmon',title:'Лосось на гриле',category:'Ужины',kcal:480,p:39,f:25,c:24,time:'20 минут',image:'https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=900&q=85',ingredients:[['Филе лосося','140 г'],['Брокколи','150 г'],['Лимон','¼ шт.'],['Оливковое масло','1 ч. л.'],['Специи','по вкусу']],steps:['Приправь лосось и сбрызни лимоном.','Обжарь на гриле по 4–5 минут с каждой стороны.','Подай с приготовленной на пару брокколи.']},
-    {id:'quinoa',title:'Киноа-боул',category:'Обеды',kcal:370,p:18,f:13,c:46,time:'25 минут',image:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=85',ingredients:[['Киноа (сухая)','50 г'],['Нут','70 г'],['Огурец','70 г'],['Томаты черри','80 г'],['Фета','25 г']],steps:['Промой киноа и отвари до готовности.','Нарежь овощи, нут промой и обсуши.','Собери боул, добавь фету и заправку по вкусу.']},
-    {id:'syrniki',title:'Сырники с ягодами',category:'Завтраки',kcal:390,p:27,f:12,c:40,time:'20 минут',image:'https://images.unsplash.com/photo-1560008581-09826d1de69e?auto=format&fit=crop&w=900&q=85',ingredients:[['Творог 5%','180 г'],['Яйцо','1 шт.'],['Рисовая мука','20 г'],['Йогурт','40 г'],['Ягоды','50 г']],steps:['Смешай творог, яйцо и муку до однородности.','Сформируй сырники влажными руками.','Обжарь на антипригарной сковороде или запеки до золотистости. Подавай с йогуртом и ягодами.']},
-    {id:'salad',title:'Салат с яйцом пашот',category:'Обеды',kcal:290,p:19,f:17,c:16,time:'15 минут',image:'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=85',ingredients:[['Микс салата','70 г'],['Яйцо','1 шт.'],['Авокадо','40 г'],['Огурец','80 г'],['Оливковое масло','1 ч. л.']],steps:['Выложи салат, огурец и авокадо в тарелку.','Приготовь яйцо пашот в слабо кипящей воде 3 минуты.','Добавь яйцо и заправь оливковым маслом.']},
-    {id:'chicken',title:'Курица с овощами',category:'Ужины',kcal:420,p:42,f:14,c:31,time:'25 минут',image:'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=900&q=85',ingredients:[['Куриное филе','150 г'],['Кабачок','100 г'],['Перец сладкий','80 г'],['Булгур (сухой)','35 г'],['Оливковое масло','1 ч. л.']],steps:['Отвари булгур согласно инструкции.','Нарежь курицу и овощи, обжарь с маслом и специями до готовности.','Подавай курицу с овощами на подушке из булгура.']},
-    {id:'yogurt',title:'Йогурт с гранолой',category:'Низкокалорийные',kcal:240,p:18,f:7,c:27,time:'5 минут',image:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=85',ingredients:[['Греческий йогурт','170 г'],['Гранола','20 г'],['Клубника','70 г'],['Семена чиа','5 г']],steps:['Выложи йогурт в небольшую чашу.','Добавь нарезанную клубнику, гранолу и семена чиа.']},
-  ];
-  let recipeCatalog = [...defaultRecipeCatalog];
+  // Встроенные демо-рецепты отключены: каталог наполняется только рецептами администратора.
+  const defaultRecipeCatalog = [];
+  let recipeCatalog = [];
   let recipeFilter = 'Все', recipeSearch = '', activeRecipeId = null;
   const favoriteRecipes = new Set(readJSON('forma-recipe-favorites', []));
   function recipeCardHTML(r) {
@@ -237,7 +229,7 @@ if (app && main) {
   }
   function refreshRecipeCatalog(){
     const extra=(state.catalogRecipes||[]).map(r=>({...r,id:String(r.id),time:r.prep_time,p:r.protein_g,f:r.fat_g,c:r.carbs_g,image:r.image_url||'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85'}));
-    recipeCatalog=[...extra,...defaultRecipeCatalog];
+    recipeCatalog=extra;
   }
 
   function recipeForm() {
