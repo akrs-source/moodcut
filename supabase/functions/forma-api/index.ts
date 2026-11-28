@@ -196,7 +196,7 @@ Deno.serve(async (req: Request) => {
         return json({ ok: true });
       }
       const title = String(payload.title || "").trim().slice(0,160);
-      const category = allowed(payload.category, ["Завтраки","Обеды","Ужины","Перекусы","Низкокалорийные"]) ? payload.category : "Обеды";
+      const category = allowed(payload.category, ["Завтраки","Обеды","Ужины","Перекусы","Десерты","Низкокалорийные"]) ? payload.category : "Обеды";
       const numeric = (v: unknown) => Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : 0;
       const arr = (v: unknown, max: number) => Array.isArray(v) ? v.slice(0,max) : [];
       const ingredients = arr(payload.ingredients,40).map((x: any) => ({ name:String(x?.name || "").slice(0,120), amount:String(x?.amount || "").slice(0,60) })).filter((x: any) => x.name);
