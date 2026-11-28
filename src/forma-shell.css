@@ -790,19 +790,16 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 
 
 /* Admin recipe catalogue: compact visual cards instead of a long text list. */
-.forma-admin-recipe-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px}
-.forma-admin-recipe-tile{min-width:0;display:flex;flex-direction:column;gap:5px;padding:9px;border:1px solid #e9dfd5;border-radius:12px;background:rgba(255,250,245,.92);box-shadow:none}
-.forma-admin-recipe-top{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
-.forma-admin-recipe-category{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#987d66}
-.forma-admin-recipe-visibility{font-size:8px;padding:4px 6px;border-radius:20px;background:#eee9e1;color:#7d746b}
+.forma-admin-recipe-grid{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.forma-admin-recipe-tile{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border:1px solid #e9dfd5;border-radius:10px;background:rgba(255,250,245,.92);box-shadow:none}
+.forma-admin-recipe-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px}
+.forma-admin-recipe-line{display:flex;align-items:center;gap:6px;min-width:0}
+.forma-admin-recipe-tile h2{font:600 13px/1.2 'Cormorant Garamond',Georgia,serif;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.forma-admin-recipe-visibility{flex:none;font-size:8px;padding:2px 5px;border-radius:20px;background:#eee9e1;color:#7d746b;white-space:nowrap}
 .forma-admin-recipe-visibility.is-live{background:#e8eee4;color:#617456}
 .forma-admin-recipe-visibility.is-hidden{background:#f4e9e4;color:#9a6e5c}
-.forma-admin-recipe-tile h2{font:600 15px/1.25 'Cormorant Garamond',Georgia,serif;margin:2px 0;overflow-wrap:anywhere}
-.forma-admin-recipe-tile p{font-size:10px;color:#887e75;margin:0}
-.forma-admin-recipe-tile>small{font-size:9px;color:#887e75;white-space:nowrap}
-.forma-admin-recipe-tile .forma-recipe-actions{margin-top:auto;padding-top:5px}
-.forma-admin-recipe-tile .forma-recipe-actions button:first-child{flex:1}
-.forma-admin-recipe-tile .forma-recipe-actions button{padding:8px 9px}
-@media(max-width:360px){.forma-admin-recipe-grid{grid-template-columns:1fr}}
-
+.forma-admin-recipe-info>small{font-size:9px;color:#887e75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.forma-admin-recipe-tile .forma-recipe-actions{display:flex;flex:none;gap:4px;margin:0;padding:0}
+.forma-admin-recipe-tile .forma-recipe-actions button{padding:5px 7px;font-size:10px;min-height:28px}
+.forma-admin-recipe-tile .forma-recipe-actions button:first-child{flex:none}
 .forma-catalog-search{display:flex;flex-direction:column;gap:6px;margin-top:14px}.forma-catalog-search>span{font-size:9px;letter-spacing:.1em;color:#987d66}.forma-catalog-search input{width:100%;min-width:0;padding:12px 13px;border:1px solid #e9dfd5;border-radius:12px;background:#fffaf5;color:inherit;font:inherit;outline:none}.forma-catalog-expand{display:block;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #e9dfd5;border-radius:12px;background:transparent;color:inherit;font:inherit;font-size:12px}
