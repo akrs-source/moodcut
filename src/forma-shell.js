@@ -206,13 +206,28 @@ if (app && main) {
 
   function catalogAdminPage(){
     const list=Array.isArray(state.catalogRecipes)?state.catalogRecipes:[];
-    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-catalog-back">← Рецепты</button><p class="eyebrow">FORMA · ADMIN</p><h1>Каталог рецептов</h1><p class="muted">Общие рецепты, которые видят пользователи приложения.</p></section>
+    const ordered=[...list].sort((a,b)=>new Date(b.updated_at||b.created_at||0)-new Date(a.updated_at||a.created_at||0));
+    let expanded=false, query='';
+    main.innerHTML=`<section class="forma-page-intro"><button class="forma-back" id="forma-catalog-back">← Рецепты</button><p class="eyebrow">FORMA · ADMIN</p><h1>Каталог рецептов</h1><p class="muted">Управление общими рецептами.</p></section>
     <button class="forma-primary" id="forma-catalog-new">＋ Добавить рецепт</button>
-    <div class="forma-admin-recipe-grid" style="margin-top:14px">${list.length?list.map(r=>`<article class="forma-admin-recipe-tile"><div class="forma-admin-recipe-top"><span class="forma-admin-recipe-category">${esc(r.category)}</span><span class="forma-admin-recipe-visibility ${r.is_published?'is-live':'is-hidden'}">${r.is_published?'Опубликован':'Скрыт'}</span></div><h2>${esc(r.title)}</h2><p>${r.is_premium?'Premium':'Бесплатный'} · ${r.kcal} ккал</p><small>Б ${r.protein_g} · Ж ${r.fat_g} · У ${r.carbs_g}</small><div class="forma-recipe-actions"><button data-catalog-edit="${r.id}">Изменить</button><button data-catalog-delete="${r.id}" aria-label="Удалить рецепт">×</button></div></article>`).join(''):'<div class="forma-card"><p class="muted">Пока нет добавленных рецептов.</p></div>'}</div>`;
+    <label class="forma-catalog-search"><span>БЫСТРЫЙ ПОИСК</span><input id="forma-catalog-search" type="search" placeholder="Название или категория…"></label>
+    <div id="forma-catalog-list"></div>`;
+    const listHost=main.querySelector('#forma-catalog-list');
+    const renderList=()=>{
+      const q=query.trim().toLocaleLowerCase('ru-RU');
+      const filtered=ordered.filter(r=>!q||String(r.title||'').toLocaleLowerCase('ru-RU').includes(q)||String(r.category||'').toLocaleLowerCase('ru-RU').includes(q));
+      const visible=(expanded||q)?filtered:filtered.slice(0,6);
+      listHost.innerHTML=filtered.length?'<div class="forma-admin-recipe-grid">'+visible.map(r=>`<article class="forma-admin-recipe-tile"><div class="forma-admin-recipe-top"><span class="forma-admin-recipe-category">${esc(r.category)}</span><span class="forma-admin-recipe-visibility ${r.is_published?'is-live':'is-hidden'}">${r.is_published?'Опубликован':'Скрыт'}</span></div><h2>${esc(r.title)}</h2><p>${r.is_premium?'Premium':'Бесплатный'} · ${r.kcal} ккал</p><small>Б ${r.protein_g} · Ж ${r.fat_g} · У ${r.carbs_g}</small><div class="forma-recipe-actions"><button data-catalog-edit="${r.id}">Изменить</button><button data-catalog-delete="${r.id}" aria-label="Удалить рецепт">×</button></div></article>`).join('')+'</div>':'<div class="forma-card"><p class="muted">'+(q?'Ничего не найдено. Попробуй другое название.':'Пока нет добавленных рецептов.')+'</p></div>';
+      const toggle=listHost.querySelector('[data-catalog-expand]');
+      if(filtered.length>6&&!q)listHost.insertAdjacentHTML('beforeend',`<button class="forma-catalog-expand" data-catalog-expand>${expanded?'Свернуть список':'Показать все рецепты · '+filtered.length}</button>`);
+      listHost.querySelectorAll('[data-catalog-edit]').forEach(btn=>btn.onclick=()=>catalogEditor(ordered.find(x=>x.id===btn.dataset.catalogEdit)));
+      listHost.querySelectorAll('[data-catalog-delete]').forEach(btn=>btn.onclick=async()=>{if(!confirm('Удалить рецепт из общего каталога?'))return;try{await api('delete_catalog_recipe',{id:btn.dataset.catalogDelete});state.catalogRecipes=state.catalogRecipes.filter(x=>x.id!==btn.dataset.catalogDelete);catalogAdminPage();toast('Рецепт удалён');}catch(e){toast('Не удалось удалить рецепт');}});
+      listHost.querySelector('[data-catalog-expand]')?.addEventListener('click',()=>{expanded=!expanded;renderList();});
+    };
     main.querySelector('#forma-catalog-back').onclick=()=>recipesPage();
     main.querySelector('#forma-catalog-new').onclick=()=>catalogEditor();
-    main.querySelectorAll('[data-catalog-edit]').forEach(b=>b.onclick=()=>catalogEditor(list.find(x=>x.id===b.dataset.catalogEdit)));
-    main.querySelectorAll('[data-catalog-delete]').forEach(b=>b.onclick=async()=>{if(!confirm('Удалить рецепт из общего каталога?'))return;try{await api('delete_catalog_recipe',{id:b.dataset.catalogDelete});state.catalogRecipes=state.catalogRecipes.filter(x=>x.id!==b.dataset.catalogDelete);refreshRecipeCatalog();catalogAdminPage();toast('Рецепт удалён');}catch(e){toast('Не удалось удалить рецепт');}});
+    main.querySelector('#forma-catalog-search').addEventListener('input',e=>{query=e.target.value;renderList();});
+    renderList();
   }
   function catalogEditor(r={}){
     const ing=(r.ingredients||[]).map(x=>Array.isArray(x)?x[0]+' | '+x[1]:x.name+' | '+(x.amount||'')).join('\n');
