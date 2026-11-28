@@ -34,8 +34,8 @@ if (app && main) {
     if (!response.ok) throw new Error(result.error || 'Ошибка синхронизации');
     return result;
   };
-  const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner'}[value] || 'other');
-  const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Другое'}[value] || 'Другое');
+  const mealTypeToDb = value => ({'Завтрак':'breakfast','Обед':'lunch','Перекус':'snack','Ужин':'dinner','Десерт':'other'}[value] || 'other');
+  const mealTypeFromDb = value => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Десерт'}[value] || 'Десерт');
   const state = { tab: 'home', meals: readJSON('forma-meals', []).map((m,i)=>({...m,id:m.id||'local-existing-'+i})), weight: storage.getItem('forma-weight') || '', chat: [], supportMessages: [], profile: null, subscription: null, isAdmin: false, goals: readJSON('forma-goals', null), preferences: readJSON('forma-preferences', null), weights: readJSON('forma-weights', []), measurements: readJSON('forma-measurements', []), editingWeightId: null, editingMeasurementId: null, plans: readJSON('forma-plans', []), shopping: readJSON('forma-shopping', []), recipes: readJSON('forma-recipes', []), foodSearchResults: [], planDate: '', diaryDate: localDate(new Date()), planMonth: localDate(new Date()).slice(0,7) };
   let supportPoll = null;
   let targets = { kcal: 1850, protein: 120, fat: 65, carbs: 205 };
@@ -81,7 +81,7 @@ if (app && main) {
   function home() {
     const t=totals(todayMeals()), pct=Math.min(100,targets.kcal?t.kcal/targets.kcal*100:0);
     const firstName=(tg?.initDataUnsafe?.user?.first_name || state.profile?.first_name || 'Анджелина').trim();
-    const today=todayMeals(), mealOrder=['Завтрак','Обед','Перекус','Ужин'];
+    const today=todayMeals(), mealOrder=['Завтрак','Обед','Перекус','Ужин','Десерт'];
     const mealCards=today.length?mealOrder.map(type=>{const item=today.find(m=>m.type===type);if(!item)return '';return '<article class="forma-meal-glass"><div class="forma-meal-thumb" role="img" aria-label="Приём пищи" '+(item.image_url?'style="background-image:url(\''+esc(item.image_url)+'\')"':'')+'></div><div class="forma-meal-copy"><span>'+type+'</span><b>'+esc(item.name)+'</b><small>'+fmt(item.kcal)+' ккал · '+fmt(item.grams)+' г</small></div><span class="forma-meal-check">✓</span></article>';}).join(''):'<div class="forma-meal-empty">Твои приёмы пищи появятся здесь после первой записи.</div>';
     return '<section class="forma-greeting forma-editorial-hero"><div class="forma-greeting-copy"><p class="forma-brand-kicker">ТВОЁ ПРОСТРАНСТВО ЗАБОТЫ</p><h1>'+timeGreeting()+',<br>'+esc(firstName)+' ♡</h1></div><span class="forma-date">'+new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})+'</span></section>' +
     '<section class="forma-card forma-glass-energy"><div class="forma-energy-ring" style="--pct:'+pct+'%"><div><b>'+fmt(t.kcal)+'</b><span>из '+fmt(targets.kcal)+' ккал</span></div></div><div class="forma-glass-macros"><div><b>'+fmt(t.p)+' / '+fmt(targets.protein)+' г</b><span>Белки</span></div><div><b>'+fmt(t.f)+' / '+fmt(targets.fat)+' г</b><span>Жиры</span></div><div><b>'+fmt(t.c)+' / '+fmt(targets.carbs)+' г</b><span>Углеводы</span></div></div><button class="forma-energy-open" data-action="diary" aria-label="Открыть дневник">→</button></section>' +
@@ -100,7 +100,7 @@ if (app && main) {
     <div class="forma-add-methods"><button data-action="add-product"><span>＋</span><b>Добавить продукт</b><small>Найти и указать граммовку</small></button><button data-action="add-product"><span>▧</span><b>Добавить блюдо</b><small>Состав и ингредиенты</small></button><button data-action="photo"><span>◎</span><b>По фото</b><small>Распознавание — позже</small></button><button data-action="barcode"><span>▥</span><b>По штрихкоду</b><small>Сканирование — позже</small></button></div>`;
   }
   function localDate(d) { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
-  const mealLabel = v => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин'}[v]||'Приём пищи');
+  const mealLabel = v => ({breakfast:'Завтрак',lunch:'Обед',snack:'Перекус',dinner:'Ужин',other:'Десерт'}[v]||'Приём пищи');
   function plan() {
     const today=localDate(new Date());
     if(!state.planDate)state.planDate=today;
@@ -190,7 +190,7 @@ if (app && main) {
     main.querySelector('#forma-recipe-back').onclick=()=>recipesPage();
     main.querySelector('#forma-detail-fav').onclick=()=>{favoriteRecipes.has(r.id)?favoriteRecipes.delete(r.id):favoriteRecipes.add(r.id);storage.setItem('forma-recipe-favorites',JSON.stringify([...favoriteRecipes]));recipeDetail(r.id);};
     main.querySelector('#forma-add-recipe-diary').onclick=async()=>{
-      const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':r.category==='Перекусы'?'Перекус':'Обед';
+      const type=r.category==='Завтраки'?'Завтрак':r.category==='Ужины'?'Ужин':r.category==='Перекусы'?'Перекус':r.category==='Десерты'?'Десерт':'Обед';
       const photo=String(r.image_url||r.image||r.photo_url||'').trim();
       const item={name:r.title,type,grams:250,kcal:Number(r.kcal||0),p:Number(r.p??r.protein_g??0),f:Number(r.f??r.fat_g??0),c:Number(r.c??r.carbs_g??0),image_url:photo.startsWith('https://')?photo:null,eaten_at:new Date().toISOString(),date:localDate(new Date())};
       const button=main.querySelector('#forma-add-recipe-diary');if(button)button.disabled=true;
