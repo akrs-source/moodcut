@@ -803,9 +803,3 @@ body{background:linear-gradient(180deg,#eee4db 0%,#f5eee8 54%,#f2e9e1 100%)!impo
 .forma-admin-recipe-tile .forma-recipe-actions button{padding:5px 7px;font-size:10px;min-height:28px}
 .forma-admin-recipe-tile .forma-recipe-actions button:first-child{flex:none}
 .forma-catalog-search{display:flex;flex-direction:column;gap:6px;margin-top:14px}.forma-catalog-search>span{font-size:9px;letter-spacing:.1em;color:#987d66}.forma-catalog-search input{width:100%;min-width:0;padding:12px 13px;border:1px solid #e9dfd5;border-radius:12px;background:#fffaf5;color:inherit;font:inherit;outline:none}.forma-catalog-expand{display:block;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #e9dfd5;border-radius:12px;background:transparent;color:inherit;font:inherit;font-size:12px}
-
-
-/* Ensure recipe names remain visible in the compact admin list. */
-.forma-admin-recipe-title{display:block!important;min-width:0!important;max-width:100%!important;color:#211d1a!important;font:600 14px/1.25 'DM Sans',sans-serif!important;opacity:1!important;visibility:visible!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-.forma-admin-recipe-line{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important;}
-.forma-admin-recipe-info{min-width:0!important;flex:1 1 auto!important;}
