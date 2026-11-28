@@ -148,7 +148,7 @@ if (app && main) {
   function recipeCardHTML(r) {
     return `<article class="forma-cook-card" data-recipe-open="${r.id}" role="button" tabindex="0" aria-label="Открыть рецепт ${esc(r.title)}" style="--recipe-image:url('${r.image}')">
       <button class="forma-cook-fav ${favoriteRecipes.has(r.id)?'is-favorite':''}" data-recipe-fav="${r.id}" aria-label="В избранное">${favoriteRecipes.has(r.id)?'♥':'♡'}</button>
-      <div class="forma-cook-overlay"><span>${r.category} · ${r.time}</span><h2>${esc(r.title)}</h2><b>${r.kcal} ккал</b>${r.is_premium?'<small class="forma-tag">PREMIUM</small>':''}</div>
+      <div class="forma-cook-overlay"><span>${r.category} · ${r.time}</span><h2>${esc(r.title||r.name||r.recipe_name||"Без названия")}</h2><b>${r.kcal} ккал</b>${r.is_premium?'<small class="forma-tag">PREMIUM</small>':''}</div>
     </article>`;
   }
   function recipesPage() {
